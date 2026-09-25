@@ -126,7 +126,9 @@ kbd { font: 600 11px var(--mono); border: 1px solid currentColor; border-radius:
   top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
   align-self: start;
   max-height: calc(100vh - var(--header-h));
+  max-height: calc(100dvh - var(--header-h));
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding-block: 20px 32px;
 }
 .search input, .sheet-filter input {
@@ -309,10 +311,12 @@ input[type="range"] { width: 100%; accent-color: var(--ochre); margin: 2px 0; }
   .progress .bar { width: 56px; }
   .shell { grid-template-columns: minmax(0, 1fr); gap: 0; padding-inline: 16px; }
   .sidebar {
-    display: none; position: fixed; inset: 0; top: 0; z-index: 30; max-height: none;
+    display: none; position: fixed; inset: 0; z-index: 30; align-self: stretch; height: 100%; max-height: none;
+    overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
     padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(32px + env(safe-area-inset-bottom, 0px));
     background: var(--paper);
   }
+  body.nav-open { overflow: hidden; }
   body.nav-open .sidebar { display: block; }
   body.nav-open .top { position: fixed; left: 0; right: 0; z-index: 40; }
   body.nav-open .sidebar { padding-top: calc(120px + env(safe-area-inset-top, 0px)); }
