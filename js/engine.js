@@ -8,6 +8,8 @@
 
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const n = (v) => (Math.round(v * 10) / 10).toString();
+  // "Q_A" style labels: render the part after the underscore as a subscript.
+  const lbl = (s) => esc(s).replace(/_([A-Za-z0-9]+)/g, '<tspan dy="4" font-size="0.78em">$1</tspan><tspan dy="-4">\u200b</tspan>');
 
   let clipSeq = 0;
 
@@ -34,8 +36,8 @@
     // Axes and titles.
     L.axes.push(`<line class="axis" x1="${M.l}" y1="${M.t + PH}" x2="${M.l + PW}" y2="${M.t + PH}"/>`);
     L.axes.push(`<line class="axis" x1="${M.l}" y1="${M.t}" x2="${M.l}" y2="${M.t + PH}"/>`);
-    L.axes.push(`<text class="axis-title" x="${M.l + PW / 2}" y="${H - 10}" text-anchor="middle">${esc(spec.x.label)}</text>`);
-    L.axes.push(`<text class="axis-title" x="16" y="${M.t + PH / 2}" text-anchor="middle" transform="rotate(-90 16 ${M.t + PH / 2})">${esc(spec.y.label)}</text>`);
+    L.axes.push(`<text class="axis-title" x="${M.l + PW / 2}" y="${H - 10}" text-anchor="middle">${lbl(spec.x.label)}</text>`);
+    L.axes.push(`<text class="axis-title" x="16" y="${M.t + PH / 2}" text-anchor="middle" transform="rotate(-90 16 ${M.t + PH / 2})">${lbl(spec.y.label)}</text>`);
     const fx = spec.x.fmt || ((v) => v), fy = spec.y.fmt || ((v) => v);
     (spec.x.ticks || []).forEach((v) => {
       L.axes.push(`<line class="axis" x1="${n(sx(v))}" y1="${M.t + PH}" x2="${n(sx(v))}" y2="${M.t + PH + 5}"/>`);
@@ -48,10 +50,10 @@
 
     const curveLabel = (x, y, text, k) => {
       const px = sx(x), py = sy(y);
-      const nearRight = px > W - M.r - 70;
+      const nearRight = px + text.length * 7.5 + 10 > W - M.r;
       const ax = nearRight ? px - 8 : px + 8;
       const ay = Math.max(M.t + 12, Math.min(M.t + PH - 6, py - 7));
-      L.label.push(`<text class="clabel t-${k}" x="${n(ax)}" y="${n(ay)}" text-anchor="${nearRight ? 'end' : 'start'}">${esc(text)}</text>`);
+      L.label.push(`<text class="clabel t-${k}" x="${n(ax)}" y="${n(ay)}" text-anchor="${nearRight ? 'end' : 'start'}">${lbl(text)}</text>`);
     };
 
     const items = spec.draw(state).filter(Boolean);
@@ -80,20 +82,20 @@
         case 'vline': {
           if (it.x < x0 || it.x > x1) break;
           L.curve.push(`<line class="curve k-${k}${dash}" x1="${n(sx(it.x))}" y1="${M.t}" x2="${n(sx(it.x))}" y2="${M.t + PH}"/>`);
-          if (it.label) L.label.push(`<text class="clabel t-${k}" x="${n(sx(it.x) + 7)}" y="${M.t + 14}">${esc(it.label)}</text>`);
+          if (it.label) L.label.push(`<text class="clabel t-${k}" x="${n(sx(it.x) + 7)}" y="${M.t + 14}">${lbl(it.label)}</text>`);
           break;
         }
         case 'hline': {
           if (it.y < y0 || it.y > y1) break;
           L.curve.push(`<line class="curve k-${k}${dash}" x1="${M.l}" y1="${n(sy(it.y))}" x2="${M.l + PW}" y2="${n(sy(it.y))}"/>`);
-          if (it.label) L.label.push(`<text class="clabel t-${k}" x="${it.labelLeft ? M.l + 6 : M.l + PW - 6}" y="${n(sy(it.y) - 7)}" text-anchor="${it.labelLeft ? 'start' : 'end'}">${esc(it.label)}</text>`);
+          if (it.label) L.label.push(`<text class="clabel t-${k}" x="${it.labelLeft ? M.l + 6 : M.l + PW - 6}" y="${n(sy(it.y) - 7)}" text-anchor="${it.labelLeft ? 'start' : 'end'}">${lbl(it.label)}</text>`);
           break;
         }
         case 'seg': {
           L.curve.push(`<line class="curve k-${k}${dash}${it.bold ? ' bold' : ''}" x1="${n(sx(it.x1))}" y1="${n(sy(it.y1))}" x2="${n(sx(it.x2))}" y2="${n(sy(it.y2))}" clip-path="url(#${clipId})"/>`);
           if (it.label) {
             const mx = (it.x1 + it.x2) / 2, my = (it.y1 + it.y2) / 2;
-            if (inBox(mx, my)) L.label.push(`<text class="clabel t-${k}" x="${n(sx(mx))}" y="${n(sy(my) + (it.below ? 20 : -9))}" text-anchor="middle">${esc(it.label)}</text>`);
+            if (inBox(mx, my)) L.label.push(`<text class="clabel t-${k}" x="${n(sx(mx))}" y="${n(sy(my) + (it.below ? 20 : -9))}" text-anchor="middle">${lbl(it.label)}</text>`);
           }
           break;
         }
@@ -104,7 +106,7 @@
           if (it.label) {
             const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
             const cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
-            if (inBox(cx, cy)) L.label.push(`<text class="alabel t-${k}" x="${n(sx(cx))}" y="${n(sy(cy) + 4)}" text-anchor="middle">${esc(it.label)}</text>`);
+            if (inBox(cx, cy)) L.label.push(`<text class="alabel t-${k}" x="${n(sx(cx))}" y="${n(sy(cy) + 4)}" text-anchor="middle">${lbl(it.label)}</text>`);
           }
           break;
         }
@@ -112,8 +114,8 @@
           if (!inBox(it.x, it.y)) break;
           const px = sx(it.x), py = sy(it.y);
           L.guide.push(`<path class="guide k-${k}" d="M${n(px)} ${M.t + PH}V${n(py)}${it.yl !== null ? 'H' + M.l : ''}"/>`);
-          if (it.xl) L.guide.push(`<text class="gtick t-${k}" x="${n(px)}" y="${M.t + PH + 18}" text-anchor="middle">${esc(it.xl)}</text>`);
-          if (it.yl) L.guide.push(`<text class="gtick t-${k}" x="${M.l - 8}" y="${n(py + 4)}" text-anchor="end">${esc(it.yl)}</text>`);
+          if (it.xl) L.guide.push(`<text class="gtick t-${k}" x="${n(px)}" y="${M.t + PH + 18}" text-anchor="middle">${lbl(it.xl)}</text>`);
+          if (it.yl) L.guide.push(`<text class="gtick t-${k}" x="${M.l - 8}" y="${n(py + 4)}" text-anchor="end">${lbl(it.yl)}</text>`);
           break;
         }
         case 'point': {
@@ -121,13 +123,13 @@
           L.point.push(`<circle class="pt p-${k}" cx="${n(sx(it.x))}" cy="${n(sy(it.y))}" r="${it.small ? 3.5 : 5}"/>`);
           if (it.label) {
             const dx = it.dx ?? 9, dy = it.dy ?? -9;
-            L.label.push(`<text class="plabel t-${k}" x="${n(sx(it.x) + dx)}" y="${n(sy(it.y) + dy)}" text-anchor="${dx < 0 ? 'end' : 'start'}">${esc(it.label)}</text>`);
+            L.label.push(`<text class="plabel t-${k}" x="${n(sx(it.x) + dx)}" y="${n(sy(it.y) + dy)}" text-anchor="${dx < 0 ? 'end' : 'start'}">${lbl(it.label)}</text>`);
           }
           break;
         }
         case 'text': {
           if (!inBox(it.x, it.y)) break;
-          L.label.push(`<text class="note t-${k}" x="${n(sx(it.x))}" y="${n(sy(it.y))}" text-anchor="${it.anchor || 'start'}">${esc(it.text)}</text>`);
+          L.label.push(`<text class="note t-${k}" x="${n(sx(it.x))}" y="${n(sy(it.y))}" text-anchor="${it.anchor || 'start'}">${lbl(it.text)}</text>`);
           break;
         }
       }

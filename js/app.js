@@ -4,6 +4,7 @@
   const byId = Object.fromEntries(TOPICS.map((t) => [t.id, t]));
   const $ = (sel, root = document) => root.querySelector(sel);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const sub = (s) => esc(s).replace(/_([A-Za-z0-9]+)/g, '<sub>$1</sub>');
 
   function tex(src, display) {
     if (window.katex) {
@@ -31,7 +32,7 @@
   /* ── Sidebar ── */
   function matches(t, q) {
     if (!q) return true;
-    const hay = [t.title, t.unit, t.summary, ...t.equations.map((e) => e.name)].join(' ').toLowerCase();
+    const hay = [t.title, t.unit, t.block || '', t.summary, ...t.equations.map((e) => e.name)].join(' ').toLowerCase();
     return q.toLowerCase().split(/\s+/).every((w) => hay.includes(w));
   }
 
@@ -44,7 +45,7 @@
       for (const t of items) {
         html += `<li><a href="#${t.id}" class="nav-item${t.id === activeId ? ' active' : ''}"${t.id === activeId ? ' aria-current="page"' : ''}>
           <span class="nav-check${mastered.has(t.id) ? ' done' : ''}" aria-label="${mastered.has(t.id) ? 'Mastered' : 'Not yet mastered'}"></span>
-          <span>${esc(t.title)}</span></a></li>`;
+          <span class="nav-title">${esc(t.title)}</span>${t.block ? `<span class="nav-block">${esc(t.block.replace(/Blocks? /, 'B'))}</span>` : ''}</a></li>`;
       }
       html += '</ul></div>';
     }
@@ -60,18 +61,43 @@
   function renderTopic(t) {
     const idx = TOPICS.indexOf(t);
     const prev = TOPICS[idx - 1], next = TOPICS[idx + 1];
-    const s = stateFor(t);
-    const controls = t.graph.params.map((p) => `
+    const g = t.graph;
+    const s = g ? stateFor(t) : null;
+    const controls = g ? g.params.map((p) => p.options ? `
+      <div class="ctrl">
+        <span class="ctrl-label">${esc(p.label)}</span>
+        <div class="seg" role="group" aria-label="${esc(p.label)}">
+          ${p.options.map((o) => `<button type="button" id="p-${t.id}-${p.id}-${o.v}" data-param="${p.id}" data-v="${o.v}" aria-pressed="${s[p.id] === o.v}">${esc(o.label)}</button>`).join('')}
+        </div>
+        ${p.hint ? `<small>${esc(p.hint)}</small>` : ''}
+      </div>` : `
       <div class="ctrl">
         <label for="p-${t.id}-${p.id}"><span>${esc(p.label)}</span><output id="o-${t.id}-${p.id}">${fmtParam(p, s[p.id])}</output></label>
         <input type="range" id="p-${t.id}-${p.id}" data-param="${p.id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${s[p.id]}">
         ${p.hint ? `<small>${esc(p.hint)}</small>` : ''}
-      </div>`).join('');
+      </div>`).join('') : '';
+    const actions = g && g.actions ? g.actions.map((a, i) => `<button type="button" class="primary" data-action="${i}">${esc(a.label)}</button>`).join('') : '';
+
+    const figure = g ? `
+          <section class="panel graph-panel" aria-label="Interactive graph">
+            <div class="graph-wrap" id="graph"></div>
+            <p class="model"><span>Model</span> ${sub(t.model)}</p>
+            <div class="controls">${controls}</div>
+            <div class="readout-wrap">
+              <dl class="readout" id="readout"></dl>
+              <p class="status" id="status" hidden></p>
+            </div>
+            <div class="btn-row">${actions}<button type="button" class="ghost-btn" id="reset">Reset</button></div>
+          </section>` : `
+          <section class="panel graph-panel" aria-label="Diagram">
+            <div class="graph-wrap">${t.diagram}</div>
+            ${t.model ? `<p class="model"><span>Read it</span> ${esc(t.model)}</p>` : ''}
+          </section>`;
 
     main.innerHTML = `
       <article class="topic">
         <header class="topic-head">
-          <p class="eyebrow">${esc(t.unit)} <span aria-hidden="true">·</span> Topic ${idx + 1} of ${TOPICS.length}</p>
+          <p class="eyebrow">${t.block ? esc(t.block) + ' <span aria-hidden="true">·</span> ' : ''}${esc(t.unit)}</p>
           <h1>${esc(t.title)}</h1>
           <p class="lede">${esc(t.summary)}</p>
           <button type="button" class="master-toggle" id="master-toggle" aria-pressed="${mastered.has(t.id)}">
@@ -79,16 +105,7 @@
           </button>
         </header>
         <div class="bench">
-          <section class="panel graph-panel" aria-label="Interactive graph">
-            <div class="graph-wrap" id="graph"></div>
-            <p class="model"><span>Model</span> ${esc(t.model)}</p>
-            <div class="controls">${controls}</div>
-            <div class="readout-wrap">
-              <dl class="readout" id="readout"></dl>
-              <p class="status" id="status" hidden></p>
-            </div>
-            <button type="button" class="ghost-btn" id="reset">Reset sliders</button>
-          </section>
+          ${figure}
           <section class="eqs" aria-labelledby="eq-h">
             <h2 id="eq-h">Key equations</h2>
             <ul class="eq-list">
@@ -112,29 +129,51 @@
         </nav>
       </article>`;
 
+    bindMastered(t);
+    if (!g) return;
+
     const draw = () => {
-      $('#graph').innerHTML = window.renderGraph({ ...t.graph, aria: t.title + ' graph' }, s);
-      const r = t.graph.readout(s);
-      $('#readout').innerHTML = r.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
+      $('#graph').innerHTML = window.renderGraph({ ...g, aria: t.title + ' graph' }, s);
+      const r = g.readout(s);
+      $('#readout').innerHTML = r.rows.map(([k, v]) => `<div><dt>${sub(k)}</dt><dd>${sub(v)}</dd></div>`).join('');
       const st = $('#status');
       st.hidden = !r.status;
-      st.textContent = r.status || '';
+      st.innerHTML = r.status ? sub(r.status) : '';
       st.dataset.tone = r.tone || 'info';
+    };
+    // Push state values back into the controls (after reset or an action).
+    const sync = () => {
+      g.params.forEach((p) => {
+        if (p.options) {
+          p.options.forEach((o) => $(`#p-${t.id}-${p.id}-${o.v}`).setAttribute('aria-pressed', s[p.id] === o.v));
+        } else {
+          s[p.id] = Math.min(p.max, Math.max(p.min, s[p.id]));
+          $(`#p-${t.id}-${p.id}`).value = s[p.id];
+          $(`#o-${t.id}-${p.id}`).textContent = fmtParam(p, s[p.id]);
+        }
+      });
+      draw();
     };
     draw();
 
     main.querySelectorAll('input[type=range]').forEach((inp) => {
       inp.addEventListener('input', () => {
-        const p = t.graph.params.find((x) => x.id === inp.dataset.param);
+        const p = g.params.find((x) => x.id === inp.dataset.param);
         s[p.id] = parseFloat(inp.value);
         $(`#o-${t.id}-${p.id}`).textContent = fmtParam(p, s[p.id]);
         draw();
       });
     });
-    $('#reset').addEventListener('click', () => {
-      t.graph.params.forEach((p) => { s[p.id] = p.value; $(`#p-${t.id}-${p.id}`).value = p.value; $(`#o-${t.id}-${p.id}`).textContent = fmtParam(p, p.value); });
-      draw();
+    main.querySelectorAll('.ctrl .seg button').forEach((b) => {
+      b.addEventListener('click', () => { s[b.dataset.param] = parseFloat(b.dataset.v); sync(); });
     });
+    main.querySelectorAll('[data-action]').forEach((b) => {
+      b.addEventListener('click', () => { g.actions[+b.dataset.action].run(s); sync(); });
+    });
+    $('#reset').addEventListener('click', () => { g.params.forEach((p) => { s[p.id] = p.value; }); sync(); });
+  }
+
+  function bindMastered(t) {
     $('#master-toggle').addEventListener('click', (ev) => {
       const btn = ev.currentTarget;
       if (mastered.has(t.id)) mastered.delete(t.id); else mastered.add(t.id);
