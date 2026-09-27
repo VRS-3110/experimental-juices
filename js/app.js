@@ -23,7 +23,18 @@
 
   /* ── State ── */
   const sliderState = {};
-  const stateFor = (t) => (sliderState[t.id] ||= Object.fromEntries(t.graph.params.map((p) => [p.id, p.value])));
+  // Param fields (min, max, step, value) may be functions of the state, so ranges follow the market.
+  const rv = (v, s) => (typeof v === 'function' ? v(s) : v);
+  function resetParams(t, s) {
+    t.graph.params.forEach((p) => { s[p.id] = rv(p.value, s); });
+    return s;
+  }
+  function initState(t) {
+    const s = {};
+    if (t.market) s.m = window.MARKET.build(t.market.demand, t.market.supply).m;
+    return resetParams(t, s);
+  }
+  const stateFor = (t) => (sliderState[t.id] ||= initState(t));
   let query = '';
 
   const main = $('#main');
@@ -72,8 +83,8 @@
         ${p.hint ? `<small>${esc(p.hint)}</small>` : ''}
       </div>` : `
       <div class="ctrl">
-        <label for="p-${t.id}-${p.id}"><span>${esc(p.label)}</span><output id="o-${t.id}-${p.id}">${fmtParam(p, s[p.id])}</output></label>
-        <input type="range" id="p-${t.id}-${p.id}" data-param="${p.id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${s[p.id]}">
+        <label for="p-${t.id}-${p.id}"><span>${esc(p.label)}</span><output id="o-${t.id}-${p.id}">${fmtParam(p, s[p.id], s)}</output></label>
+        <input type="range" id="p-${t.id}-${p.id}" data-param="${p.id}" min="${rv(p.min, s)}" max="${rv(p.max, s)}" step="${rv(p.step, s)}" value="${s[p.id]}">
         ${p.hint ? `<small>${esc(p.hint)}</small>` : ''}
       </div>`).join('') : '';
     const actions = g && g.actions ? g.actions.map((a, i) => `<button type="button" class="primary" data-action="${i}">${esc(a.label)}</button>`).join('') : '';
@@ -81,7 +92,7 @@
     const figure = g ? `
           <section class="panel graph-panel" aria-label="Interactive graph">
             <div class="graph-wrap" id="graph"></div>
-            <p class="model"><span>Model</span> ${sub(t.model)}</p>
+            ${t.market ? marketPanel(t, s) : `<p class="model"><span>Model</span> ${sub(t.model)}</p>`}
             <div class="controls">${controls}</div>
             <div class="readout-wrap">
               <dl class="readout" id="readout"></dl>
@@ -132,26 +143,35 @@
     bindMastered(t);
     if (!g) return;
 
-    const draw = () => {
+    const draw = (limit) => {
       $('#graph').innerHTML = window.renderGraph({ ...g, aria: t.title + ' graph' }, s);
       const r = g.readout(s);
       $('#readout').innerHTML = r.rows.map(([k, v]) => `<div><dt>${sub(k)}</dt><dd>${sub(v)}</dd></div>`).join('');
       const st = $('#status');
-      st.hidden = !r.status;
-      st.innerHTML = r.status ? sub(r.status) : '';
-      st.dataset.tone = r.tone || 'info';
+      const msg = limit ? 'Limit reached. ' + limit : r.status;
+      st.hidden = !msg;
+      st.innerHTML = msg ? sub(msg) : '';
+      st.dataset.tone = limit ? 'bad' : r.tone || 'info';
+    };
+    // Recompute ranges that depend on the market or on other sliders.
+    const refreshRanges = () => {
+      g.params.forEach((p) => {
+        if (p.options) return;
+        const inp = $(`#p-${t.id}-${p.id}`), min = rv(p.min, s), max = rv(p.max, s);
+        inp.min = min; inp.max = max; inp.step = rv(p.step, s);
+        s[p.id] = Math.min(max, Math.max(min, s[p.id]));
+        inp.value = s[p.id];
+        $(`#o-${t.id}-${p.id}`).textContent = fmtParam(p, s[p.id], s);
+      });
     };
     // Push state values back into the controls (after reset or an action).
     const sync = () => {
       g.params.forEach((p) => {
         if (p.options) {
           p.options.forEach((o) => $(`#p-${t.id}-${p.id}-${o.v}`).setAttribute('aria-pressed', s[p.id] === o.v));
-        } else {
-          s[p.id] = Math.min(p.max, Math.max(p.min, s[p.id]));
-          $(`#p-${t.id}-${p.id}`).value = s[p.id];
-          $(`#o-${t.id}-${p.id}`).textContent = fmtParam(p, s[p.id]);
         }
       });
+      refreshRanges();
       draw();
     };
     draw();
@@ -159,8 +179,25 @@
     main.querySelectorAll('input[type=range]').forEach((inp) => {
       inp.addEventListener('input', () => {
         const p = g.params.find((x) => x.id === inp.dataset.param);
-        s[p.id] = parseFloat(inp.value);
-        $(`#o-${t.id}-${p.id}`).textContent = fmtParam(p, s[p.id]);
+        const old = s[p.id], target = parseFloat(inp.value);
+        s[p.id] = target;
+        const verdict = g.valid ? g.valid(s) : true;
+        if (verdict !== true) {
+          // Walk from the last good value toward the target and stop at the last valid step.
+          const step = rv(p.step, s), dir = Math.sign(target - old), n = Math.floor(Math.abs(target - old) / step + 1e-9);
+          let good = old, reason = verdict;
+          for (let i = 1; i <= n; i++) {
+            s[p.id] = +(old + dir * i * step).toFixed(10);
+            const v = g.valid(s);
+            if (v !== true) { reason = v; break; }
+            good = s[p.id];
+          }
+          s[p.id] = good;
+          refreshRanges();
+          draw(reason);
+          return;
+        }
+        refreshRanges();
         draw();
       });
     });
@@ -170,7 +207,42 @@
     main.querySelectorAll('[data-action]').forEach((b) => {
       b.addEventListener('click', () => { g.actions[+b.dataset.action].run(s); sync(); });
     });
-    $('#reset').addEventListener('click', () => { g.params.forEach((p) => { s[p.id] = p.value; }); sync(); });
+    $('#reset').addEventListener('click', () => { resetParams(t, s); sync(); });
+
+    if (t.market) {
+      const apply = (dText, sText) => {
+        const res = window.MARKET.build(dText, sText);
+        const err = $('#fn-error');
+        if (res.error) { err.hidden = false; err.textContent = res.error; return; }
+        s.m = res.m;
+        resetParams(t, s);
+        renderTopic(t);
+        const note = $('#fn-note');
+        if (note) { note.hidden = false; note.textContent = 'Graph redrawn from your functions.'; }
+      };
+      $('#fn-form').addEventListener('submit', (e) => { e.preventDefault(); apply($('#fn-d').value, $('#fn-s').value); });
+      $('#fn-example').addEventListener('click', () => apply(t.market.demand, t.market.supply));
+      ['#fn-d', '#fn-s'].forEach((id) => $(id).addEventListener('input', () => { $('#fn-error').hidden = true; $('#fn-note').hidden = true; }));
+    }
+  }
+
+  function marketPanel(t, s) {
+    const m = s.m, e = window.MARKET.eqm(m);
+    return `
+      <form class="market" id="fn-form" novalidate>
+        <p class="market-title">Your market functions</p>
+        <div class="fn-grid">
+          <label for="fn-d">${esc(t.market.dLabel || 'Demand')}</label>
+          <input id="fn-d" class="fn" value="${esc(m.dText)}" spellcheck="false" autocomplete="off" placeholder="${esc(t.market.demand)}">
+          <label for="fn-s">${esc(t.market.sLabel || 'Supply')}</label>
+          <input id="fn-s" class="fn" value="${esc(m.sText)}" spellcheck="false" autocomplete="off" placeholder="${esc(t.market.supply)}">
+        </div>
+        <p class="fn-help">Type each line as Q = a − bP or P = a − bQ, for example <code>Qd = 120 − 10P</code> or <code>P = 2 + 0.1Q</code>.</p>
+        <p class="fn-error" id="fn-error" role="alert" hidden></p>
+        <p class="fn-note" id="fn-note" role="status" hidden></p>
+        <div class="btn-row"><button type="submit" class="primary">Draw my market</button><button type="button" class="ghost-btn" id="fn-example">Use example</button></div>
+        <p class="model"><span>Model</span> ${sub(window.MARKET.describe(m))} Free-market equilibrium: P* = ${e.p.toFixed(2)}, Q* = ${e.q.toFixed(2)}.</p>
+      </form>`;
   }
 
   function bindMastered(t) {
@@ -185,9 +257,10 @@
     });
   }
 
-  function fmtParam(p, v) {
-    const decimals = (String(p.step).split('.')[1] || '').length;
-    return Number(v).toFixed(decimals);
+  function fmtParam(p, v, s) {
+    const step = rv(p.step, s);
+    const decimals = (String(+Number(step).toPrecision(6)).split('.')[1] || '').length;
+    return Number(v).toFixed(Math.min(decimals, 6));
   }
 
   /* ── Formula sheet ── */

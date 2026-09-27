@@ -14,6 +14,12 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 
 Notation follows the guide: M for income in micro, Z for imports and NT for net taxes in macro, (n + d + g) in Solow, γ in SRAS and the Phillips curve.
 
+## Your own supply and demand
+
+Six graphs are built from demand and supply functions you type in: supply and demand, price ceilings and floors, tax incidence, externalities, tariffs, and the foreign exchange market. Enter each line in either form, for example `Qd = 120 - 10P` or `P = 2 + 0.1Q` (use `e` for the exchange rate). The app checks that demand slopes down, supply slopes up, and a market exists (buyers' highest price is above sellers' lowest price at a positive equilibrium price).
+
+Sliders scale to your market and stop at the last valid value. For example, a specific tax stops before it closes the market or pushes sellers' price below zero, and a tariff stops at the prohibitive level. The status line says which limit was reached.
+
 ## Modes
 
 - **Graphs**: move the sliders to shift curves. Equilibria, surplus areas, deadweight loss and other values update live.
@@ -30,6 +36,7 @@ styles.css        theme (light and dark) and layout
 js/engine.js      SVG graph renderer
 js/topics.js      core study content and shared graph helpers
 js/syllabus.js    EC1002 topics, course order and block numbers
+js/markets.js     supply-and-demand graphs driven by user-entered functions
 js/app.js         navigation, formula sheet, flashcards
 scripts/build.mjs bundles everything into dist/marginal-notes.html
 ```

@@ -748,47 +748,7 @@
       id: 'forex',
       title: 'Foreign exchange market',
       summary: 'Under a floating regime the exchange rate moves to clear the market. Under a fixed regime the central bank holds the rate and must buy or sell its own currency to cover any gap.',
-      model: 'Demand for domestic currency e = a − 0.8Q; supply e = c + 0.6Q; e is foreign currency per unit of domestic.',
-      graph: {
-        x: { range: [0, 12], label: 'Quantity of domestic currency' },
-        y: { range: [0, 10], label: 'Exchange rate e (foreign per domestic)' },
-        params: [
-          { id: 'reg', label: 'Regime', options: [{ v: 0, label: 'Floating' }, { v: 1, label: 'Fixed' }], value: 0 },
-          { id: 'a', label: 'Demand (exports, capital inflows)', min: 6, max: 12, step: 0.1, value: 9 },
-          { id: 'c', label: 'Supply shifter (imports, outflows)', min: -1, max: 4, step: 0.1, value: 1, hint: 'Lower means more supplied: curve shifts right' },
-          { id: 'fix', label: 'Pegged rate (fixed regime)', min: 2, max: 8, step: 0.01, value: 4.43 },
-        ],
-        draw(s) {
-          const q = (s.a - s.c) / 1.4, e = s.a - 0.8 * q;
-          const out = [
-            ghost(changed(s.a, 9), (Q) => 9 - 0.8 * Q, 'D₀'),
-            ghost(changed(s.c, 1), (Q) => 1 + 0.6 * Q, 'S₀'),
-            C((Q) => s.a - 0.8 * Q, 'd', 'D'),
-            C((Q) => s.c + 0.6 * Q, 's', 'S'),
-          ];
-          if (s.reg === 1) {
-            const qd = (s.a - s.fix) / 0.8, qs = (s.fix - s.c) / 0.6;
-            out.push(Hl(s.fix, 'o', 'Peg', { dash: true }), G(qd, s.fix, 'Qd', null, 'd'), G(qs, s.fix, 'Qs', null, 's'),
-              Math.abs(qs - qd) > 0.02 ? S(Math.min(qd, qs), s.fix, Math.max(qd, qs), s.fix, 'o', qs > qd ? 'Bank buys' : 'Bank sells', { bold: true, below: true }) : null,
-              P(q, e, '', 'n', { small: true }));
-          } else {
-            out.push(G(q, e, 'Q*', 'e*'), P(q, e, 'E'));
-          }
-          return out;
-        },
-        readout(s) {
-          const q = (s.a - s.c) / 1.4, e = s.a - 0.8 * q, e0 = 9 - 0.8 * (8 / 1.4), ch = ((e - e0) / e0) * 100;
-          if (s.reg === 1) {
-            const gap = (s.fix - s.c) / 0.6 - (s.a - s.fix) / 0.8;
-            return {
-              rows: [['Pegged rate', f(s.fix, 2)], ['Market-clearing rate', f(e, 2)], [gap > 0 ? 'Excess supply of currency' : 'Excess demand for currency', f(Math.abs(gap))]],
-              status: gap > 0.01 ? 'Peg is overvalued: the bank buys its own currency with foreign reserves, which run down.' : gap < -0.01 ? 'Peg is undervalued: the bank sells its own currency and piles up foreign reserves.' : 'Peg equals the market rate: no intervention needed.',
-              tone: gap > 0.01 ? 'warn' : 'info',
-            };
-          }
-          return { rows: [['Exchange rate e*', f(e, 3)], ['Change from start', pct(ch)]], status: Math.abs(ch) < 0.05 ? 'At the starting rate.' : ch > 0 ? 'Appreciation: exports dearer abroad, imports cheaper at home.' : 'Depreciation: exports cheaper abroad, imports dearer at home.' };
-        },
-      },
+      // Graph: built from the student's own demand and supply functions in markets.js.
       equations: [
         { name: 'Real exchange rate', tex: R`RER = \frac{e \cdot P}{P^*}`, note: 'Price of domestic goods in terms of foreign goods.' },
         { name: 'Purchasing power parity', tex: R`e = \frac{P^*}{P} \;\Rightarrow\; RER = 1`, note: 'Long-run benchmark.' },

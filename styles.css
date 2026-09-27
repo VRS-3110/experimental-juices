@@ -180,6 +180,18 @@ main { min-width: 0; padding-block: 28px 64px; }
 .ctrl label { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 600; }
 .ctrl output { font: 600 13px var(--mono); color: var(--ochre); font-variant-numeric: tabular-nums; }
 .ctrl-label { font-size: 14px; font-weight: 600; }
+.market { display: grid; gap: 8px; padding: 12px 14px; border: 1px dashed var(--rule); border-radius: 6px; background: var(--paper); }
+.market-title { margin: 0; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.fn-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 12px; align-items: center; }
+.fn-grid label { font-size: 14px; font-weight: 600; }
+.fn { width: 100%; padding: 7px 10px; font: 15px var(--mono); color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 5px; }
+.fn:focus { border-color: var(--focus); }
+.fn-help { margin: 0; font-size: 13px; color: var(--ink-3); }
+.fn-help code { font: 12.5px var(--mono); color: var(--ink-2); }
+.fn-error { margin: 0; font-size: 14px; color: var(--bad); }
+.fn-note { margin: 0; font-size: 14px; color: var(--good); }
+.market .model { margin: 0; }
+@media (max-width: 480px) { .fn-grid { grid-template-columns: minmax(0, 1fr); } }
 .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .ctrl small { color: var(--ink-3); font-size: 12.5px; }
 input[type="range"] { width: 100%; accent-color: var(--ochre); margin: 2px 0; }

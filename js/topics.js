@@ -33,32 +33,7 @@ window.TOPICS = (function () {
       unit: 'Microeconomics',
       title: 'Supply and demand',
       summary: 'Market price settles where quantity demanded equals quantity supplied. Shifts in either curve move the equilibrium, and surplus measures the gains from trade.',
-      model: 'Inverse demand P = a − 0.8Q; inverse supply P = c + 0.6Q.',
-      graph: {
-        x: XQ, y: YP,
-        params: [
-          { id: 'a', label: 'Demand level (a)', min: 6, max: 11, step: 0.1, value: 9, hint: 'Raise to shift demand right' },
-          { id: 'c', label: 'Production cost (c)', min: -1, max: 4, step: 0.1, value: 1, hint: 'Raise to shift supply left' },
-        ],
-        draw(s) {
-          const q = (s.a - s.c) / 1.4, p = s.a - 0.8 * q;
-          return [
-            A([[0, s.a], [0, p], [q, p]], 'd', 'CS'),
-            A([[0, p], [0, s.c], [q, p]], 's', 'PS'),
-            ghost(changed(s.a, 9), (Q) => 9 - 0.8 * Q, 'D₀'),
-            ghost(changed(s.c, 1), (Q) => 1 + 0.6 * Q, 'S₀'),
-            C((Q) => s.a - 0.8 * Q, 'd', 'D'),
-            C((Q) => s.c + 0.6 * Q, 's', 'S'),
-            G(q, p, 'Q*', 'P*'),
-            P(q, p, 'E'),
-          ];
-        },
-        readout(s) {
-          const q = (s.a - s.c) / 1.4, p = s.a - 0.8 * q;
-          const cs = 0.5 * (s.a - p) * q, ps = 0.5 * (p - s.c) * q;
-          return { rows: [['Equilibrium price P*', money(p)], ['Equilibrium quantity Q*', f(q)], ['Consumer surplus', money(cs)], ['Producer surplus', money(ps)], ['Total surplus', money(cs + ps)]] };
-        },
-      },
+      // Graph: built from the student's own demand and supply functions in markets.js.
       equations: [
         { name: 'Direct demand', tex: R`Q_D = a - bP`, note: 'Law of demand: quantity demanded falls as price rises (b > 0).' },
         { name: 'Direct supply', tex: R`Q_S = c + dP`, note: 'Quantity supplied rises with price (d > 0).' },
@@ -124,36 +99,7 @@ window.TOPICS = (function () {
       unit: 'Microeconomics',
       title: 'Price ceilings and floors',
       summary: 'A legal maximum below equilibrium creates a shortage; a legal minimum above it creates a surplus. Either way, fewer units trade and surplus is lost.',
-      model: 'Demand P = 9 − 0.8Q; supply P = 1 + 0.6Q; equilibrium P* ≈ 4.43.',
-      graph: {
-        x: { range: [0, 12], label: 'Quantity (Q)' }, y: YP,
-        params: [{ id: 'pc', label: 'Controlled price', min: 1.2, max: 8.2, step: 0.1, value: 3, hint: 'Below P* acts as a ceiling, above P* as a floor' }],
-        draw(s) {
-          const qe = 8 / 1.4, pe = 9 - 0.8 * qe;
-          const qd = (9 - s.pc) / 0.8, qs = (s.pc - 1) / 0.6, qt = Math.min(qd, qs);
-          const ceiling = s.pc < pe;
-          return [
-            A([[qt, 9 - 0.8 * qt], [qt, 1 + 0.6 * qt], [qe, pe]], 'o', 'DWL'),
-            C((Q) => 9 - 0.8 * Q, 'd', 'D'),
-            C((Q) => 1 + 0.6 * Q, 's', 'S'),
-            Hl(s.pc, 'o', ceiling ? 'Price ceiling' : 'Price floor', { dash: true }),
-            G(qd, s.pc, 'Qd', null, 'd'),
-            G(qs, s.pc, 'Qs', null, 's'),
-            S(qs, s.pc, qd, s.pc, 'r', ceiling ? 'Shortage' : 'Surplus', { bold: true, below: true }),
-            P(qe, pe, 'E', 'n', { small: true }),
-          ];
-        },
-        readout(s) {
-          const qe = 8 / 1.4;
-          const qd = (9 - s.pc) / 0.8, qs = (s.pc - 1) / 0.6, qt = Math.min(qd, qs);
-          const dwl = 0.5 * ((9 - 0.8 * qt) - (1 + 0.6 * qt)) * (qe - qt);
-          const ceiling = qd > qs;
-          return {
-            rows: [['Controlled price', money(s.pc)], ['Quantity demanded', f(qd)], ['Quantity supplied', f(qs)], [ceiling ? 'Shortage' : 'Surplus', f(Math.abs(qd - qs))], ['Deadweight loss', money(dwl)]],
-            status: ceiling ? 'Binding ceiling: buyers want more than sellers offer.' : 'Binding floor: sellers offer more than buyers want.',
-          };
-        },
-      },
+      // Graph: built from the student's own demand and supply functions in markets.js.
       equations: [
         { name: 'Shortage under a ceiling', tex: R`\text{Shortage} = Q_d(P_c) - Q_s(P_c)`, note: 'Only when the ceiling is set below P*.' },
         { name: 'Surplus under a floor', tex: R`\text{Surplus} = Q_s(P_f) - Q_d(P_f)`, note: 'Only when the floor is set above P*.' },
@@ -172,35 +118,7 @@ window.TOPICS = (function () {
       unit: 'Microeconomics',
       title: 'Tax incidence and deadweight loss',
       summary: 'A per-unit tax drives a wedge between what buyers pay and what sellers keep. The less elastic side of the market bears more of the tax.',
-      model: 'Demand P = 9 − 0.8Q; supply P = 1 + 0.6Q; tax t shifts supply up to S + t.',
-      graph: {
-        x: XQ, y: YP,
-        params: [{ id: 't', label: 'Per-unit tax (t)', min: 0, max: 6, step: 0.1, value: 2 }],
-        draw(s) {
-          const qe = 8 / 1.4, pe = 9 - 0.8 * qe;
-          const qt = (8 - s.t) / 1.4, pb = 9 - 0.8 * qt, ps = pb - s.t;
-          return [
-            A([[0, pb], [qt, pb], [qt, ps], [0, ps]], 'g', 'Tax revenue'),
-            A([[qt, pb], [qt, ps], [qe, pe]], 'o', ''),
-            C((Q) => 9 - 0.8 * Q, 'd', 'D'),
-            C((Q) => 1 + 0.6 * Q, 's', 'S'),
-            s.t > 0 ? C((Q) => 1 + s.t + 0.6 * Q, 's', 'S + t', { dash: true }) : null,
-            G(qt, pb, 'Qt', 'Pb'),
-            G(qt, ps, null, 'Ps', 's'),
-            P(qe, pe, 'E₀', 'n', { small: true, dx: 9, dy: 14 }),
-            P(qt, pb, '', 'o'),
-            P(qt, ps, '', 's', { small: true }),
-          ];
-        },
-        readout(s) {
-          const qe = 8 / 1.4, pe = 9 - 0.8 * qe;
-          const qt = (8 - s.t) / 1.4, pb = 9 - 0.8 * qt, ps = pb - s.t;
-          return {
-            rows: [['Buyers pay Pb', money(pb)], ['Sellers keep Ps', money(ps)], ['Buyer share of tax', s.t ? pct(((pb - pe) / s.t) * 100, 0) : '—'], ['Tax revenue', money(s.t * qt)], ['Deadweight loss (shaded)', money(0.5 * s.t * (qe - qt))]],
-            status: 'Demand is steeper (less elastic) here, so buyers carry 57% of the tax.',
-          };
-        },
-      },
+      // Graph: built from the student's own demand and supply functions in markets.js.
       equations: [
         { name: 'Tax wedge', tex: R`P_b - P_s = t`, note: 'Buyers’ price minus sellers’ price equals the tax.' },
         { name: 'Tax revenue', tex: R`\text{Revenue} = t \cdot Q_t`, note: 'The rectangle between Pb and Ps.' },
@@ -365,28 +283,7 @@ window.TOPICS = (function () {
       unit: 'Microeconomics',
       title: 'Externalities',
       summary: 'When production imposes costs on third parties, the market ignores them and overproduces. A Pigouvian tax equal to the marginal external cost restores the efficient quantity.',
-      model: 'MSB = D: P = 10 − 0.8Q; MPC: P = 1 + 0.6Q; MSC = MPC + MEC.',
-      graph: {
-        x: XQ, y: YP,
-        params: [{ id: 'e', label: 'Marginal external cost (MEC)', min: 0, max: 5, step: 0.1, value: 2 }],
-        draw(s) {
-          const qm = 9 / 1.4, pm = 10 - 0.8 * qm, qo = (9 - s.e) / 1.4, po = 10 - 0.8 * qo;
-          return [
-            A([[qo, po], [qm, 1 + s.e + 0.6 * qm], [qm, pm]], 'o', 'DWL'),
-            C((Q) => 10 - 0.8 * Q, 'd', 'D = MPB = MSB'),
-            C((Q) => 1 + 0.6 * Q, 's', 'MPC = S'),
-            C((Q) => 1 + s.e + 0.6 * Q, 'g', 'MSC'),
-            G(qm, pm, 'Qm', null, 'n'),
-            G(qo, po, 'Q*', 'P*'),
-            P(qm, pm, 'Market', 'n', { small: true, dy: 18 }),
-            P(qo, po, 'Optimum', 'o', { dx: -9 }),
-          ];
-        },
-        readout(s) {
-          const qm = 9 / 1.4, qo = (9 - s.e) / 1.4;
-          return { rows: [['Market quantity', f(qm)], ['Efficient quantity', f(qo)], ['Overproduction', f(qm - qo)], ['Pigouvian tax needed', money(s.e)], ['Deadweight loss', money(0.5 * s.e * (qm - qo))]] };
-        },
-      },
+      // Graph: built from the student's own demand and supply functions in markets.js.
       equations: [
         { name: 'Marginal social cost', tex: R`MSC = MPC + MEC`, note: 'Negative production externality: MSC lies above supply.' },
         { name: 'Marginal social benefit', tex: R`MSB = MPB + MEB`, note: 'Positive consumption externality: MSB lies above demand.' },
@@ -581,37 +478,7 @@ window.TOPICS = (function () {
       unit: 'International',
       title: 'Tariffs and trade',
       summary: 'With free trade a small country imports at the world price. A tariff raises the domestic price, helps domestic producers and the government, and costs consumers more than both gain.',
-      model: 'Domestic demand P = 10 − 0.8Q; domestic supply P = 1 + 0.6Q; world price Pw.',
-      graph: {
-        x: { range: [0, 12], label: 'Quantity (Q)' }, y: YP,
-        params: [
-          { id: 'pw', label: 'World price (Pw)', min: 1.2, max: 4.5, step: 0.1, value: 2 },
-          { id: 't', label: 'Tariff per unit (t)', min: 0, max: 2.8, step: 0.1, value: 1 },
-        ],
-        draw(s) {
-          const paut = 10 - 0.8 * (9 / 1.4), pt = Math.min(s.pw + s.t, paut);
-          const qs0 = (s.pw - 1) / 0.6, qd0 = (10 - s.pw) / 0.8, qs = (pt - 1) / 0.6, qd = (10 - pt) / 0.8;
-          return [
-            A([[qs, pt], [qd, pt], [qd, s.pw], [qs, s.pw]], 'g', 'Revenue'),
-            A([[qs0, s.pw], [qs, pt], [qs, s.pw]], 'o', ''),
-            A([[qd, pt], [qd0, s.pw], [qd, s.pw]], 'o', ''),
-            C((Q) => 10 - 0.8 * Q, 'd', 'D'),
-            C((Q) => 1 + 0.6 * Q, 's', 'S'),
-            Hl(s.pw, 'n', 'Pw', { dash: true }),
-            s.t > 0 ? Hl(pt, 'o', 'Pw + t', { dash: true }) : null,
-            G(qs, pt, 'Qs', null, 's'),
-            G(qd, pt, 'Qd', null, 'd'),
-            G(qs0, s.pw, '', null, 'n'),
-            G(qd0, s.pw, '', null, 'n'),
-            S(qs, pt, qd, pt, 'o', 'Imports', { bold: true }),
-          ];
-        },
-        readout(s) {
-          const paut = 10 - 0.8 * (9 / 1.4), pt = Math.min(s.pw + s.t, paut);
-          const qs0 = (s.pw - 1) / 0.6, qd0 = (10 - s.pw) / 0.8, qs = (pt - 1) / 0.6, qd = (10 - pt) / 0.8, dp = pt - s.pw;
-          return { rows: [['Domestic price', money(pt)], ['Imports (free trade)', f(qd0 - qs0)], ['Imports (with tariff)', f(Math.max(0, qd - qs))], ['Tariff revenue', money(dp * Math.max(0, qd - qs))], ['Deadweight loss (both triangles)', money(0.5 * dp * (qs - qs0) + 0.5 * dp * (qd0 - qd))]], status: pt >= paut - 1e-6 ? 'Prohibitive tariff: imports stop and the market returns to autarky.' : null };
-        },
-      },
+      // Graph: built from the student's own demand and supply functions in markets.js.
       equations: [
         { name: 'Imports', tex: R`M = Q_d(P) - Q_s(P)`, note: 'Measured at the domestic price.' },
         { name: 'Domestic price with tariff', tex: R`P = P_w + t`, note: 'For a small open economy that cannot affect world prices.' },

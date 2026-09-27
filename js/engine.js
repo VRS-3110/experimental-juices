@@ -14,6 +14,8 @@
   let clipSeq = 0;
 
   function renderGraph(spec, state) {
+    const resolve = (a) => (typeof a === 'function' ? a(state) : a);
+    spec = { ...spec, x: resolve(spec.x), y: resolve(spec.y) };
     const [x0, x1] = spec.x.range;
     const [y0, y1] = spec.y.range;
     const sx = (x) => M.l + ((x - x0) / (x1 - x0)) * PW;
@@ -39,13 +41,18 @@
     L.axes.push(`<text class="axis-title" x="${M.l + PW / 2}" y="${H - 10}" text-anchor="middle">${lbl(spec.x.label)}</text>`);
     L.axes.push(`<text class="axis-title" x="16" y="${M.t + PH / 2}" text-anchor="middle" transform="rotate(-90 16 ${M.t + PH / 2})">${lbl(spec.y.label)}</text>`);
     const fx = spec.x.fmt || ((v) => v), fy = spec.y.fmt || ((v) => v);
+    // Numeric tick labels give way to guide labels (P*, Q* …) that land near them.
+    const items = spec.draw(state).filter(Boolean);
+    const guides = items.filter((it) => it.t === 'guide' && inBox(it.x, it.y));
+    const nearX = (px) => guides.some((g) => g.xl && Math.abs(sx(g.x) - px) < 22);
+    const nearY = (py) => guides.some((g) => g.yl && Math.abs(sy(g.y) - py) < 13);
     (spec.x.ticks || []).forEach((v) => {
       L.axes.push(`<line class="axis" x1="${n(sx(v))}" y1="${M.t + PH}" x2="${n(sx(v))}" y2="${M.t + PH + 5}"/>`);
-      L.axes.push(`<text class="tick" x="${n(sx(v))}" y="${M.t + PH + 18}" text-anchor="middle">${esc(fx(v))}</text>`);
+      if (!nearX(sx(v))) L.axes.push(`<text class="tick" x="${n(sx(v))}" y="${M.t + PH + 18}" text-anchor="middle">${esc(fx(v))}</text>`);
     });
     (spec.y.ticks || []).forEach((v) => {
       L.axes.push(`<line class="axis" x1="${M.l - 5}" y1="${n(syRaw(v))}" x2="${M.l}" y2="${n(syRaw(v))}"/>`);
-      L.axes.push(`<text class="tick" x="${M.l - 8}" y="${n(syRaw(v) + 4)}" text-anchor="end">${esc(fy(v))}</text>`);
+      if (!nearY(syRaw(v))) L.axes.push(`<text class="tick" x="${M.l - 8}" y="${n(syRaw(v) + 4)}" text-anchor="end">${esc(fy(v))}</text>`);
     });
 
     const curveLabel = (x, y, text, k) => {
@@ -56,7 +63,6 @@
       L.label.push(`<text class="clabel t-${k}" x="${n(ax)}" y="${n(ay)}" text-anchor="${nearRight ? 'end' : 'start'}">${lbl(text)}</text>`);
     };
 
-    const items = spec.draw(state).filter(Boolean);
     for (const it of items) {
       const k = it.k || 'n';
       const dash = it.dash || k === 'ghost' ? ' dashed' : '';
