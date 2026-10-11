@@ -182,42 +182,66 @@ window.TOPICS = (function () {
       unit: 'Microeconomics',
       title: 'Short-run costs and perfect competition',
       summary: 'A price-taking firm produces where price equals marginal cost. Comparing price with average total cost tells you whether it earns a profit; comparing with average variable cost tells you whether to stay open.',
-      model: 'VC = 6Q − 1.5Q² + 0.15Q³, TC = F + VC. Minimum AVC = $2.25 at Q = 5.',
-      graph: {
-        x: { range: [0, 10], label: 'Quantity (Q)' },
-        y: { range: [0, 12], label: 'Cost and price ($)' },
-        params: [
-          { id: 'P', label: 'Market price (P = MR)', min: 1, max: 10, step: 0.1, value: 5 },
-          { id: 'F', label: 'Fixed cost (F)', min: 2, max: 20, step: 0.5, value: 8 },
-        ],
-        draw(s) {
-          const mc = (Q) => 6 - 3 * Q + 0.45 * Q * Q, avc = (Q) => 6 - 1.5 * Q + 0.15 * Q * Q, atc = (Q) => avc(Q) + s.F / Q;
-          const q = s.P >= 2.25 ? (3 + Math.sqrt(9 - 1.8 * (6 - s.P))) / 0.9 : 0;
-          const out = [];
-          if (q > 0) out.push(A([[0, s.P], [q, s.P], [q, atc(q)], [0, atc(q)]], s.P >= atc(q) ? 'g' : 'r', s.P >= atc(q) ? 'Profit' : 'Loss'));
-          out.push(
-            C((Q) => s.F / Q, 'ghost', 'SAFC', { from: 0.3 }),
-            C(avc, 'n', 'SAVC', { labelAt: 9.4 }),
-            C(atc, 'd', 'SATC', { from: 0.3, labelAt: 9.4 }),
-            C(mc, 's', 'SMC'),
-            Hl(s.P, 'o', 'P = MR = AR', { labelLeft: true }),
-          );
-          if (q > 0) out.push(G(q, s.P, 'Q*', null), P(q, atc(q), '', 'd', { small: true }), P(q, s.P, ''));
-          return out;
-        },
-        readout(s) {
-          const avc = (Q) => 6 - 1.5 * Q + 0.15 * Q * Q, atc = (Q) => avc(Q) + s.F / Q;
-          let beQ = 1, be = Infinity;
-          for (let Q = 0.5; Q < 30; Q += 0.01) { const v = atc(Q); if (v < be) { be = v; beQ = Q; } }
-          if (s.P < 2.25) return { rows: [['Output Q*', '0'], ['Profit', money(-s.F)], ['Break-even price (min ATC)', money(be)], ['Shutdown price (min AVC)', money(2.25)]], status: 'Shut down: price is below minimum AVC, so producing loses more than F.', tone: 'bad' };
-          const q = (3 + Math.sqrt(9 - 1.8 * (6 - s.P))) / 0.9, pi = (s.P - atc(q)) * q;
-          return {
-            rows: [['Output Q* (P = MC)', f(q)], ['ATC at Q*', money(atc(q))], ['Profit (P − ATC) × Q', money(pi)], ['Break-even price (min ATC)', money(be)], ['Shutdown price (min AVC)', money(2.25)]],
-            status: pi >= 0 ? 'Economic profit: in the long run, entry pushes price down to min ATC.' : 'Loss, but keep producing: price covers AVC and part of fixed cost.',
-            tone: pi >= 0 ? 'good' : 'warn',
-          };
-        },
-      },
+      model: 'VC = 6Q − 1.5Q² + 0.15Q³, TC = F + VC. Minimum AVC = $2.25 at Q = 5. The bold part of SMC is the firm’s short-run supply curve.',
+      graph: (function () {
+        const mc = (Q) => 6 - 3 * Q + 0.45 * Q * Q, avc = (Q) => 6 - 1.5 * Q + 0.15 * Q * Q;
+        const atcOf = (F) => (Q) => avc(Q) + F / Q;
+        const qAt = (p) => (p >= 2.25 ? (3 + Math.sqrt(Math.max(0, 9 - 1.8 * (6 - p)))) / 0.9 : 0);
+        // Break-even: P = min SATC, found where SMC = SATC on the rising part of SMC.
+        const breakEven = (F) => {
+          const atc = atcOf(F);
+          let lo = 5, hi = 40;
+          for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (mc(m) < atc(m)) lo = m; else hi = m; }
+          return { q: lo, p: atc(lo) };
+        };
+        const SHUT = 2.25;
+        return {
+          x: { range: [0, 10], label: 'Quantity (Q)' },
+          y: { range: [0, 12], label: 'Cost and price ($)' },
+          params: [
+            { id: 'P', label: 'Market price (P = MR)', min: 1, max: 10, step: 0.01, value: 5 },
+            { id: 'F', label: 'Fixed cost (F)', min: 2, max: 20, step: 0.5, value: 8 },
+          ],
+          actions: [
+            { label: 'Supernormal profit', run: (s) => { s.P = Math.min(10, breakEven(s.F).p + 1.5); } },
+            { label: 'Break-even', run: (s) => { s.P = breakEven(s.F).p; } },
+            { label: 'Loss, keep producing', run: (s) => { s.P = (breakEven(s.F).p + SHUT) / 2; } },
+            { label: 'Shutdown point', run: (s) => { s.P = SHUT; } },
+            { label: 'Shut down', run: (s) => { s.P = 1.6; } },
+          ],
+          draw(s) {
+            const atc = atcOf(s.F), be = breakEven(s.F), q = qAt(s.P);
+            const out = [];
+            // Label the rectangle only when it is tall enough to hold the text.
+            const gap = s.P - (q > 0 ? atc(q) : 0), roomy = Math.abs(gap) > 0.6;
+            if (q > 0 && Math.abs(gap) > 0.005) out.push(A([[0, s.P], [q, s.P], [q, atc(q)], [0, atc(q)]], gap > 0 ? 'g' : 'r', roomy ? (gap > 0 ? 'Profit' : 'Loss') : ''));
+            out.push(
+              C((Q) => s.F / Q, 'ghost', 'SAFC', { from: 0.3 }),
+              C(avc, 'n', 'SAVC', { labelAt: 9.4 }),
+              C(atc, 'd', 'SATC', { from: 0.3, labelAt: 9.4 }),
+              C(mc, 's', 'SMC'),
+              C(mc, 's', '', { from: 5, bold: true }),
+              { t: 'seg', x1: 0, y1: 0, x2: 0, y2: SHUT, k: 's', bold: true },
+              Hl(s.P, 'o', 'P = MR = AR', { labelLeft: true }),
+              P(5, SHUT, 'Shutdown', 'n', { small: true, dx: 9, dy: 16 }),
+              P(be.q, be.p, 'Break-even', 'd', { small: true, dx: 9, dy: 16 }),
+            );
+            if (q > 0) out.push(G(q, s.P, 'Q*', null), P(q, atc(q), '', 'd', { small: true }), P(q, s.P, ''));
+            return out;
+          },
+          readout(s) {
+            const atc = atcOf(s.F), be = breakEven(s.F), q = qAt(s.P);
+            const base = [['Break-even price (min SATC)', money(be.p)], ['Shutdown price (min SAVC)', money(SHUT)]];
+            if (s.P < SHUT - 1e-9) return { rows: [['Output Q*', '0'], ['Profit', money(-s.F)], ...base], status: 'Shut down: price is below minimum SAVC, so producing would lose more than the fixed cost.', tone: 'bad' };
+            const pi = (s.P - atc(q)) * q, rows = [['Output Q* (P = SMC)', f(q)], ['SATC at Q*', money(atc(q))], ['Profit (P − SATC) × Q', money(pi)], ...base];
+            if (Math.abs(s.P - SHUT) < 0.005) return { rows, status: 'Shutdown point: P = min SAVC. Producing or closing both lose exactly the fixed cost, so the firm is indifferent.', tone: 'warn' };
+            if (Math.abs(pi) < 0.01) return { rows, status: 'Break-even: P = min SATC. Zero economic profit (normal profit only). This is the long-run equilibrium position.', tone: 'good' };
+            return pi > 0
+              ? { rows, status: 'Supernormal profit: P > SATC. In the long run this attracts entry, pushing price down to min LAC.', tone: 'good' }
+              : { rows, status: 'Loss but keep producing: min SAVC < P < min SATC. Revenue covers variable cost and part of the fixed cost. In the long run firms exit.', tone: 'warn' };
+          },
+        };
+      })(),
       equations: [
         { name: 'Short-run total cost', tex: R`STC = SFC + SVC`, note: 'Fixed cost does not vary with output in the short run.' },
         { name: 'Short-run marginal cost', tex: R`SMC = \frac{d(STC)}{dQ}`, note: 'SMC cuts SAVC and SATC at their minimum points.' },
@@ -230,9 +254,11 @@ window.TOPICS = (function () {
       points: [
         'Short run: at least one fixed input. Long run: all inputs variable.',
         'Diminishing marginal returns make MC eventually rise.',
-        'Between min AVC and min ATC the firm loses money but still produces.',
+        'Five cases: supernormal profit (P > min SATC), break-even (P = min SATC), loss but produce (min SAVC < P < min SATC), shutdown point (P = min SAVC), shut down (P < min SAVC).',
+        'The firm’s short-run supply curve is SMC above min SAVC, plus the vertical axis below it.',
+        'Short-run market supply is the horizontal sum of every firm’s supply curve.',
       ],
-      tip: 'Read profit off the graph as a rectangle: height P − ATC at Q*, width Q*.',
+      tip: 'Read profit off the graph as a rectangle: height P − SATC at Q*, width Q*. Use the five buttons to rehearse each case.',
     },
     {
       id: 'monopoly',

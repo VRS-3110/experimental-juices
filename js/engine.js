@@ -78,7 +78,7 @@
             pen = true;
             if (inBox(x, y) && y > y0 + (y1 - y0) * 0.02) lastIn = [x, y];
           }
-          L.curve.push(`<path class="curve k-${k}${dash}" d="${d}" clip-path="url(#${clipId})"/>`);
+          L.curve.push(`<path class="curve k-${k}${dash}${it.bold ? ' bold' : ''}" d="${d}" clip-path="url(#${clipId})"/>`);
           if (it.label) {
             if (it.labelAt != null) curveLabel(it.labelAt, it.fn(it.labelAt), it.label, k);
             else if (lastIn) curveLabel(lastIn[0], lastIn[1], it.label, k);

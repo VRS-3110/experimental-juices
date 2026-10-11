@@ -200,47 +200,146 @@
     {
       id: 'lac-envelope',
       title: 'Long-run average cost envelope',
-      summary: 'Each plant size has its own short-run average cost curve. The long-run average cost curve is the lower envelope of all of them, falling with economies of scale and rising with diseconomies.',
-      model: 'LAC = 3 + 0.08(Q − 6)². Each SAC is tangent to LAC at its plant size and lies above it elsewhere.',
+      summary: 'Each plant size has its own short-run average cost curve. The long-run average cost curve is the lower envelope of all of them. Its shape depends on returns to scale: it can be U-shaped, L-shaped (flat after minimum efficient scale), flat throughout, falling throughout or rising throughout.',
+      model: 'Pick a shape. Each SAC is tangent to LAC at its plant size and lies above it elsewhere. LMC = LAC + Q·dLAC/dQ.',
+      graph: (function () {
+        const SHAPES = [
+          { name: 'U-shaped', lac: (q) => 3 + 0.08 * (q - 6) ** 2, d: (q) => 0.16 * (q - 6), c: 0.35, mes: 6,
+            text: 'Economies of scale up to Q = 6, then diseconomies. LMC cuts LAC at its minimum.' },
+          { name: 'L-shaped', lac: (q) => (q < 5 ? 3 + 0.12 * (q - 5) ** 2 : 3), d: (q) => (q < 5 ? 0.24 * (q - 5) : 0), c: 0.35, mes: 5,
+            text: 'Economies of scale up to minimum efficient scale (Q = 5), then constant returns: LAC goes flat and LMC = LAC.' },
+          { name: 'Flat', lac: () => 3.5, d: () => 0, c: 0.35, mes: null,
+            text: 'Constant returns to scale at every output: LAC is horizontal, LMC = LAC, and every SAC touches LAC at its own minimum.' },
+          { name: 'Falling', lac: (q) => 2 + 12 / (q + 3), d: (q) => -12 / (q + 3) ** 2, c: 0.5, mes: null,
+            text: 'Economies of scale throughout: LAC keeps falling and LMC stays below it. One large firm is cheapest, so this is a natural monopoly.' },
+          { name: 'Rising', lac: (q) => 2 + 0.25 * q, d: () => 0.25, c: 0.35, mes: 0,
+            text: 'Diseconomies of scale throughout: LAC rises from the start and LMC lies above it. Many small plants are cheapest.' },
+        ];
+        const sh = (s) => SHAPES[s.shape];
+        const sacOf = (z, k) => (q) => z.lac(k) + z.d(k) * (q - k) + z.c * (q - k) ** 2;
+        const lmcOf = (z) => (q) => z.lac(q) + q * z.d(q);
+        const scale = (d) => (d < -0.005 ? 'economies' : d > 0.005 ? 'diseconomies' : 'constant');
+        return {
+          x: { range: [0, 12], label: 'Output (Q)' },
+          y: { range: [0, 10], label: 'Average and marginal cost ($)' },
+          params: [
+            { id: 'shape', label: 'Shape of LAC', options: SHAPES.map((z, v) => ({ v, label: z.name })), value: 0 },
+            { id: 'k', label: 'Plant size (tangency output)', min: 1.5, max: 11, step: 0.1, value: 3 },
+          ],
+          draw(s) {
+            const z = sh(s), lac = z.lac, k = s.k;
+            const out = [2, 4, 6, 8, 10].map((pk) => C(sacOf(z, pk), 'ghost', ''));
+            out.push(
+              // Where LAC is flat, LMC lies on top of it, so label the shared line once.
+              C(lmcOf(z), 's', s.shape === 1 || s.shape === 2 ? '' : 'LMC', { dash: true }),
+              C(lac, 'g', s.shape === 1 || s.shape === 2 ? 'LAC = LMC' : 'LAC', { labelAt: 11.3 }),
+              C(sacOf(z, k), 'd', 'SAC'),
+              z.mes ? V(z.mes, 'ghost', 'MES') : null,
+              G(k, lac(k), 'Q₁', null),
+              P(k, lac(k), 'Tangency'),
+            );
+            return out;
+          },
+          readout(s) {
+            const z = sh(s), k = s.k, d = z.d(k);
+            const qmin = k - d / (2 * z.c), sacMin = z.lac(k) - (d * d) / (4 * z.c);
+            const kind = scale(d);
+            return {
+              rows: [
+                ['LAC at tangency', money(z.lac(k))],
+                ['LMC at tangency', money(lmcOf(z)(k))],
+                ['Output where this SAC is lowest', f(qmin)],
+                ['Minimum of this SAC', money(sacMin)],
+                ['Returns to scale at Q₁', kind === 'economies' ? 'Increasing (economies)' : kind === 'constant' ? 'Constant' : 'Decreasing (diseconomies)'],
+                ['Minimum efficient scale', z.mes === null ? (s.shape === 2 ? 'Any output' : 'Not reached') : f(z.mes)],
+              ],
+              status: z.text + (kind === 'economies' ? ' At this plant, the tangency is left of the SAC minimum.' : kind === 'diseconomies' ? ' At this plant, the tangency is right of the SAC minimum.' : ' At this plant, the tangency is at the SAC minimum.'),
+            };
+          },
+        };
+      })(),
+      equations: [
+        { name: 'Long-run average cost', tex: R`LAC = \frac{LTC}{Q}`, note: 'Every input is variable in the long run.' },
+        { name: 'Long-run marginal cost', tex: R`LMC = \frac{d(LTC)}{dQ} = LAC + Q\,\frac{d\,LAC}{dQ}`, note: 'So LMC < LAC while LAC falls, LMC = LAC where it is flat, LMC > LAC while it rises.' },
+        { name: 'Envelope property', tex: R`LAC(Q) = \min_{k}\; SAC_k(Q)`, note: 'The cheapest plant for each output level.' },
+        { name: 'Returns to scale and LAC', tex: R`\text{IRS} \Rightarrow \tfrac{d\,LAC}{dQ} < 0,\quad \text{CRS} \Rightarrow \tfrac{d\,LAC}{dQ} = 0,\quad \text{DRS} \Rightarrow \tfrac{d\,LAC}{dQ} > 0`, note: 'With input prices fixed, the shape of LAC mirrors returns to scale.' },
+        { name: 'Minimum efficient scale', tex: R`MES = \min\{Q : LAC(Q) = \min LAC\}`, note: 'The smallest output at which LAC reaches its lowest level.' },
+        { name: 'Natural monopoly', tex: R`\frac{d\,LAC}{dQ} < 0 \text{ over all market demand}`, note: 'One firm can supply the whole market more cheaply than two.' },
+      ],
+      points: [
+        'U-shaped: economies then diseconomies of scale. L-shaped: economies then a long flat stretch, which many empirical studies find.',
+        'Where LAC is flat, many plant sizes are equally efficient and LMC = LAC.',
+        'A SAC touches LAC at the SAC’s own minimum only where LAC is flat (at MES on a U, everywhere on a flat LAC).',
+        'Sources of economies: specialisation, indivisibilities, bulk buying, cheaper finance. Sources of diseconomies: management and coordination problems.',
+      ],
+      tip: 'Draw at least three SAC curves and say which side of each SAC’s minimum the tangency falls on. On an L-shaped LAC, mark MES where it goes flat.',
+    },
+    {
+      id: 'lr-industry',
+      title: 'Perfect competition in the long run',
+      summary: 'When demand changes, price first moves along the short-run industry supply curve. Profits or losses then cause entry or exit until price is back at minimum LAC. The long-run industry supply curve can be flat, upward-sloping or downward-sloping.',
+      model: 'Demand P = a − 0.25Q. Start: E₀ at Q = 24, P = 4 = min LAC. Short-run supply has slope 0.25 and shifts as firms enter or exit.',
       graph: {
-        x: { range: [0, 12], label: 'Output (Q)' },
-        y: { range: [0, 10], label: 'Average cost ($)' },
-        params: [{ id: 'k', label: 'Plant size (tangency output)', min: 1.5, max: 11, step: 0.1, value: 3 }],
+        x: { range: [0, 48], label: 'Industry output (Q)' },
+        y: { range: [0, 12], label: 'Price (P)' },
+        params: [
+          { id: 'type', label: 'Industry type', options: [{ v: 0, label: 'Constant cost' }, { v: 1, label: 'Increasing cost' }, { v: 2, label: 'Decreasing cost' }], value: 0 },
+          { id: 'a', label: 'Market demand (a)', min: 6, max: 14, step: 0.1, value: 12, hint: 'Start is a = 10. Raise for growth and entry, lower for decline and exit.' },
+        ],
         draw(s) {
-          const lac = (q) => 3 + 0.08 * (q - 6) ** 2, dlac = (q) => 0.16 * (q - 6);
-          const sac = (k) => (q) => lac(k) + dlac(k) * (q - k) + 0.35 * (q - k) ** 2;
+          const k = [0, 0.08, -0.04][s.type];
+          const q1 = 2 * (s.a + 2), p1 = s.a - 0.25 * q1;
+          const q2 = (s.a - 4 + 24 * k) / (0.25 + k), p2 = s.a - 0.25 * q2;
+          const moved = Math.abs(s.a - 10) > 1e-6;
           return [
-            C(sac(2.5), 'ghost', ''), C(sac(6), 'ghost', ''), C(sac(9.5), 'ghost', ''),
-            C(lac, 'g', 'LAC', { labelAt: 11.3 }),
-            C(sac(s.k), 'd', 'SAC'),
-            T(1.2, 1.2, 'Economies of scale', 'n'),
-            T(8.6, 1.2, 'Diseconomies', 'n'),
-            V(6, 'ghost', 'MES'),
-            G(s.k, lac(s.k), 'Q₁', null),
-            P(s.k, lac(s.k), 'Tangency'),
+            moved ? C((Q) => 10 - 0.25 * Q, 'ghost', 'D₀') : null,
+            C((Q) => s.a - 0.25 * Q, 'd', 'D'),
+            C((Q) => 4 + 0.25 * (Q - 24), 's', 'S₀ (short run)'),
+            moved ? C((Q) => p2 + 0.25 * (Q - q2), 's', 'S₁', { dash: true }) : null,
+            C((Q) => 4 + k * (Q - 24), 'g', 'LRS', { labelAt: 44 }),
+            P(24, 4, 'E₀', 'n', { dx: -9, dy: 18 }),
+            moved ? P(q1, p1, 'Short run', 'o', { dx: -9 }) : null,
+            moved ? G(q2, p2, 'Q_LR', 'P_LR', 'g') : null,
+            moved ? P(q2, p2, 'Long run', 'g', { dy: 18 }) : null,
           ];
         },
         readout(s) {
-          const lac = 3 + 0.08 * (s.k - 6) ** 2, qmin = s.k - (0.16 * (s.k - 6)) / 0.7;
-          const sacMin = 3 + 0.08 * (s.k - 6) ** 2 + 0.16 * (s.k - 6) * (qmin - s.k) + 0.35 * (qmin - s.k) ** 2;
+          const k = [0, 0.08, -0.04][s.type];
+          const q1 = 2 * (s.a + 2), p1 = s.a - 0.25 * q1;
+          const q2 = (s.a - 4 + 24 * k) / (0.25 + k), p2 = s.a - 0.25 * q2;
+          const minLac = p2; // in long-run equilibrium P = min LAC
+          const types = [
+            'Constant-cost industry: entry does not change input prices, so every firm’s LAC stays put and LRS is flat. Price returns to $4.00.',
+            'Increasing-cost industry: as the industry grows it bids up input prices, raising every firm’s LAC. LRS slopes up, so the long-run price ends above $4.00.',
+            'Decreasing-cost industry: industry growth lowers input costs (external economies of scale), shifting every firm’s LAC down. LRS slopes down.',
+          ];
+          const moved = Math.abs(s.a - 10) > 1e-6;
           return {
-            rows: [['LAC at tangency', money(lac)], ['Output where this SAC is lowest', f(qmin)], ['Minimum of this SAC', money(sacMin)], ['Minimum efficient scale', f(6)]],
-            status: s.k < 5.95 ? 'Economies of scale: the tangency is on the falling part of LAC, left of the SAC minimum.' : s.k > 6.05 ? 'Diseconomies of scale: the tangency is on the rising part of LAC, right of the SAC minimum.' : 'At minimum efficient scale: SAC and LAC share the same minimum.',
+            rows: [
+              ['Short-run price (no entry yet)', money(p1)],
+              ['Firms’ short-run position', !moved ? 'Normal profit' : p1 > 4 ? 'Supernormal profit, so firms enter' : 'Losses, so firms exit'],
+              ['Long-run price = min LAC', money(minLac)],
+              ['Long-run industry output', f(q2)],
+              ['Change in number of firms (2 units each)', (q2 >= 24 ? '+' : '') + f((q2 - 24) / 2, 1)],
+            ],
+            status: types[s.type],
           };
         },
       },
       equations: [
-        { name: 'Long-run average cost', tex: R`LAC = \frac{LTC}{Q}`, note: 'Every input is variable in the long run.' },
-        { name: 'Long-run marginal cost', tex: R`LMC = \frac{d(LTC)}{dQ}`, note: 'LMC cuts LAC at its minimum.' },
-        { name: 'Envelope property', tex: R`LAC(Q) = \min_{k}\; SAC_k(Q)`, note: 'The cheapest plant for each output level.' },
-        { name: 'Economies of scale', tex: R`\frac{d\,LAC}{dQ} < 0`, note: 'Constant returns where LAC is flat; diseconomies where it rises.' },
+        { name: 'Long-run equilibrium (each firm)', tex: R`P = MR = SMC = LMC = \min LAC,\quad \pi = 0`, note: 'Free entry and exit compete profit away.' },
+        { name: 'Short-run industry supply', tex: R`Q_S(P) = n \cdot q(P)`, note: 'Horizontal sum of the n firms’ SMC curves above min SAVC.' },
+        { name: 'Number of firms', tex: R`n = \frac{Q}{q_{MES}}`, note: 'Industry output divided by each firm’s output at min LAC.' },
+        { name: 'Constant-cost LRS', tex: R`P_{LR} = \min LAC \text{ for all } Q`, note: 'Horizontal long-run supply.' },
+        { name: 'Increasing / decreasing cost LRS', tex: R`\frac{dP_{LR}}{dQ} > 0 \;\text{ or }\; \frac{dP_{LR}}{dQ} < 0`, note: 'Input prices rise (or fall) as the industry expands.' },
       ],
       points: [
-        'Tangency is at the minimum of SAC only at minimum efficient scale.',
-        'Sources of economies: specialisation, indivisibilities, bulk buying, cheaper finance.',
-        'Sources of diseconomies: management and coordination problems.',
+        'Sequence after a demand rise: price jumps along S₀, firms earn supernormal profit, entry shifts S right, price falls back to min LAC.',
+        'After a demand fall the same steps run in reverse: losses, exit, supply shifts left.',
+        'Constant cost gives a flat LRS. Increasing cost (scarce inputs) gives an upward LRS. Decreasing cost (external economies) gives a downward LRS.',
+        'Long-run equilibrium is productively efficient (min LAC) and allocatively efficient (P = MC).',
       ],
-      tip: 'Draw at least three SAC curves: one on each side of the LAC minimum and one at it.',
+      tip: 'Draw the firm and the industry side by side with the same price axis. Show the short-run move first, then the long-run adjustment.',
     },
 
     /* ───────────── Blocks 6–8 ───────────── */
@@ -803,7 +902,8 @@
     ['market-demand', MICRO, 'Block 4'],
     ['isoquant', MICRO, 'Block 5'],
     ['costs', MICRO, 'Blocks 5–6'],
-    ['lac-envelope', MICRO, 'Block 5'],
+    ['lac-envelope', MICRO, 'Blocks 5–6'],
+    ['lr-industry', MICRO, 'Block 6'],
     ['monopoly', MICRO, 'Blocks 6–8'],
     ['monopolistic-competition', MICRO, 'Blocks 6–8'],
     ['cournot', MICRO, 'Blocks 6–8'],
