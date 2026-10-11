@@ -4,7 +4,7 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 
 ## What's inside
 
-31 topics. The first 26 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
+33 topics. The first 28 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
 
 | Part | Topics |
 | --- | --- |
@@ -19,6 +19,17 @@ Notation follows the guide: M for income in micro, Z for imports and NT for net 
 Six graphs are built from demand and supply functions you type in: supply and demand, price ceilings and floors, tax incidence, externalities, tariffs, and the foreign exchange market. Enter each line in either form, for example `Qd = 120 - 10P` or `P = 2 + 0.1Q` (use `e` for the exchange rate). The app checks that demand slopes down, supply slopes up, and a market exists (buyers' highest price is above sellers' lowest price at a positive equilibrium price).
 
 Sliders scale to your market and stop at the last valid value. For example, a specific tax stops before it closes the market or pushes sellers' price below zero, and a tariff stops at the prohibitive level. The status line says which limit was reached.
+
+## Linked graphs
+
+Some topics draw two diagrams driven by the same sliders, side by side on a shared vertical axis or stacked on a shared horizontal axis:
+
+- Perfect competition in the long run: typical firm beside the industry (shared price axis)
+- Labour market: market wage-setting beside one firm's hiring, with an optional minimum wage
+- Monopolistic competition: short run beside long run
+- AD–AS beside the Phillips curve (shared inflation axis, linked by Okun's law)
+- Keynesian cross above injections and leakages (shared income axis)
+- Deriving the demand curve: price–consumption curve above the demand curve (shared X axis)
 
 ## Modes
 
@@ -37,6 +48,7 @@ js/engine.js      SVG graph renderer
 js/topics.js      core study content and shared graph helpers
 js/syllabus.js    EC1002 topics, course order and block numbers
 js/markets.js     supply-and-demand graphs driven by user-entered functions
+js/linked.js      two-panel linked graphs
 js/app.js         navigation, formula sheet, flashcards
 scripts/build.mjs bundles everything into dist/marginal-notes.html
 ```

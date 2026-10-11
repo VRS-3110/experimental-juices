@@ -115,7 +115,7 @@
             <span class="box" aria-hidden="true"></span><span class="lbl">${mastered.has(t.id) ? 'Mastered' : 'Mark as mastered'}</span>
           </button>
         </header>
-        <div class="bench">
+        <div class="bench${g && g.panels && g.layout !== 'column' ? ' wide' : ''}">
           ${figure}
           <section class="eqs" aria-labelledby="eq-h">
             <h2 id="eq-h">Key equations</h2>
@@ -144,7 +144,9 @@
     if (!g) return;
 
     const draw = (limit) => {
-      $('#graph').innerHTML = window.renderGraph({ ...g, aria: t.title + ' graph' }, s);
+      $('#graph').innerHTML = g.panels
+        ? `<div class="panes ${g.layout || 'row'}">${g.panels.map((pn) => `<figure class="pane"><figcaption>${esc(pn.title)}</figcaption>${window.renderGraph({ ...pn, aria: pn.title }, s)}</figure>`).join('')}</div>`
+        : window.renderGraph({ ...g, aria: t.title + ' graph' }, s);
       const r = g.readout(s);
       $('#readout').innerHTML = r.rows.map(([k, v]) => `<div><dt>${sub(k)}</dt><dd>${sub(v)}</dd></div>`).join('');
       const st = $('#status');

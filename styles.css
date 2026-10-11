@@ -173,6 +173,15 @@ main { min-width: 0; padding-block: 28px 64px; }
 .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; }
 .graph-panel { padding: 16px; display: grid; gap: 14px; }
 .graph-wrap { width: 100%; }
+/* Linked panels: side by side (row) or stacked on a shared x axis (column). */
+.bench.wide { grid-template-columns: minmax(0, 1fr); }
+.bench.wide .controls { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.panes { display: grid; gap: 12px; }
+.panes.row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.panes.column { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.pane { margin: 0; min-width: 0; }
+.pane figcaption { font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding-left: 4px; }
+@media (max-width: 700px) { .panes.row { grid-template-columns: minmax(0, 1fr); } }
 .model { margin: 0; font-size: 14px; color: var(--ink-2); }
 .model span { font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-right: 6px; }
 .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 20px; }

@@ -278,54 +278,7 @@
       id: 'lr-industry',
       title: 'Perfect competition in the long run',
       summary: 'When demand changes, price first moves along the short-run industry supply curve. Profits or losses then cause entry or exit until price is back at minimum LAC. The long-run industry supply curve can be flat, upward-sloping or downward-sloping.',
-      model: 'Demand P = a − 0.25Q. Start: E₀ at Q = 24, P = 4 = min LAC. Short-run supply has slope 0.25 and shifts as firms enter or exit.',
-      graph: {
-        x: { range: [0, 48], label: 'Industry output (Q)' },
-        y: { range: [0, 12], label: 'Price (P)' },
-        params: [
-          { id: 'type', label: 'Industry type', options: [{ v: 0, label: 'Constant cost' }, { v: 1, label: 'Increasing cost' }, { v: 2, label: 'Decreasing cost' }], value: 0 },
-          { id: 'a', label: 'Market demand (a)', min: 6, max: 14, step: 0.1, value: 12, hint: 'Start is a = 10. Raise for growth and entry, lower for decline and exit.' },
-        ],
-        draw(s) {
-          const k = [0, 0.08, -0.04][s.type];
-          const q1 = 2 * (s.a + 2), p1 = s.a - 0.25 * q1;
-          const q2 = (s.a - 4 + 24 * k) / (0.25 + k), p2 = s.a - 0.25 * q2;
-          const moved = Math.abs(s.a - 10) > 1e-6;
-          return [
-            moved ? C((Q) => 10 - 0.25 * Q, 'ghost', 'D₀') : null,
-            C((Q) => s.a - 0.25 * Q, 'd', 'D'),
-            C((Q) => 4 + 0.25 * (Q - 24), 's', 'S₀ (short run)'),
-            moved ? C((Q) => p2 + 0.25 * (Q - q2), 's', 'S₁', { dash: true }) : null,
-            C((Q) => 4 + k * (Q - 24), 'g', 'LRS', { labelAt: 44 }),
-            P(24, 4, 'E₀', 'n', { dx: -9, dy: 18 }),
-            moved ? P(q1, p1, 'Short run', 'o', { dx: -9 }) : null,
-            moved ? G(q2, p2, 'Q_LR', 'P_LR', 'g') : null,
-            moved ? P(q2, p2, 'Long run', 'g', { dy: 18 }) : null,
-          ];
-        },
-        readout(s) {
-          const k = [0, 0.08, -0.04][s.type];
-          const q1 = 2 * (s.a + 2), p1 = s.a - 0.25 * q1;
-          const q2 = (s.a - 4 + 24 * k) / (0.25 + k), p2 = s.a - 0.25 * q2;
-          const minLac = p2; // in long-run equilibrium P = min LAC
-          const types = [
-            'Constant-cost industry: entry does not change input prices, so every firm’s LAC stays put and LRS is flat. Price returns to $4.00.',
-            'Increasing-cost industry: as the industry grows it bids up input prices, raising every firm’s LAC. LRS slopes up, so the long-run price ends above $4.00.',
-            'Decreasing-cost industry: industry growth lowers input costs (external economies of scale), shifting every firm’s LAC down. LRS slopes down.',
-          ];
-          const moved = Math.abs(s.a - 10) > 1e-6;
-          return {
-            rows: [
-              ['Short-run price (no entry yet)', money(p1)],
-              ['Firms’ short-run position', !moved ? 'Normal profit' : p1 > 4 ? 'Supernormal profit, so firms enter' : 'Losses, so firms exit'],
-              ['Long-run price = min LAC', money(minLac)],
-              ['Long-run industry output', f(q2)],
-              ['Change in number of firms (2 units each)', (q2 >= 24 ? '+' : '') + f((q2 - 24) / 2, 1)],
-            ],
-            status: types[s.type],
-          };
-        },
-      },
+      // Graph: linked panels, see linked.js.
       equations: [
         { name: 'Long-run equilibrium (each firm)', tex: R`P = MR = SMC = LMC = \min LAC,\quad \pi = 0`, note: 'Free entry and exit compete profit away.' },
         { name: 'Short-run industry supply', tex: R`Q_S(P) = n \cdot q(P)`, note: 'Horizontal sum of the n firms’ SMC curves above min SAVC.' },
@@ -347,33 +300,7 @@
       id: 'monopolistic-competition',
       title: 'Monopolistic competition',
       summary: 'Each firm faces its own downward-sloping demand curve. Short-run profits attract entry, which shifts each firm’s demand left until it is tangent to average cost and profit is zero.',
-      model: 'Firm demand P = a − 0.5Q, MR = a − Q, MC = 2, AC = 2 + 4/Q.',
-      graph: {
-        x: XQ, y: YP,
-        params: [{ id: 'a', label: 'Demand per firm (falls as firms enter)', min: 4.83, max: 9, step: 0.01, value: 7 }],
-        actions: [{ label: 'Let firms enter (long run)', run: (s) => { s.a = 4.83; } }],
-        draw(s) {
-          const q = s.a - 2, p = s.a - 0.5 * q, ac = 2 + 4 / q;
-          return [
-            A([[0, p], [q, p], [q, ac], [0, ac]], p - ac > 0.02 ? 'g' : 'n', p - ac > 0.05 ? 'Profit' : ''),
-            C((Q) => 2 + 4 / Q, 'n', 'AC', { from: 0.45, labelAt: 7.5 }),
-            Hl(2, 's', 'MC'),
-            C((Q) => s.a - 0.5 * Q, 'd', "DD'"),
-            C((Q) => s.a - Q, 'g', 'MR', { to: s.a, labelAt: Math.min(s.a - 0.6, 6) }),
-            G(q, p, 'Q*', 'P*'),
-            P(q, 2, '', 'g', { small: true }),
-            P(q, p, ''),
-          ];
-        },
-        readout(s) {
-          const q = s.a - 2, p = s.a - 0.5 * q, ac = 2 + 4 / q, pi = (p - ac) * q;
-          return {
-            rows: [['Output Q*', f(q)], ['Price P*', money(p)], ['AC at Q*', money(ac)], ['Profit', money(pi)]],
-            status: pi > 0.05 ? 'Short run: positive profit attracts new firms, shifting DD′ left.' : 'Long run: DD′ is tangent to AC, so P = AC and profit is zero. AC is still falling at Q*, so the firm has excess capacity.',
-            tone: pi > 0.05 ? 'info' : 'good',
-          };
-        },
-      },
+      // Graph: linked panels, see linked.js.
       equations: [
         { name: 'Profit maximisation', tex: R`MR = MC`, note: 'Same rule as monopoly; price comes from the firm’s demand curve.' },
         { name: 'Long-run tangency', tex: R`P = AC,\quad \text{slope of } DD' = \text{slope of } AC`, note: 'Zero economic profit.' },
@@ -432,29 +359,7 @@
       id: 'labour-market',
       title: 'Labour demand and MRP',
       summary: 'A firm hires workers until the revenue from the last worker equals the wage. Under perfect competition in the output market, labour demand is the marginal value product curve.',
-      model: 'MP_L = 10 − L; output price P; wage w set in a competitive labour market.',
-      graph: {
-        x: { range: [0, 10], label: 'Workers (L)' },
-        y: { range: [0, 30], label: '$ per worker', ticks: range(0, 30, 5) },
-        params: [
-          { id: 'p', label: 'Output price (P)', min: 1, max: 3, step: 0.05, value: 2 },
-          { id: 'w', label: 'Wage (w)', min: 2, max: 20, step: 0.5, value: 8 },
-        ],
-        draw(s) {
-          const L = Math.max(0, 10 - s.w / s.p);
-          return [
-            ghost(changed(s.p, 2), (l) => 2 * (10 - l), 'MRP₀'),
-            C((l) => s.p * (10 - l), 'd', 'MRP_L = D_L', { to: 10 }),
-            Hl(s.w, 's', 'w = supply of labour to the firm'),
-            G(L, s.w, 'L*', 'w'),
-            P(L, s.w, 'E'),
-          ];
-        },
-        readout(s) {
-          const L = Math.max(0, 10 - s.w / s.p);
-          return { rows: [['Workers hired L*', f(L)], ['MP_L at L*', f(10 - L)], ['MRP_L at L*', money(s.p * (10 - L))], ['Wage bill', money(s.w * L)]], status: 'A higher output price raises MRP and shifts labour demand right.' };
-        },
-      },
+      // Graph: linked panels, see linked.js.
       equations: [
         { name: 'Marginal revenue product', tex: R`MRP_L = MP_L \times MR`, note: 'Extra revenue from one more worker.' },
         { name: 'Value of marginal product', tex: R`MVP_L = MP_L \times P`, note: 'Equals MRP_L when the output market is perfectly competitive.' },
@@ -656,32 +561,7 @@
       id: 'injections-leakages',
       title: 'Injections and leakages',
       summary: 'The same equilibrium as the Keynesian cross, seen another way: output settles where planned leakages (S + NT + Z) equal planned injections (I + G + X).',
-      model: 'Leakages S + NT + Z = −A + [1 − c(1 − t) + z]Y with autonomous consumption A = 0.5. Injections I + G + X are fixed.',
-      graph: {
-        x: { range: [0, 12], label: 'National income (Y)' },
-        y: { range: [-1, 6], label: 'Leakages and injections', ticks: range(-1, 6, 1) },
-        params: [
-          { id: 'J', label: 'Injections I + G + X', min: 1, max: 4, step: 0.1, value: 2 },
-          { id: 'c', label: 'MPC (c)', min: 0.5, max: 0.95, step: 0.01, value: 0.8 },
-          { id: 't', label: 'Tax rate (t)', min: 0, max: 0.4, step: 0.01, value: 0.2 },
-          { id: 'z', label: 'Marginal propensity to import (z)', min: 0, max: 0.3, step: 0.01, value: 0.14 },
-        ],
-        draw(s) {
-          const lr = 1 - s.c * (1 - s.t) + s.z, y = (0.5 + s.J) / lr;
-          return [
-            Hl(0, 'ghost', ''),
-            ghost(changed(s.J, 2), (Y) => 2, 'J₀'),
-            Hl(s.J, 'g', 'I + G + X'),
-            C((Y) => -0.5 + lr * Y, 's', 'S + NT + Z'),
-            G(y, s.J, 'Y*', null),
-            P(y, s.J, 'E'),
-          ];
-        },
-        readout(s) {
-          const lr = 1 - s.c * (1 - s.t) + s.z;
-          return { rows: [['Equilibrium Y*', f((0.5 + s.J) / lr)], ['Marginal leakage rate', f(lr)], ['Multiplier K = 1 / leakage rate', f(1 / lr)]], status: 'A steeper leakages line (higher t, z or s) means a smaller multiplier.' };
-        },
-      },
+      // Graph: linked panels, see linked.js.
       equations: [
         { name: 'Equilibrium condition', tex: R`S + NT + Z = I + G + X`, note: 'Planned withdrawals equal planned injections.' },
         { name: 'Saving function', tex: R`S = -A + s\,Y_d`, note: 'Negative at low income: dissaving.' },
