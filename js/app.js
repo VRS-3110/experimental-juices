@@ -145,7 +145,7 @@
 
     const draw = (limit) => {
       $('#graph').innerHTML = g.panels
-        ? `<div class="panes ${g.layout || 'row'}">${g.panels.map((pn) => `<figure class="pane"><figcaption>${esc(pn.title)}</figcaption>${window.renderGraph({ ...pn, aria: pn.title }, s)}</figure>`).join('')}</div>`
+        ? `<div class="panes ${g.layout || 'row'}">${g.panels.map((pn) => `<figure class="pane"><figcaption>${esc(rv(pn.title, s))}</figcaption>${window.renderGraph({ ...pn, aria: pn.title }, s)}</figure>`).join('')}</div>`
         : window.renderGraph({ ...g, aria: t.title + ' graph' }, s);
       const r = g.readout(s);
       $('#readout').innerHTML = r.rows.map(([k, v]) => `<div><dt>${sub(k)}</dt><dd>${sub(v)}</dd></div>`).join('');

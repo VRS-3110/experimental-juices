@@ -4,7 +4,7 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 
 ## What's inside
 
-34 topics. The first 29 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
+35 topics. The first 30 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
 
 | Part | Topics |
 | --- | --- |
@@ -27,6 +27,7 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 - Perfect competition in the long run: typical firm beside the industry (shared price axis)
 - Labour market: market wage-setting beside one firm's hiring, with an optional minimum wage
 - Monopolistic competition: short run beside long run
+- Money market beside IS–MP (shared interest-rate axis), switchable to a fixed money supply to show LM
 - AD–AS beside the Phillips curve (shared inflation axis, linked by Okun's law)
 - Keynesian cross above injections and leakages (shared income axis)
 - Deriving the demand curve: price–consumption curve above the demand curve (shared X axis)

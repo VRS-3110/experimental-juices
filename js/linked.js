@@ -402,4 +402,101 @@
   };
   insertAfter('market-demand', demandDerivation, MICRO, 'Block 4');
   insertAfter('phillips', adasPhillips, MACRO, 'Blocks 16–18');
+  /* ── New: money market beside IS–MP ── */
+  // Money demand: i = 4 + 0.8Y − 0.5(M/P); expected inflation is taken as zero, so i = r.
+  const mm = (s) => {
+    const rule = s.reg === 0;
+    const y = rule ? (s.a - s.r0 + 5 * s.b) / (0.8 + s.b) : (s.a - 4 + 0.5 * s.M) / 1.6;
+    const r = s.a - 0.8 * y;
+    const m = rule ? (4 + 0.8 * y - r) / 0.5 : s.M;
+    return { rule, y, r, m };
+  };
+  const R_AXIS = { range: [0, 10], label: 'Interest rate r (%)', ticks: range(0, 10, 2) };
+  const moneyIsmp = {
+    id: 'money-ismp',
+    title: 'Money market and IS–MP together',
+    summary: 'The money market and the goods market share one interest rate. Under an interest-rate rule the central bank picks r and supplies whatever money is demanded at that rate. With a fixed money supply instead, the money market traces out an upward-sloping LM curve.',
+    model: 'IS: r = a − 0.8Y. Money demand: i = 4 + 0.8Y − 0.5(M/P), with expected inflation zero so i = r. Rule: r = r₀ + β(Y − 5). Fixed money: LM is r = 4 + 0.8Y − 0.5M̄. Both panels share the interest-rate axis.',
+    graph: {
+      layout: 'row',
+      params: [
+        { id: 'reg', label: 'Monetary policy', options: [{ v: 0, label: 'Interest-rate rule (MP)' }, { v: 1, label: 'Fixed money supply (LM)' }], value: 0 },
+        { id: 'a', label: 'IS position: autonomous spending and G', min: 6, max: 12, step: 0.1, value: 9, hint: 'Raise for a fiscal expansion' },
+        { id: 'r0', label: 'Target rate at Y = 5 (r₀, rule only)', min: 0, max: 8, step: 0.1, value: 5 },
+        { id: 'b', label: 'MP slope β (rule only)', min: 0, max: 1.5, step: 0.05, value: 0 },
+        { id: 'M', label: 'Money supply M/P (fixed money only)', min: 2, max: 30, step: 0.1, value: 6 },
+      ],
+      valid(s) {
+        const z = mm(s);
+        if (z.r <= 0) return 'Past this point the interest rate would fall below zero: the zero lower bound.';
+        if (z.m <= 0) return 'At this rate money demand is zero; the central bank cannot push the money supply below nothing.';
+        if (z.y <= 0) return 'Past this point output would fall to zero.';
+        return true;
+      },
+      panels: [
+        {
+          title: 'Money market',
+          x: { range: [0, 30], label: 'Real money balances (M/P)', ticks: range(0, 30, 5) },
+          y: R_AXIS,
+          draw(s) {
+            const z = mm(s), moved = Math.abs(z.y - 5) > 1e-6;
+            return [
+              moved ? C((m) => 8 - 0.5 * m, 'ghost', 'Md₀', { labelAt: 2 }) : null,
+              C((m) => 4 + 0.8 * z.y - 0.5 * m, 'd', `Md (Y = ${z.y.toFixed(1)})`),
+              Math.abs(z.m - 6) > 1e-6 ? V(6, 'ghost', 'Ms₀') : null,
+              V(z.m, 's', z.rule ? 'Ms (adjusts)' : 'Ms = M̄'),
+              Hl(z.r, 'o', z.rule ? 'Target r' : '', { dash: true }),
+              G(z.m, z.r, 'M/P', null, 's'),
+              P(z.m, z.r, 'E'),
+            ];
+          },
+        },
+        {
+          title: (s) => (s.reg === 0 ? 'IS–MP (goods market)' : 'IS–LM (goods and money markets)'),
+          x: { range: [0, 15], label: 'Output (Y)' },
+          y: R_AXIS,
+          draw(s) {
+            const z = mm(s), ruleCurve = (Y) => s.r0 + s.b * (Y - 5), lmCurve = (Y) => 4 + 0.8 * Y - 0.5 * s.M;
+            const startChanged = z.rule ? Math.abs(s.r0 - 5) > 1e-6 || s.b !== 0 : Math.abs(s.M - 6) > 1e-6;
+            return [
+              Math.abs(s.a - 9) > 1e-6 ? C((Y) => 9 - 0.8 * Y, 'ghost', 'IS₀') : null,
+              startChanged ? C(z.rule ? () => 5 : (Y) => 1 + 0.8 * Y, 'ghost', z.rule ? 'MP₀' : 'LM₀') : null,
+              C((Y) => s.a - 0.8 * Y, 'd', 'IS'),
+              C(z.rule ? ruleCurve : lmCurve, 's', z.rule ? 'MP' : 'LM'),
+              Hl(z.r, 'o', '', { dash: true }),
+              G(z.y, z.r, 'Y*', null),
+              P(z.y, z.r, 'E'),
+            ];
+          },
+        },
+      ],
+      readout(s) {
+        const z = mm(s);
+        return {
+          rows: [['Output Y*', f(z.y)], ['Interest rate r*', pct(z.r, 2)], ['Money supply M/P', f(z.m)], ['Change in money supply from start', (z.m >= 6 ? '+' : '') + f(z.m - 6)]],
+          status: z.rule
+            ? (s.b === 0
+              ? 'Flat MP: the bank holds r fixed. When IS shifts right, money demand rises with Y and the bank must expand the money supply to stop r rising. Money is endogenous.'
+              : 'Upward-sloping MP: the bank lets r rise with output, partly offsetting a fiscal expansion. It still supplies whatever money is demanded at its chosen rate.')
+            : 'Fixed money supply: a rise in Y raises money demand, and with M/P fixed the interest rate must rise. Each Y has one market-clearing r, which traces out the LM curve.',
+        };
+      },
+    },
+    equations: [
+      { name: 'Money demand (liquidity preference)', tex: R`\frac{M^d}{P} = L(i, Y)`, note: 'Falls with i (opportunity cost of holding money), rises with Y (transactions).' },
+      { name: 'Money market equilibrium', tex: R`\frac{M^s}{P} = L(i, Y)`, note: 'Under a rate rule M^s adjusts to the target; under fixed money i adjusts.' },
+      { name: 'MP rule', tex: R`r = r_0 + \beta\,(Y - Y^*)`, note: 'The central bank chooses r; β = 0 is a flat MP line.' },
+      { name: 'LM curve (fixed money supply)', tex: R`\frac{\bar{M}}{P} = L(r, Y) \;\Rightarrow\; r = \frac{1}{h}\left(kY - \frac{\bar{M}}{P}\right)`, note: 'Upward-sloping: higher Y needs a higher r to clear the money market.' },
+      { name: 'Fisher equation', tex: R`i = r + \pi^e`, note: 'Here πᵉ = 0, so i = r.' },
+      { name: 'Zero lower bound', tex: R`i \ge 0`, note: 'The bank cannot cut the nominal rate much below zero.' },
+    ],
+    points: [
+      'Same shock, two regimes: with a flat MP a fiscal expansion raises Y with no rise in r; with LM it raises r too (crowding out).',
+      'A rate-setting central bank does not choose the money supply; it accommodates money demand at its target.',
+      'At the zero lower bound conventional monetary policy runs out, leaving fiscal policy or unconventional tools (QE, forward guidance).',
+    ],
+    tip: 'Draw the money market to the left of IS–MP with a dashed line at r* across both, and say which variable the central bank controls.',
+  };
+  insertAfter('is-mp', moneyIsmp, MACRO, 'Block 15');
+
 })();
