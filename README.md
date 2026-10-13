@@ -4,11 +4,11 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 
 ## What's inside
 
-33 topics. The first 28 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
+34 topics. The first 29 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
 
 | Part | Topics |
 | --- | --- |
-| Microeconomics (Blocks 1–10) | PPF (linear and concave), supply and demand, price ceilings and floors, elasticities, tax incidence, consumer choice, income and substitution effects, market demand by horizontal summation, isoquants and isocosts, short-run costs and perfect competition (all five short-run cases), LAC envelope (U-shaped, L-shaped, flat, falling, rising), perfect competition in the long run (constant, increasing and decreasing cost industries), monopoly, monopolistic competition, Cournot duopoly, labour demand (MRP), Edgeworth box, externalities |
+| Microeconomics (Blocks 1–10) | PPF (linear and concave), supply and demand, price ceilings and floors, elasticities, tax incidence, consumer choice, income and substitution effects, market demand by horizontal summation, isoquants and isocosts, short-run costs and perfect competition (all five short-run cases), LAC envelope (U-shaped, L-shaped, flat, falling, rising), perfect competition in the long run (constant, increasing and decreasing cost industries), monopoly, natural monopoly and regulation (none, P = MC, P = AC), monopolistic competition, Cournot duopoly, labour demand (MRP), Edgeworth box, externalities |
 | Macroeconomics (Blocks 11–20) | Circular flow and national income, Solow growth, Keynesian cross and multipliers, injections and leakages, IS–MP, AD–AS with shock adjustment, Phillips curve, foreign exchange (floating and fixed) |
 | Further topics | Price indices and growth rates, money market, loanable funds, Lorenz curve, tariffs |
 

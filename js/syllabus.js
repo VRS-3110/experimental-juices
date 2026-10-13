@@ -297,6 +297,92 @@
 
     /* ───────────── Blocks 6–8 ───────────── */
     {
+      id: 'natural-monopoly',
+      title: 'Natural monopoly and regulation',
+      summary: 'With a large fixed cost and constant marginal cost, average cost falls over all market demand, so one firm is cheapest. Left alone it restricts output. Regulators can force P = MC (efficient, but the firm makes a loss) or P = AC (no subsidy, but some deadweight loss remains).',
+      model: 'Demand P = 12 − 0.5Q, MR = 12 − Q, MC = 2, AC = 2 + F/Q. AC pricing is the larger root of 0.5Q² − 10Q + F = 0.',
+      graph: (function () {
+        const D = (q) => 12 - 0.5 * q, ac = (F) => (q) => 2 + F / q;
+        const outcomes = (F) => {
+          const qac = 10 + Math.sqrt(Math.max(0, 100 - 2 * F));
+          return [
+            { name: 'Unregulated (MR = MC)', short: 'M', q: 10, p: 7, k: 'o' },
+            { name: 'Marginal-cost pricing (P = MC)', short: 'MC', q: 20, p: 2, k: 'g' },
+            { name: 'Average-cost pricing (P = AC)', short: 'AC', q: qac, p: D(qac), k: 'd' },
+          ];
+        };
+        const welfare = (o, F) => {
+          const profit = (o.p - 2) * o.q - F;
+          return { profit, cs: 0.5 * (12 - o.p) * o.q, dwl: 0.5 * (o.p - 2) * (20 - o.q) };
+        };
+        return {
+          x: { range: [0, 24], label: 'Quantity (Q)' },
+          y: { range: [0, 12], label: 'Price and cost ($)' },
+          params: [
+            { id: 'reg', label: 'Regulation', options: [{ v: 0, label: 'None' }, { v: 1, label: 'P = MC' }, { v: 2, label: 'P = AC' }, { v: 3, label: 'Compare all' }], value: 3 },
+            { id: 'F', label: 'Fixed cost (F)', min: 4, max: 60, step: 0.5, value: 32 },
+          ],
+          valid(s) {
+            if (s.F >= 50) return 'At F = 50 or more, average cost lies above demand at every output. No price covers cost, so no firm would supply this market without a subsidy.';
+            return true;
+          },
+          draw(s) {
+            const os = outcomes(s.F), AC = ac(s.F), out = [];
+            if (s.reg < 3) {
+              const o = os[s.reg], w = welfare(o, s.F), acq = AC(o.q);
+              out.push(A([[0, 12], [0, o.p], [o.q, o.p]], 'd', 'CS'));
+              if (Math.abs(w.profit) > 0.05) out.push(A([[0, o.p], [o.q, o.p], [o.q, acq], [0, acq]], w.profit > 0 ? 'g' : 'r', w.profit > 0 ? 'Profit' : 'Loss'));
+              if (w.dwl > 0.01) out.push(A([[o.q, o.p], [o.q, 2], [20, 2]], 'o', 'DWL'));
+            }
+            out.push(
+              C(AC, 'n', 'AC', { from: s.F / 10, labelAt: 22.5 }),
+              Hl(2, 's', 'MC', { labelLeft: true }),
+              C(D, 'd', 'D = AR', { to: 24 }),
+              C((q) => 12 - q, 'g', 'MR', { to: 12, labelAt: 9 }),
+            );
+            const shown = s.reg < 3 ? [os[s.reg]] : os;
+            shown.forEach((o) => out.push(G(o.q, o.p, s.reg < 3 ? 'Q' : 'Q_' + o.short, s.reg < 3 ? 'P' : 'P_' + o.short, o.k), P(o.q, o.p, s.reg < 3 ? '' : o.short, o.k)));
+            if (s.reg === 1 || s.reg === 3) out.push(P(20, AC(20), '', 'n', { small: true }));
+            return out;
+          },
+          readout(s) {
+            const os = outcomes(s.F);
+            if (s.reg === 3) {
+              return {
+                rows: os.map((o) => { const w = welfare(o, s.F); return [o.name, `P ${f(o.p)}, Q ${f(o.q)}, π ${money(w.profit)}, DWL ${money(w.dwl)}`]; }),
+                status: 'Compare: unregulated gives the highest price and largest DWL; P = MC is efficient but needs a subsidy equal to the loss; P = AC needs no subsidy and leaves a smaller DWL.',
+              };
+            }
+            const o = os[s.reg], w = welfare(o, s.F);
+            const notes = [
+              'The monopolist sets MR = MC and charges the highest price demand allows. Profit, but output is well below the efficient level.',
+              `Allocatively efficient (P = MC, no DWL), but price is below AC, so the firm loses its fixed cost. It needs a subsidy of ${money(-w.profit)} or it will leave.`,
+              'Fair-return pricing: P = AC gives zero economic profit and no subsidy, but P > MC so some deadweight loss remains.',
+            ];
+            return {
+              rows: [['Price', money(o.p)], ['Quantity', f(o.q)], ['Profit', money(w.profit)], ['Consumer surplus', money(w.cs)], ['Deadweight loss', money(w.dwl)], ['Subsidy needed', money(Math.max(0, -w.profit))]],
+              status: notes[s.reg],
+              tone: s.reg === 1 ? 'warn' : s.reg === 2 ? 'good' : 'info',
+            };
+          },
+        };
+      })(),
+      equations: [
+        { name: 'Natural monopoly cost structure', tex: R`TC = F + cQ \;\Rightarrow\; AC = c + \frac{F}{Q} > MC = c`, note: 'AC falls at every output, so one firm can supply the market most cheaply.' },
+        { name: 'Unregulated', tex: R`MR = MC,\quad P = D(Q_m) > AC`, note: 'Profit maximisation with deadweight loss.' },
+        { name: 'Marginal-cost pricing', tex: R`P = MC \;\Rightarrow\; \pi = -F < 0`, note: 'Efficient output, but the loss must be covered by a subsidy.' },
+        { name: 'Average-cost (fair-return) pricing', tex: R`P = AC \;\Rightarrow\; \pi = 0`, note: 'No subsidy; output between the other two, small DWL.' },
+        { name: 'Two-part tariff', tex: R`\text{Fee} = \frac{F}{N},\quad \text{price per unit} = MC`, note: 'A fixed charge covers F while the unit price stays efficient.' },
+      ],
+      points: [
+        'Examples: water, electricity grids, railways — duplicating the network would waste the fixed cost.',
+        'P = MC needs a subsidy funded by taxes, which create their own distortions.',
+        'P = AC weakens the incentive to cut costs (any saving is passed on in a lower regulated price). Price caps (RPI − X) try to fix this.',
+        'Alternatives: public ownership, franchising the right to operate, or a two-part tariff.',
+      ],
+      tip: 'Mark all three points on one diagram: Pm on demand above MR = MC, P_AC where demand cuts AC, P_MC where demand cuts MC. Then shade the loss under P = MC.',
+    },
+    {
       id: 'monopolistic-competition',
       title: 'Monopolistic competition',
       summary: 'Each firm faces its own downward-sloping demand curve. Short-run profits attract entry, which shifts each firm’s demand left until it is tangent to average cost and profit is zero.',
@@ -785,6 +871,7 @@
     ['lac-envelope', MICRO, 'Blocks 5–6'],
     ['lr-industry', MICRO, 'Block 6'],
     ['monopoly', MICRO, 'Blocks 6–8'],
+    ['natural-monopoly', MICRO, 'Blocks 6–8'],
     ['monopolistic-competition', MICRO, 'Blocks 6–8'],
     ['cournot', MICRO, 'Blocks 6–8'],
     ['labour-market', MICRO, 'Block 9'],
