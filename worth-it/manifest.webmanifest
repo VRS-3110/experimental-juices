@@ -1,0 +1,15 @@
+{
+  "name": "Worth It? Should I buy it?",
+  "short_name": "Worth It?",
+  "description": "Cost per use, hours of your work, what the money could grow to, and the true rate on easy payment plans, in rupees.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f2ea",
+  "theme_color": "#0f5c4c",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

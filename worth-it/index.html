@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Worth It?</title>
+<meta name="description" content="Should I buy it? Cost per use, hours of your work, what the money could grow to, and the true rate on easy payment plans, in rupees.">
+<meta name="theme-color" content="#0f5c4c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="#buy">
+      <img class="brand-mark" src="icon.svg" alt="" width="36" height="36">
+      <span><b>Worth It?</b><small>Think before you buy, in rupees</small></span>
+    </a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#buy" data-view="buy">Should I buy?</a>
+      <a href="#emi" data-view="emi">Easy payment</a>
+      <a href="#settings" data-view="settings">Settings</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- Should I buy? -->
+  <section class="view" id="view-buy" aria-labelledby="buy-h">
+    <h1 class="visually-hidden" id="buy-h">Should I buy it?</h1>
+    <div class="layout">
+      <form class="card inputs" id="buy-form" autocomplete="off" onsubmit="return false">
+        <label class="field">
+          <span class="label">What is it?</span>
+          <input type="text" data-bind="buy.name" placeholder="e.g. new phone, daily coffee" maxlength="60">
+        </label>
+
+        <fieldset class="seg">
+          <legend class="visually-hidden">Kind of spending</legend>
+          <label><input type="radio" name="kind" value="once" data-bind="buy.kind"><span>One-off buy</span></label>
+          <label><input type="radio" name="kind" value="habit" data-bind="buy.kind"><span>Regular spend</span></label>
+        </fieldset>
+
+        <div id="once-fields" class="stack">
+          <label class="field" id="rs-price-field">
+            <span class="label">Price</span>
+            <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="buy.price" data-type="money" placeholder="150,000"></span>
+          </label>
+          <label class="check"><input type="checkbox" data-bind="buy.usd"> Priced in US dollars</label>
+          <div id="usd-fields" class="row2">
+            <label class="field">
+              <span class="label">Price in dollars</span>
+              <span class="affix"><i>$</i><input type="text" inputmode="decimal" data-bind="buy.usdPrice" data-type="money"></span>
+            </label>
+            <label class="field">
+              <span class="label">Rupees per dollar</span>
+              <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="settings.usdRate" data-type="money"></span>
+            </label>
+          </div>
+          <div class="row2">
+            <label class="field">
+              <span class="label">I'll use it</span>
+              <span class="affix"><input type="text" inputmode="decimal" data-bind="buy.uses" data-type="money"><i>times</i></span>
+            </label>
+            <label class="field">
+              <span class="label">every</span>
+              <select data-bind="buy.per">
+                <option value="day">day</option>
+                <option value="week">week</option>
+                <option value="month">month</option>
+                <option value="year">year</option>
+              </select>
+            </label>
+          </div>
+          <div class="row2">
+            <label class="field">
+              <span class="label">It will last</span>
+              <span class="affix"><input type="text" inputmode="decimal" data-bind="buy.years" data-type="money"><i>years</i></span>
+            </label>
+            <label class="field">
+              <span class="label">Resale value</span>
+              <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="buy.resale" data-type="money" placeholder="0"></span>
+            </label>
+          </div>
+        </div>
+
+        <div id="habit-fields" class="stack">
+          <label class="field">
+            <span class="label">Cost each time</span>
+            <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="buy.cost" data-type="money" placeholder="500"></span>
+          </label>
+          <div class="row2">
+            <label class="field">
+              <span class="label">How often</span>
+              <span class="affix"><input type="text" inputmode="decimal" data-bind="buy.times" data-type="money"><i>times</i></span>
+            </label>
+            <label class="field">
+              <span class="label">every</span>
+              <select data-bind="buy.timesPer">
+                <option value="day">day</option>
+                <option value="week">week</option>
+                <option value="month">month</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <label class="field">
+          <span class="label">Compare with investing for <output id="horizon-out">10 years</output></span>
+          <input type="range" min="1" max="30" step="1" data-bind="buy.horizon" data-type="range">
+        </label>
+        <p class="hint" id="inv-hint"></p>
+        <p class="hint">Tip: you can type amounts like <kbd>1.5 lakhs</kbd>, <kbd>2mn</kbd> or <kbd>25k</kbd>.</p>
+        <div class="actions">
+          <button type="button" class="btn" id="save-btn">Save to wishlist</button>
+          <span class="saved-msg" id="saved-msg" role="status"></span>
+        </div>
+      </form>
+
+      <div class="results">
+        <div class="verdict card" id="buy-verdict" aria-live="polite"></div>
+        <div class="lenses" id="buy-lenses"></div>
+        <ul class="notes" id="buy-notes"></ul>
+        <figure class="card chart" id="buy-chart-fig">
+          <figcaption id="buy-chart-cap"></figcaption>
+          <svg id="buy-chart" role="img"></svg>
+          <div class="legend" id="buy-legend"></div>
+        </figure>
+        <section class="card wishlist" aria-labelledby="wish-h">
+          <h2 id="wish-h">Wishlist</h2>
+          <p class="hint" id="wish-empty">Save things you're thinking about buying. Come back in a week: if you still want it, the numbers are here.</p>
+          <ul id="wishlist"></ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- Easy payment checker -->
+  <section class="view" id="view-emi" aria-labelledby="emi-h" hidden>
+    <div class="layout">
+      <form class="card inputs" autocomplete="off" onsubmit="return false">
+        <h1 class="form-title" id="emi-h">Easy payment checker</h1>
+        <p class="hint">For credit card instalment plans, "0% easy payment" offers and leases. Find out what the plan really costs.</p>
+        <label class="field">
+          <span class="label">Cash price</span>
+          <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="emi.cash" data-type="money"></span>
+        </label>
+        <div class="row2">
+          <label class="field">
+            <span class="label">Monthly payment</span>
+            <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="emi.monthly" data-type="money"></span>
+          </label>
+          <label class="field">
+            <span class="label">For</span>
+            <span class="affix"><input type="text" inputmode="numeric" data-bind="emi.months" data-type="money"><i>months</i></span>
+          </label>
+        </div>
+        <label class="field">
+          <span class="label">Down payment</span>
+          <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="emi.down" data-type="money" placeholder="0"></span>
+        </label>
+        <div class="row2">
+          <label class="field">
+            <span class="label">Processing or handling fee</span>
+            <input type="text" inputmode="decimal" data-bind="emi.fee" data-type="money" placeholder="0">
+          </label>
+          <label class="field">
+            <span class="label">as</span>
+            <select data-bind="emi.feeUnit">
+              <option value="rs">rupees</option>
+              <option value="pct">% of price</option>
+            </select>
+          </label>
+        </div>
+      </form>
+
+      <div class="results">
+        <div class="verdict card" id="emi-verdict" aria-live="polite"></div>
+        <div class="lenses" id="emi-lenses"></div>
+        <ul class="notes" id="emi-notes"></ul>
+        <section class="card explain">
+          <h2>Why the flat rate looks lower</h2>
+          <p>Plans and leases are often quoted at a <b>flat rate</b>: interest on the full amount for the whole term. But you pay the loan back every month, so on average you owe only about half of it. The <b>true rate</b> counts interest only on what you still owe, which is how a bank loan or fixed deposit rate works. That's the fair number to compare.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- Settings -->
+  <section class="view" id="view-settings" aria-labelledby="set-h" hidden>
+    <div class="settings">
+      <h1 class="form-title" id="set-h">Settings</h1>
+
+      <section class="card stack">
+        <h2>Your pay</h2>
+        <div class="row2">
+          <label class="field">
+            <span class="label">Monthly take-home salary</span>
+            <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="settings.salary" data-type="money"></span>
+          </label>
+          <label class="field">
+            <span class="label">Hours you work</span>
+            <span class="affix"><input type="text" inputmode="decimal" data-bind="settings.hoursPerWeek" data-type="money"><i>a week</i></span>
+          </label>
+        </div>
+        <p class="readout" id="set-hourly"></p>
+      </section>
+
+      <section class="card stack">
+        <h2>If you invested instead</h2>
+        <p class="hint">Rates in Sri Lanka change often. These are examples only: put in today's rate from your bank or the Central Bank (CBSL).</p>
+        <div class="presets" id="presets"></div>
+        <label class="field narrow">
+          <span class="label">Expected inflation</span>
+          <span class="affix"><input type="text" inputmode="decimal" data-bind="settings.inflation" data-type="money"><i>% a year</i></span>
+        </label>
+        <p class="readout" id="set-real"></p>
+      </section>
+
+      <section class="card stack">
+        <h2>Display</h2>
+        <label class="check"><input type="checkbox" data-bind="settings.lakhs"> Show big amounts in lakhs (Rs. 1.5 lakhs instead of Rs. 150,000)</label>
+        <label class="field narrow">
+          <span class="label">Rupees per US dollar</span>
+          <span class="affix"><i>Rs.</i><input type="text" inputmode="decimal" data-bind="settings.usdRate" data-type="money"></span>
+        </label>
+      </section>
+
+      <section class="card stack">
+        <h2>Put it on your phone</h2>
+        <p>Open this page on your phone and choose <b>Add to Home Screen</b> (Safari: the share button; Chrome: the ⋮ menu). It then opens like an app and works offline.</p>
+        <p class="hint">Everything you enter stays on this device. Nothing is sent anywhere.</p>
+        <div class="actions"><button type="button" class="btn ghost" id="reset-btn">Reset everything</button></div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script src="calc.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

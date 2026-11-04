@@ -59,3 +59,7 @@ To add a topic, add an object to `js/syllabus.js` with a `graph` (axes, `params`
 Equations are rendered by KaTeX (loaded from cdnjs) as MathML. Without a network connection they fall back to plain TeX source.
 
 Run `node scripts/build.mjs` to produce a single self-contained HTML file.
+
+## Also in this repo
+
+- [`worth-it/`](worth-it/): **Worth It?** A "should I buy it?" calculator in rupees. It shows cost per use, hours of work, what the money could grow to, and the true interest rate on easy payment plans. See its [README](worth-it/README.md).
