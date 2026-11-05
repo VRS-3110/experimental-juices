@@ -36,6 +36,7 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 
 - **Glossary**: 178 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
 - **Worked answers**: 25 exam-style run-throughs (21 calculations, 4 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
+- **Quiz**: 36 question types built on the worked answers. 21 calculation types generate new numbers every time, so you practise the method rather than the example; 15 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
 - **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck.
 
 ## Modes
@@ -58,6 +59,7 @@ js/markets.js     supply-and-demand graphs driven by user-entered functions
 js/linked.js      two-panel linked graphs
 js/glossary.js    reference glossary of key terms
 js/worked.js      step-by-step worked answers
+js/quiz.js        quiz question generators and concept questions
 js/app.js         navigation, formula sheet, flashcards
 scripts/build.mjs bundles everything into dist/marginal-notes.html
 ```

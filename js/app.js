@@ -377,6 +377,7 @@
         <div class="btn-row">
           ${done ? '' : `<button type="button" class="primary" data-wk-act="next">${n ? 'Next step' : 'Start the run-through'} <span class="wk-count">${n}/${w.steps.length}</span></button><button type="button" class="ghost-btn" data-wk-act="all">Show full answer</button>`}
           ${n ? '<button type="button" class="ghost-btn" data-wk-act="hide">Hide answer</button>' : ''}
+          ${hasDrill(w.id) ? `<a class="ghost-btn" href="#q-${w.id}">Practise with new numbers</a>` : ''}
         </div>
       </article>`;
   }
@@ -414,6 +415,134 @@
     main.querySelectorAll('[data-wk-unit]').forEach((b) => b.addEventListener('click', () => { wkFilter.unit = b.dataset.wkUnit; renderWorked(); }));
     main.querySelectorAll('[data-wk-kind]').forEach((b) => b.addEventListener('click', () => { wkFilter.kind = b.dataset.wkKind; renderWorked(); }));
     if (focus) { const el = document.getElementById(focus); if (el) { el.classList.add('target'); requestAnimationFrame(() => el.scrollIntoView({ block: 'start' })); } }
+  }
+
+  /* ── Practice quiz ── */
+  const QUIZ_ITEMS = (window.QUIZ && window.QUIZ.items) || [];
+  const workedById = Object.fromEntries(WORKED.map((w) => [w.id, w]));
+  const hasDrill = (id) => QUIZ_ITEMS.some((it) => it.worked === id);
+  const quiz = { phase: 'setup', opts: { n: 10, area: 'All', type: 'mixed' }, list: [], i: 0, label: '' };
+  const fmtAns = (v) => String(+(+v).toFixed(Math.abs(v) < 1 && v !== 0 ? 3 : 2));
+  const parseNum = (raw) => {
+    const s = String(raw).replace(/[−–—]/g, '-').replace(/[,£$%\s]/g, '');
+    if (!s) return NaN;
+    const frac = s.match(/^(-?\d*\.?\d+)\/(-?\d*\.?\d+)$/);
+    return frac ? parseFloat(frac[1]) / parseFloat(frac[2]) : Number(s);
+  };
+  const closeEnough = (v, a) => Number.isFinite(v) && Math.abs(v - a) <= Math.max(0.01, Math.abs(a) * 0.01);
+
+  function quizPool(o) {
+    return QUIZ_ITEMS.filter((it) => (o.area === 'All' || byId[it.topic]?.unit === o.area) && (o.type === 'mixed' || (o.type === 'calc' ? it.kind === 'calc' : it.kind === 'concept')));
+  }
+  function startQuiz(items, count, label) {
+    const order = shuffle(items.slice()), list = [];
+    for (let k = 0; k < count; k++) {
+      const it = order[k % order.length];
+      list.push({ it, inst: it.make(), given: [], ok: [], checked: false });
+    }
+    Object.assign(quiz, { phase: 'run', list, i: 0, label });
+  }
+  const marks = () => quiz.list.reduce((s, x) => s + x.ok.filter(Boolean).length, 0);
+  const totalMarks = () => quiz.list.reduce((s, x) => s + x.inst.parts.length, 0);
+
+  function renderQuiz() {
+    const head = (lede) => `
+      <header class="topic-head">
+        <p class="eyebrow">Practice</p>
+        <h1>Quiz</h1>
+        <p class="lede">${lede}</p>
+      </header>`;
+
+    if (quiz.phase === 'setup') {
+      const o = quiz.opts, pool = quizPool(o), best = store.get('mn-quiz-best', null);
+      const seg = (name, val, opts) => `<div class="seg" role="group" aria-label="${name}">${opts.map(([v, l]) => `<button type="button" data-q-${name}="${v}" aria-pressed="${String(val) === String(v)}">${l}</button>`).join('')}</div>`;
+      main.innerHTML = `<article class="quiz">${head('Questions built on the worked answers, with new numbers every time, so you practise the method rather than remembering the example. Calculation answers are accepted within 1%.')}
+        <div class="quiz-setup panel">
+          <div class="q-row"><span class="ctrl-label">Questions</span>${seg('n', o.n, [[5, '5'], [10, '10'], [15, '15']])}</div>
+          <div class="q-row"><span class="ctrl-label">Area</span>${seg('area', o.area, [['All', 'All'], ...UNITS.filter((u) => QUIZ_ITEMS.some((it) => byId[it.topic]?.unit === u)).map((u) => [u, u])])}</div>
+          <div class="q-row"><span class="ctrl-label">Type</span>${seg('type', o.type, [['mixed', 'Mixed'], ['calc', 'Calculations'], ['concept', 'Concepts']])}</div>
+          <p class="q-pool">${pool.length} question types match.${best ? ` Best score so far: ${best.pct}% (${best.marks}/${best.total}).` : ''}</p>
+          <div class="btn-row"><button type="button" class="primary" id="q-start" ${pool.length ? '' : 'disabled'}>Start quiz</button></div>
+        </div></article>`;
+      ['n', 'area', 'type'].forEach((name) => main.querySelectorAll(`[data-q-${name}]`).forEach((b) => b.addEventListener('click', () => {
+        const v = b.getAttribute(`data-q-${name}`); quiz.opts[name] = name === 'n' ? +v : v; renderQuiz();
+      })));
+      $('#q-start')?.addEventListener('click', () => { startQuiz(quizPool(quiz.opts), quiz.opts.n, ''); renderQuiz(); $('.q-card input, .q-card [type=radio]')?.focus(); });
+      return;
+    }
+
+    if (quiz.phase === 'done') {
+      const m = marks(), T = totalMarks(), pctv = Math.round((100 * m) / T);
+      if (!quiz.label) {
+        const best = store.get('mn-quiz-best', null);
+        if (!best || pctv > best.pct) store.set('mn-quiz-best', { pct: pctv, marks: m, total: T });
+      }
+      const missed = quiz.list.filter((x) => x.ok.some((v) => !v));
+      main.innerHTML = `<article class="quiz">${head(quiz.label ? `Drill finished: ${esc(quiz.label)}.` : 'Quiz finished.')}
+        <div class="q-score panel"><p class="q-big">${m} / ${T}</p><p>${pctv}% of marks. ${missed.length ? `${missed.length} question${missed.length > 1 ? 's' : ''} had at least one wrong part.` : 'Every part correct.'}</p>
+          <div class="btn-row">
+            ${missed.length ? '<button type="button" class="primary" id="q-retry">Retry the missed ones with new numbers</button>' : ''}
+            <button type="button" class="${missed.length ? 'ghost-btn' : 'primary'}" id="q-again">New quiz, same settings</button>
+            <button type="button" class="ghost-btn" id="q-setup">Change settings</button>
+          </div></div>
+        <ol class="q-review">${quiz.list.map((x) => {
+          const w = workedById[x.it.worked], good = x.ok.filter(Boolean).length, all = x.ok.length;
+          return `<li class="${good === all ? 'ok' : 'bad'}"><span class="q-mark">${good}/${all}</span> ${rich(x.inst.q.length > 110 ? x.inst.q.slice(0, 107) + '…' : x.inst.q)} <a href="#${x.it.worked}">${esc(w ? w.title : 'Run-through')}</a></li>`;
+        }).join('')}</ol></article>`;
+      $('#q-retry')?.addEventListener('click', () => { startQuiz(missed.map((x) => x.it), missed.length, quiz.label ? quiz.label + ' (retry)' : 'missed questions'); renderQuiz(); });
+      $('#q-again').addEventListener('click', () => { startQuiz(quizPool(quiz.opts), quiz.opts.n, ''); renderQuiz(); });
+      $('#q-setup').addEventListener('click', () => { quiz.phase = 'setup'; renderQuiz(); });
+      return;
+    }
+
+    // Running
+    const x = quiz.list[quiz.i], t = byId[x.it.topic], w = workedById[x.it.worked];
+    const partHtml = (p, k) => {
+      const state = x.checked ? (x.ok[k] ? ' ok' : ' bad') : '';
+      const fb = x.checked ? `<span class="q-fb">${x.ok[k] ? 'Correct' : `Answer: ${p.choices ? esc(p.choices[p.correct]) : fmtAns(p.answer)}`}</span>` : '';
+      if (p.choices) {
+        return `<fieldset class="q-part${state}"><legend>${rich(p.label)}</legend><div class="q-choices">${p.choices.map((c, ci) => `
+          <label class="q-choice${x.checked && ci === p.correct ? ' right' : ''}"><input type="radio" name="qp${k}" value="${ci}" ${x.given[k] === ci ? 'checked' : ''} ${x.checked ? 'disabled' : ''}> <span>${rich(c)}</span></label>`).join('')}</div>${fb}</fieldset>`;
+      }
+      return `<div class="q-part${state}"><label for="qp${k}">${rich(p.label)}</label><div class="q-input"><input id="qp${k}" inputmode="decimal" autocomplete="off" value="${x.given[k] !== undefined ? esc(x.given[k]) : ''}" ${x.checked ? 'disabled' : ''}>${fb}</div></div>`;
+    };
+    main.innerHTML = `<article class="quiz">${head(quiz.label ? `Drill: ${esc(quiz.label)}. New numbers each time.` : 'Type numbers to 2 decimal places where needed. Fractions like 1/3 are fine.')}
+      <div class="card-meter"><span>Question ${quiz.i + 1} of ${quiz.list.length} · ${marks()} marks so far</span><div class="bar"><i style="width:${(100 * quiz.i) / quiz.list.length}%"></i></div></div>
+      <form class="q-card panel" id="q-form" novalidate>
+        <p class="card-kicker">${t ? `${esc(t.block || t.unit)} <span aria-hidden="true">·</span> ${esc(t.title)} <span aria-hidden="true">·</span> ` : ''}${x.it.kind === 'calc' ? 'Calculation' : 'Concept'}</p>
+        <p class="q-text">${rich(x.inst.q)}</p>
+        ${x.inst.parts.map(partHtml).join('')}
+        <p class="fn-error" id="q-err" role="alert" hidden></p>
+        ${x.checked ? `<div class="wk-answer"><p><strong>Solution</strong></p><ol class="q-sol">${x.inst.solution.map((st) => `<li>${rich(st)}</li>`).join('')}</ol>${w ? `<p class="q-link">Full run-through: <a href="#${w.id}">${esc(w.title)}</a></p>` : ''}</div>` : ''}
+        <div class="btn-row">
+          ${x.checked ? `<button type="submit" class="primary" id="q-next">${quiz.i + 1 < quiz.list.length ? 'Next question' : 'See results'}</button>` : '<button type="submit" class="primary">Check answer</button>'}
+          <button type="button" class="ghost-btn" id="q-quit">End quiz</button>
+        </div>
+      </form></article>`;
+
+    $('#q-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (x.checked) {
+        quiz.i += 1;
+        if (quiz.i >= quiz.list.length) quiz.phase = 'done';
+        renderQuiz();
+        $('.q-card input:not([disabled])')?.focus();
+        return;
+      }
+      const given = x.inst.parts.map((p, k) => {
+        if (p.choices) { const r = main.querySelector(`input[name="qp${k}"]:checked`); return r ? +r.value : undefined; }
+        return $(`#qp${k}`).value.trim();
+      });
+      if (given.some((g) => g === undefined || g === '')) {
+        const err = $('#q-err'); err.hidden = false; err.textContent = 'Answer every part before checking.'; return;
+      }
+      x.given = given;
+      x.ok = x.inst.parts.map((p, k) => (p.choices ? given[k] === p.correct : closeEnough(parseNum(given[k]), p.answer)));
+      x.checked = true;
+      renderQuiz();
+      $('#q-next')?.focus();
+    });
+    $('#q-quit').addEventListener('click', () => { quiz.list = quiz.list.slice(0, quiz.i + (x.checked ? 1 : 0)); quiz.phase = quiz.list.length ? 'done' : 'setup'; renderQuiz(); });
   }
 
   /* ── Flashcards ── */
@@ -504,7 +633,8 @@
     const h = location.hash.slice(1);
     const mode = h === 'formulas' ? 'sheet' : h === 'flashcards' ? 'cards'
       : h === 'glossary' || h.startsWith('g-') ? 'glossary'
-      : h === 'worked' || WORKED.some((w) => w.id === h) ? 'worked' : 'graphs';
+      : h === 'worked' || WORKED.some((w) => w.id === h) ? 'worked'
+      : h === 'quiz' || h.startsWith('q-') ? 'quiz' : 'graphs';
     currentMode = mode;
     document.querySelectorAll('.modes a').forEach((a) => a.setAttribute('aria-current', a.dataset.mode === mode ? 'page' : 'false'));
     document.body.classList.remove('nav-open');
@@ -512,6 +642,16 @@
     if (mode === 'sheet') { renderNav(null); renderSheet(); }
     else if (mode === 'glossary') { renderNav(null); renderGlossary(h.startsWith('g-') ? h : null); }
     else if (mode === 'worked') { renderNav(null); renderWorked(h === 'worked' ? null : h); }
+    else if (mode === 'quiz') {
+      renderNav(null);
+      if (h.startsWith('q-')) {
+        // Drill one worked answer: three fresh versions (or all its concept questions).
+        const id = h.slice(2), items = QUIZ_ITEMS.filter((it) => it.worked === id);
+        if (items.length) startQuiz(items, items.some((it) => it.kind === 'calc') ? 3 : items.length, workedById[id]?.title || 'this question');
+        try { history.replaceState(null, '', '#quiz'); } catch (e) { /* sandboxed frame: keep the drill hash */ }
+      }
+      renderQuiz();
+    }
     else if (mode === 'cards') { renderNav(null); renderCards(); }
     else {
       const t = byId[h] || byId[store.get('mn-last', '')] || TOPICS[0];
