@@ -614,11 +614,12 @@
           <span class="rev-prog" id="rp-${sh.id}">${done}/${sh.outcomes.length}</span>
         </summary>
         <div class="rev-body">
+          ${sh.note ? `<p class="rev-note">${rich(sh.note)}</p>` : ''}
           <p class="rev-sum">${rich(sh.summary)}</p>
           <section><h3>You should be able to</h3>
             <ul class="rev-checks">${sh.outcomes.map((o, i) => `<li><label><input type="checkbox" data-sheet="${sh.id}" data-i="${i}" ${mine.includes(i) ? 'checked' : ''}> <span>${rich(o)}</span></label></li>`).join('')}</ul>
           </section>
-          <section><h3>Key equations from the guide</h3>
+          <section><h3>${sh.note ? 'Key equations' : 'Key equations from the guide'}</h3>
             <ul class="rev-eqs">${sh.equations.map((e) => `<li><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div></li>`).join('')}</ul>
           </section>
           <div class="rev-cols">
@@ -643,7 +644,7 @@
         <header class="topic-head">
           <p class="eyebrow">Revision</p>
           <h1>Revision planner</h1>
-          <p class="lede">One sheet per study block of the EC1002 guide breakdown: what you should be able to do, the guide’s equations, the graphs to practise and a quick test. Your breakdown groups Blocks 6–8, 17–18 and 19–20 and does not list Block 14, so the sheets do the same.</p>
+          <p class="lede">One sheet per study block of the EC1002 guide breakdown: what you should be able to do, the guide’s equations, the graphs to practise and a quick test. Your breakdown groups Blocks 6–8, 17–18 and 19–20, so the sheets do the same. It did not list Block 14, so that sheet uses standard money-and-banking material.</p>
         </header>
         <section class="rev-dash">
           <div class="stat"><p class="stat-k">Checklist</p><p class="stat-v" id="rd-ready">${pctReady}%</p><p class="stat-s" id="rd-ready-s">${r.done} of ${r.total} can-do statements ticked</p><div class="bar"><i id="rd-bar" style="width:${pctReady}%"></i></div></div>

@@ -1,6 +1,7 @@
 /* Revision sheets, one per study block of the EC1002 subject guide breakdown.
    Equations and graph lists follow that breakdown; the breakdown groups Blocks 6–8,
-   17–18 and 19–20, and does not list Block 14, so neither does this file.
+   17–18 and 19–20. It does not list Block 14, so that sheet (money and banking) uses
+   standard material and says so in its note.
    Each sheet: can-do checklist (outcomes), exam focus, guide equations (TeX),
    graphs to practise (each linked to an interactive topic), and the topics it covers. */
 (function () {
@@ -234,6 +235,37 @@
         { label: 'Injections and leakages', topic: 'injections-leakages' },
       ],
       topics: ['keynesian-cross', 'injections-leakages'],
+    },
+    {
+      id: 'b-14', block: 'Block 14', part: 'Macroeconomics', title: 'Money and banking',
+      note: 'Your study-guide breakdown did not list Block 14’s content, so this sheet uses the standard money-and-banking material taught at this level. Check it against the Block 14 chapter of your guide.',
+      summary: 'Money is whatever is generally accepted in payment. The central bank creates the monetary base; commercial banks multiply it through fractional-reserve lending. Money supply and money demand set the short-run interest rate, and in the long run money growth drives inflation.',
+      outcomes: [
+        'Explain the three functions of money and what counts as money.',
+        'Show how fractional-reserve banking creates deposits, and calculate the money multiplier with and without cash held by the public.',
+        'Explain how open market operations and the policy rate change the monetary base and interest rates.',
+        'Draw the money market and show the effect of a change in money supply or in income.',
+        'Use the quantity theory (MV = PY) to link money growth to inflation.',
+        'Distinguish nominal and real interest rates using the Fisher equation.',
+      ],
+      examFocus: [
+        'A higher reserve ratio, or more cash held outside banks, shrinks the multiplier.',
+        'Bond prices and interest rates move in opposite directions: a central bank bond purchase raises bond prices and lowers rates.',
+        'Say whether the central bank is fixing the money supply or the interest rate; the diagrams differ.',
+      ],
+      equations: [
+        { name: 'Money multiplier', tex: R`m = \frac{1}{rr}, \qquad M = m \times MB` },
+        { name: 'Multiplier with cash holdings', tex: R`m = \frac{1 + cr}{cr + rr}` },
+        { name: 'Quantity equation', tex: R`MV = PY` },
+        { name: 'Quantity theory (growth form)', tex: R`\%\Delta M + \%\Delta V = \%\Delta P + \%\Delta Y` },
+        { name: 'Fisher equation', tex: R`i = r + \pi^e` },
+        { name: 'Money demand', tex: R`\frac{M^d}{P} = L(i, Y)` },
+      ],
+      graphs: [
+        { label: 'Money market: money supply and money demand', topic: 'money-market' },
+        { label: 'Money market beside IS–MP (rate rule versus fixed money supply)', topic: 'money-ismp' },
+      ],
+      topics: ['money-market'],
     },
     {
       id: 'b-15', block: 'Block 15', part: 'Macroeconomics', title: 'The IS–MP model',

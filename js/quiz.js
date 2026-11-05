@@ -368,6 +368,29 @@
       },
     },
     {
+      worked: 'w-money-creation', topic: 'money-market',
+      gen() {
+        const rr = pick([0.05, 0.1, 0.2, 0.25]), cr = pick([0, 0.1, 0.2, 0.25]), MB = pick([50, 100, 200, 400]);
+        const gM = int(3, 10), gY = int(1, 4), gV = pick([0, 0, 1, -1]), r = int(1, 3);
+        const m = (1 + cr) / (cr + rr), pi = gM + gV - gY;
+        return {
+          q: `The monetary base is ${MB}. Banks hold reserves of ${n(rr * 100)}% of deposits and the public holds cash equal to ${n(cr * 100)}% of deposits. Money grows ${gM}% a year, real output ${gY}% and velocity ${gV > 0 ? 'rises ' + gV + '%' : gV < 0 ? 'falls ' + -gV + '%' : 'is constant'}. The real interest rate is ${r}%.`,
+          parts: [
+            { label: 'Money multiplier', answer: m },
+            { label: 'Money supply', answer: m * MB },
+            { label: 'Inflation (%)', answer: pi },
+            { label: 'Nominal interest rate (%), with expected inflation equal to that inflation', answer: r + pi },
+          ],
+          solution: [
+            `m = (1 + cr)/(cr + rr) = ${n(1 + cr)}/${n(cr + rr)} = ${n(m)}${cr === 0 ? ' (with no cash this is just 1/rr)' : ''}.`,
+            `M = ${n(m)} × ${MB} = ${n(m * MB)}.`,
+            `%ΔM + %ΔV = %ΔP + %ΔY → π = ${gM} + (${gV}) − ${gY} = ${pi}%.`,
+            `Fisher: i = r + πᵉ = ${r} + ${pi} = ${r + pi}%.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-ismp', topic: 'is-mp',
       gen() {
         const c = pick([0.75, 0.8]), C0 = pick([100, 150]), T = 100, I0 = pick([200, 250]), h = pick([10, 20]), G = pick([150, 200]), r = int(2, 6), dG = pick([20, 25, 50]);
@@ -442,6 +465,8 @@
     { worked: 'w-monopoly', topic: 'monopoly', q: 'Having found output where MR = MC, a monopolist sets price…', choices: ['On the MR curve', 'Equal to MC', 'On the demand curve above that output', 'Equal to average cost'], correct: 2, why: 'The price is the most buyers will pay for that quantity, read from demand.' },
     { worked: 'w-solow', topic: 'solow', q: 'In the Solow model, a permanent rise in the saving rate…', choices: ['Permanently raises the growth rate of output per worker', 'Raises the steady-state level of output per worker but not its long-run growth rate', 'Has no effect', 'Lowers steady-state capital'], correct: 1, why: 'Higher s raises k* and y* (a level effect); only technological progress sustains growth.' },
     { worked: 'w-externality', topic: 'externalities', q: 'With a negative production externality, the free market produces…', choices: ['Too little', 'The efficient amount', 'Too much', 'Nothing'], correct: 2, why: 'Firms ignore the external cost, so they produce where MPC = MSB, beyond the point where MSC = MSB.' },
+    { worked: 'w-money-creation', topic: 'money-market', q: 'The central bank buys government bonds from commercial banks (an open market purchase). What happens?', choices: ['The monetary base and money supply fall, and interest rates rise', 'The monetary base and money supply rise, and interest rates fall', 'Only the price of bonds changes', 'The reserve ratio rises'], correct: 1, why: 'Paying for the bonds adds reserves to banks, raising the monetary base; banks lend more, the money supply rises, and higher bond prices mean lower interest rates.' },
+    { worked: 'w-money-creation', topic: 'money-market', q: 'Banks raise their reserve ratio, and households start holding more cash. The money multiplier…', choices: ['Rises', 'Falls', 'Is unchanged', 'Becomes 1/cr'], correct: 1, why: 'm = (1 + cr)/(cr + rr): a higher rr or a higher cr (when rr < 1) lowers it, because less base money is re-lent.' },
     { worked: 'w-cournot', topic: 'cournot', q: 'Compared with monopoly and perfect competition, Cournot duopoly output is…', choices: ['Below monopoly output', 'Between monopoly and competitive output', 'Equal to competitive output', 'Above competitive output'], correct: 1, why: 'With linear demand and equal costs, Cournot total output is 2/3 of competitive output, monopoly is 1/2.' },
   ];
 
@@ -450,7 +475,8 @@
     items: [
       // key: stable id used to store per-question results for spaced review.
       ...generators.map((g) => ({ key: 'calc:' + g.worked, kind: 'calc', worked: g.worked, topic: g.topic, make: () => g.gen() })),
-      ...concepts.map((c, i) => ({ key: `concept:${c.worked}:${i}`, kind: 'concept', worked: c.worked, topic: c.topic, make: () => ({ q: c.q, parts: [{ label: 'Choose one', choices: c.choices, correct: c.correct }], solution: [c.why] }) })),
+      // Concept keys use the question text so inserting new questions never reshuffles them.
+      ...concepts.map((c) => ({ key: `concept:${c.worked}:${c.q.slice(0, 60)}`, kind: 'concept', worked: c.worked, topic: c.topic, make: () => ({ q: c.q, parts: [{ label: 'Choose one', choices: c.choices, correct: c.correct }], solution: [c.why] }) })),
     ],
   };
 })();

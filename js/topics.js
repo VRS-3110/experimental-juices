@@ -413,8 +413,8 @@ window.TOPICS = (function () {
     {
       id: 'money-market',
       unit: 'Macroeconomics',
-      title: 'Money market',
-      summary: 'The central bank sets the money supply; money demand falls as interest rates rise. Their intersection sets the nominal interest rate in the short run.',
+      title: 'Money, banking and the money market',
+      summary: 'Money is created by the central bank (the monetary base) and multiplied by commercial banks’ lending. Money demand falls as interest rates rise; where it meets money supply sets the nominal interest rate in the short run.',
       model: 'Money demand i = a − 0.9(M/P); money supply vertical at the level set by the central bank.',
       graph: {
         x: { range: [0, 10], label: 'Quantity of money (M/P)' },
@@ -444,13 +444,17 @@ window.TOPICS = (function () {
         { name: 'Quantity theory (growth form)', tex: R`\%\Delta M + \%\Delta V = \%\Delta P + \%\Delta Y`, note: 'With stable V, money growth above output growth becomes inflation.' },
         { name: 'Fisher equation', tex: R`i = r + \pi^e`, note: 'Nominal rate = real rate + expected inflation.' },
         { name: 'Money multiplier', tex: R`m = \frac{1}{rr},\quad M = m \times MB`, note: 'rr is the reserve ratio; MB is the monetary base.' },
+        { name: 'Money multiplier with cash holdings', tex: R`m = \frac{1 + cr}{cr + rr}`, note: 'cr is the public’s currency-to-deposit ratio. More cash held outside banks means a smaller multiplier.' },
         { name: 'Money demand', tex: R`\frac{M^d}{P} = L(i, Y)`, note: 'Falls with i (opportunity cost), rises with Y (transactions).' },
         { name: 'Taylor rule', tex: R`i = r^* + \pi + 0.5(\pi - \pi^*) + 0.5\,\frac{Y - Y^*}{Y^*}`, note: 'A guide to how central banks set policy rates.' },
       ],
       points: [
+        'Functions of money: medium of exchange, unit of account, store of value.',
+        'Fractional-reserve banking: banks keep a fraction of deposits as reserves and lend the rest, and each loan creates a new deposit elsewhere.',
         'Tools: open market operations, the policy rate, reserve requirements, interest on reserves.',
         'Expansionary policy: Ms right, i down, investment up, AD right.',
         'Bond prices and interest rates move in opposite directions.',
+        'Most central banks now set an interest rate and let the money supply adjust (see Money market and IS–MP together).',
       ],
       tip: 'Label the axes nominal interest rate and quantity of money. Then trace the transmission chain to AD.',
     },

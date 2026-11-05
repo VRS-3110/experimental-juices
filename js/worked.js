@@ -264,6 +264,21 @@
       mistakes: ['Thinking a higher saving rate raises the long-run growth rate (it raises the level only).'],
     },
     {
+      id: 'w-money-creation', topic: 'money-market', kind: 'calc',
+      title: 'Money creation, the quantity theory and the Fisher equation',
+      question: 'The monetary base is 200 and banks hold reserves of 10% of deposits. (a) Find the money multiplier and money supply if the public holds no cash. (b) Redo it if the public holds cash equal to 20% of deposits. (c) In case (b), the central bank buys 10 of bonds. By how much does the money supply change? (d) With M = 2,000, velocity 5 and real output 5,000, find the price level. (e) Money grows 6% a year, real output 2%, velocity is constant, and the real interest rate is 2%. Predict inflation and the nominal interest rate.',
+      steps: [
+        { t: '(a) With no cash outside banks:', m: R`m = \frac{1}{rr} = \frac{1}{0.1} = 10,\qquad M = 10 \times 200 = 2{,}000` },
+        { t: '(b) With a currency-deposit ratio cr = 0.2, some base money leaks out of the banking system as cash:', m: R`m = \frac{1 + cr}{cr + rr} = \frac{1.2}{0.3} = 4,\qquad M = 4 \times 200 = 800` },
+        { t: '(c) An open market purchase of 10 adds 10 to the monetary base:', m: R`\Delta M = m \times \Delta MB = 4 \times 10 = 40` },
+        { t: '(d) Quantity equation:', m: R`P = \frac{MV}{Y} = \frac{2000 \times 5}{5000} = 2` },
+        { t: '(e) Growth form with ΔV = 0:', m: R`\pi \approx \%\Delta M - \%\Delta Y = 6\% - 2\% = 4\%` },
+        { t: 'Fisher equation (taking expected inflation equal to this 4%):', m: R`i = r + \pi^e = 2\% + 4\% = 6\%` },
+      ],
+      answer: '(a) m = 10, M = 2,000. (b) m = 4, M = 800. (c) M rises by 40. (d) P = 2. (e) Inflation ≈ 4% and the nominal interest rate ≈ 6%.',
+      mistakes: ['Using 1/rr when the public also holds cash.', 'Forgetting that a bond purchase raises the monetary base (a sale lowers it).', 'Adding velocity growth with the wrong sign: %ΔM + %ΔV = %ΔP + %ΔY.'],
+    },
+    {
       id: 'w-ismp', topic: 'is-mp', kind: 'calc',
       title: 'IS–MP equilibrium and a fiscal expansion',
       question: 'C = 100 + 0.75(Y − T), T = 100, I = 200 − 20r, G = 150. The central bank sets r = 5. Find the IS curve and equilibrium output. Then G rises by 25.',

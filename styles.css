@@ -422,6 +422,7 @@ details.rev[open] > summary::before { transform: rotate(90deg); }
 .rev-body { display: grid; gap: 16px; padding: 4px 16px 16px; border-top: 1px solid var(--rule); }
 .rev-body h3 { margin: 10px 0 6px; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
 .rev-sum { margin: 12px 0 0; color: var(--ink-2); max-width: 70ch; }
+.rev-note { margin: 12px 0 0; padding: 8px 12px; font-size: 14px; color: var(--ink-2); background: var(--ochre-soft); border-radius: 6px; max-width: 70ch; }
 .rev-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .rev-checks label { display: flex; gap: 10px; align-items: baseline; cursor: pointer; }
 .rev-checks input { accent-color: var(--green); transform: translateY(1px); }

@@ -9,8 +9,8 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 | Part | Topics |
 | --- | --- |
 | Microeconomics (Blocks 1–10) | PPF (linear and concave), supply and demand, price ceilings and floors, elasticities, tax incidence, consumer choice, income and substitution effects, market demand by horizontal summation, isoquants and isocosts, short-run costs and perfect competition (all five short-run cases), LAC envelope (U-shaped, L-shaped, flat, falling, rising), perfect competition in the long run (constant, increasing and decreasing cost industries), monopoly, natural monopoly and regulation (none, P = MC, P = AC), monopolistic competition, Cournot duopoly, labour demand (MRP), Edgeworth box, externalities |
-| Macroeconomics (Blocks 11–20) | Circular flow and national income, Solow growth, Keynesian cross and multipliers, injections and leakages, IS–MP, AD–AS with shock adjustment, Phillips curve, foreign exchange (floating and fixed) |
-| Further topics | Price indices and growth rates, money market, loanable funds, Lorenz curve, tariffs |
+| Macroeconomics (Blocks 11–20) | Circular flow and national income, Solow growth, Keynesian cross and multipliers, injections and leakages, money and banking (Block 14), IS–MP, AD–AS with shock adjustment, Phillips curve, foreign exchange (floating and fixed) |
+| Further topics | Price indices and growth rates, loanable funds, Lorenz curve, tariffs |
 
 Notation follows the guide: M for income in micro, Z for imports and NT for net taxes in macro, (n + d + g) in Solow, γ in SRAS and the Phillips curve.
 
@@ -34,10 +34,10 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 
 ## Revision
 
-The **Revision** tab has one sheet per study block of the EC1002 guide breakdown (Blocks 1–5, 6–8, 9–13, 15, 16, 17–18 and 19–20; the breakdown does not list Block 14). Each sheet has:
+The **Revision** tab has one sheet per study block of the EC1002 guide breakdown (Blocks 1–5, 6–8, 9–16, 17–18 and 19–20). The breakdown did not list Block 14, so its money-and-banking sheet uses standard material and says so. Each sheet has:
 
-- a "you should be able to" checklist to tick off (62 statements in all)
-- the guide's key equations for that block (44 in all)
+- a "you should be able to" checklist to tick off (68 statements in all)
+- the key equations for that block (50 in all)
 - the graphs to practise, each linked to its interactive topic
 - exam focus points, the block's worked answers and key terms
 - a **Test this block** button that starts a 6-question quiz on the block's topics
@@ -52,9 +52,9 @@ Topic pages link to the sheet that covers them. Progress, results and the exam d
 
 ## Reference and practice
 
-- **Glossary**: 178 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
-- **Worked answers**: 25 exam-style run-throughs (21 calculations, 4 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
-- **Quiz**: 36 question types built on the worked answers. 21 calculation types generate new numbers every time, so you practise the method rather than the example; 15 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
+- **Glossary**: 188 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
+- **Worked answers**: 26 exam-style run-throughs (22 calculations, 4 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
+- **Quiz**: 39 question types built on the worked answers. 22 calculation types generate new numbers every time, so you practise the method rather than the example; 17 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
 - **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck.
 
 ## Modes
