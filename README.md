@@ -32,6 +32,24 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 - Keynesian cross above injections and leakages (shared income axis)
 - Deriving the demand curve: price–consumption curve above the demand curve (shared X axis)
 
+## Revision
+
+The **Revision** tab has one sheet per study block of the EC1002 guide breakdown (Blocks 1–5, 6–8, 9–13, 15, 16, 17–18 and 19–20; the breakdown does not list Block 14). Each sheet has:
+
+- a "you should be able to" checklist to tick off (62 statements in all)
+- the guide's key equations for that block (44 in all)
+- the graphs to practise, each linked to its interactive topic
+- exam focus points, the block's worked answers and key terms
+- a **Test this block** button that starts a 6-question quiz on the block's topics
+
+Above the sheets:
+
+- **Readiness dashboard**: checklist progress, overall quiz accuracy, and the weakest topics with a Drill link for each.
+- **Spaced review**: every checked quiz question is scheduled. A fully correct answer comes back after 1, 3, 7, 14 then 30 days; a wrong one is due again today. **Review due questions** runs a quiz from the due queue.
+- **Exam plan**: enter the exam date and the sheets are spread across the days left, with the last fifth kept for mixed review.
+
+Topic pages link to the sheet that covers them. Progress, results and the exam date are kept in this browser's local storage; **Reset revision progress** clears them (click twice to confirm).
+
 ## Reference and practice
 
 - **Glossary**: 178 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
@@ -60,6 +78,7 @@ js/linked.js      two-panel linked graphs
 js/glossary.js    reference glossary of key terms
 js/worked.js      step-by-step worked answers
 js/quiz.js        quiz question generators and concept questions
+js/revision.js    block revision sheets from the EC1002 guide breakdown
 js/app.js         navigation, formula sheet, flashcards
 scripts/build.mjs bundles everything into dist/marginal-notes.html
 ```

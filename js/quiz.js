@@ -448,8 +448,9 @@
   window.QUIZ = {
     // Each item yields a fresh question; concept items are fixed.
     items: [
-      ...generators.map((g) => ({ kind: 'calc', worked: g.worked, topic: g.topic, make: () => g.gen() })),
-      ...concepts.map((c) => ({ kind: 'concept', worked: c.worked, topic: c.topic, make: () => ({ q: c.q, parts: [{ label: 'Choose one', choices: c.choices, correct: c.correct }], solution: [c.why] }) })),
+      // key: stable id used to store per-question results for spaced review.
+      ...generators.map((g) => ({ key: 'calc:' + g.worked, kind: 'calc', worked: g.worked, topic: g.topic, make: () => g.gen() })),
+      ...concepts.map((c, i) => ({ key: `concept:${c.worked}:${i}`, kind: 'concept', worked: c.worked, topic: c.topic, make: () => ({ q: c.q, parts: [{ label: 'Choose one', choices: c.choices, correct: c.correct }], solution: [c.why] }) })),
     ],
   };
 })();

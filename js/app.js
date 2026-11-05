@@ -136,6 +136,7 @@
         </div>
         ${termsFor(t.id).length ? `<section class="key-terms" aria-labelledby="kt-h"><h2 id="kt-h">Key terms</h2><div class="kt-chips">${termsFor(t.id).map((g) => `<a class="kt" href="#${slug(g.term)}" title="${esc(g.def)}">${rich(g.term)}</a>`).join('')}</div></section>` : ''}
         ${WORKED.some((w) => w.topic === t.id) ? `<section class="topic-worked" aria-labelledby="tw-h"><h2 id="tw-h">Worked ${WORKED.filter((w) => w.topic === t.id).length > 1 ? 'examples' : 'example'}</h2>${WORKED.filter((w) => w.topic === t.id).map(workedCard).join('')}</section>` : ''}
+        ${sheetsFor(t.id).length ? `<p class="rev-link">Revise this in: ${sheetsFor(t.id).map((sh) => `<a href="#${sh.id}">${esc(sh.block)} sheet</a>`).join(', ')}</p>` : ''}
         <nav class="pager" aria-label="Topic navigation">
           ${prev ? `<a href="#${prev.id}" class="pager-link"><small>Previous</small><span>${esc(prev.title)}</span></a>` : '<span></span>'}
           ${next ? `<a href="#${next.id}" class="pager-link next"><small>Next</small><span>${esc(next.title)}</span></a>` : '<span></span>'}
@@ -506,7 +507,7 @@
       }
       return `<div class="q-part${state}"><label for="qp${k}">${rich(p.label)}</label><div class="q-input"><input id="qp${k}" inputmode="decimal" autocomplete="off" value="${x.given[k] !== undefined ? esc(x.given[k]) : ''}" ${x.checked ? 'disabled' : ''}>${fb}</div></div>`;
     };
-    main.innerHTML = `<article class="quiz">${head(quiz.label ? `Drill: ${esc(quiz.label)}. New numbers each time.` : 'Type numbers to 2 decimal places where needed. Fractions like 1/3 are fine.')}
+    main.innerHTML = `<article class="quiz">${head(quiz.label ? `Practising: ${esc(quiz.label)}. New numbers each time.` : 'Type numbers to 2 decimal places where needed. Fractions like 1/3 are fine.')}
       <div class="card-meter"><span>Question ${quiz.i + 1} of ${quiz.list.length} · ${marks()} marks so far</span><div class="bar"><i style="width:${(100 * quiz.i) / quiz.list.length}%"></i></div></div>
       <form class="q-card panel" id="q-form" novalidate>
         <p class="card-kicker">${t ? `${esc(t.block || t.unit)} <span aria-hidden="true">·</span> ${esc(t.title)} <span aria-hidden="true">·</span> ` : ''}${x.it.kind === 'calc' ? 'Calculation' : 'Concept'}</p>
@@ -539,10 +540,155 @@
       x.given = given;
       x.ok = x.inst.parts.map((p, k) => (p.choices ? given[k] === p.correct : closeEnough(parseNum(given[k]), p.answer)));
       x.checked = true;
+      recordResult(x.it, x.ok.every(Boolean));
       renderQuiz();
       $('#q-next')?.focus();
     });
     $('#q-quit').addEventListener('click', () => { quiz.list = quiz.list.slice(0, quiz.i + (x.checked ? 1 : 0)); quiz.phase = quiz.list.length ? 'done' : 'setup'; renderQuiz(); });
+  }
+
+  /* ── Revision: progress, spaced review and block sheets ── */
+  const SHEETS = window.REVISION || [];
+  const DAY = 864e5;
+  const BOX_DAYS = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30 }; // days until a correct answer is due again
+  const getStats = () => store.get('mn-quiz-stats', {});
+  // Called after each checked quiz question. A fully correct answer moves the item up a box
+  // (seen again later); any wrong part sends it back to box 1, due again today.
+  function recordResult(it, allRight) {
+    if (!it.key) return;
+    const st = getStats(), now = Date.now(), r = st[it.key] || { a: 0, c: 0, box: 0, due: now };
+    r.a += 1;
+    if (allRight) { r.c += 1; r.box = Math.min(5, r.box + 1); r.due = now + BOX_DAYS[r.box] * DAY; }
+    else { r.box = 1; r.due = now; }
+    st[it.key] = r;
+    store.set('mn-quiz-stats', st);
+  }
+  const dueItems = () => { const st = getStats(), now = Date.now(); return QUIZ_ITEMS.filter((it) => st[it.key] && st[it.key].due <= now); };
+  const checks = () => store.get('mn-revise-checks', {});
+  const ticked = (sheet) => (checks()[sheet.id] || []).length;
+  const sheetsFor = (topicId) => SHEETS.filter((sh) => sh.topics.includes(topicId));
+
+  function readiness() {
+    const total = SHEETS.reduce((s, sh) => s + sh.outcomes.length, 0), done = SHEETS.reduce((s, sh) => s + ticked(sh), 0);
+    const st = getStats(), vals = Object.values(st), a = vals.reduce((s, r) => s + r.a, 0), c = vals.reduce((s, r) => s + r.c, 0);
+    // Weakest topics: accuracy over every quiz item for that topic that has been attempted.
+    const byTopic = {};
+    QUIZ_ITEMS.forEach((it) => { const r = st[it.key]; if (!r) return; const tt = (byTopic[it.topic] ||= { a: 0, c: 0, worked: it.worked }); tt.a += r.a; tt.c += r.c; });
+    const weak = Object.entries(byTopic).filter(([, v]) => v.c < v.a).map(([id, v]) => ({ id, acc: v.c / v.a, n: v.a, worked: v.worked })).sort((x, y) => x.acc - y.acc).slice(0, 5);
+    return { total, done, a, c, weak, due: dueItems().length };
+  }
+
+  function planFor(dateStr) {
+    if (!dateStr) return '<p class="q-pool">Set your exam date to get a day-by-day plan through every block sheet.</p>';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const exam = new Date(dateStr + 'T00:00:00');
+    const days = Math.round((exam - today) / DAY);
+    if (!Number.isFinite(days)) return '';
+    if (days <= 0) return '<p class="q-pool">That date is today or has passed. Use the due-review queue and the quiz for last-minute practice.</p>';
+    const review = days >= 5 ? Math.max(1, Math.round(days * 0.2)) : 0, study = days - review;
+    const rows = [];
+    for (let d = 0; d < days; d++) {
+      const date = new Date(today.getTime() + d * DAY);
+      const label = date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+      const todays = d < study ? SHEETS.filter((_, i) => Math.floor((i * study) / SHEETS.length) === d) : [];
+      const work = d >= study
+        ? 'Mixed review: due questions, a 15-question quiz, and any unticked checklist items'
+        : todays.length
+          ? todays.map((sh) => `<a href="#${sh.id}">${esc(sh.block)}: ${esc(sh.title)}</a> <span class="pl-prog">${ticked(sh)}/${sh.outcomes.length}</span>`).join('<br>')
+          : 'Catch up, or redo the quiz for the last block';
+      rows.push(`<li class="${d === 0 ? 'today' : ''}"><span class="pl-date">${d === 0 ? 'Today' : label}</span><span>${work}</span></li>`);
+    }
+    return `<p class="q-pool">${days} day${days > 1 ? 's' : ''} to go: ${study} for the block sheets${review ? `, then ${review} of mixed review` : ''}.</p><ol class="plan">${rows.join('')}</ol>`;
+  }
+
+  function sheetHtml(sh, open) {
+    const done = ticked(sh), mine = checks()[sh.id] || [];
+    const terms = GLOSSARY.filter((g) => g.topics.some((tid) => sh.topics.includes(tid))).slice(0, 16);
+    const runs = WORKED.filter((w) => sh.topics.includes(w.topic));
+    const testable = QUIZ_ITEMS.some((it) => sh.topics.includes(it.topic));
+    return `
+      <details class="rev" id="${sh.id}" ${open ? 'open' : ''}>
+        <summary>
+          <span class="rev-block">${esc(sh.block)}</span>
+          <span class="rev-title">${esc(sh.title)}</span>
+          <span class="rev-prog" id="rp-${sh.id}">${done}/${sh.outcomes.length}</span>
+        </summary>
+        <div class="rev-body">
+          <p class="rev-sum">${rich(sh.summary)}</p>
+          <section><h3>You should be able to</h3>
+            <ul class="rev-checks">${sh.outcomes.map((o, i) => `<li><label><input type="checkbox" data-sheet="${sh.id}" data-i="${i}" ${mine.includes(i) ? 'checked' : ''}> <span>${rich(o)}</span></label></li>`).join('')}</ul>
+          </section>
+          <section><h3>Key equations from the guide</h3>
+            <ul class="rev-eqs">${sh.equations.map((e) => `<li><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div></li>`).join('')}</ul>
+          </section>
+          <div class="rev-cols">
+            <section><h3>Graphs to practise</h3><ul class="rev-links">${sh.graphs.map((gr) => `<li><a href="#${gr.topic}">${rich(gr.label)}</a></li>`).join('')}</ul></section>
+            <section><h3>Exam focus</h3><ul class="rev-focus">${sh.examFocus.map((f) => `<li>${rich(f)}</li>`).join('')}</ul></section>
+          </div>
+          ${runs.length ? `<section><h3>Worked answers</h3><ul class="rev-links">${runs.map((w) => `<li><a href="#${w.id}">${rich(w.title)}</a></li>`).join('')}</ul></section>` : ''}
+          ${terms.length ? `<section><h3>Key terms</h3><div class="kt-chips">${terms.map((g) => `<a class="kt" href="#${slug(g.term)}" title="${esc(g.def)}">${rich(g.term)}</a>`).join('')}</div></section>` : ''}
+          ${testable ? `<div class="btn-row"><button type="button" class="primary" data-test-sheet="${sh.id}">Test this block (6 questions)</button></div>` : ''}
+        </div>
+      </details>`;
+  }
+
+  const openSheets = new Set();
+  let resetArmed = false;
+  function renderRevise(focus) {
+    if (focus) openSheets.add(focus);
+    const r = readiness(), examDate = store.get('mn-exam-date', '');
+    const pctReady = r.total ? Math.round((100 * r.done) / r.total) : 0;
+    main.innerHTML = `
+      <article class="revise">
+        <header class="topic-head">
+          <p class="eyebrow">Revision</p>
+          <h1>Revision planner</h1>
+          <p class="lede">One sheet per study block of the EC1002 guide breakdown: what you should be able to do, the guide’s equations, the graphs to practise and a quick test. Your breakdown groups Blocks 6–8, 17–18 and 19–20 and does not list Block 14, so the sheets do the same.</p>
+        </header>
+        <section class="rev-dash">
+          <div class="stat"><p class="stat-k">Checklist</p><p class="stat-v" id="rd-ready">${pctReady}%</p><p class="stat-s" id="rd-ready-s">${r.done} of ${r.total} can-do statements ticked</p><div class="bar"><i id="rd-bar" style="width:${pctReady}%"></i></div></div>
+          <div class="stat"><p class="stat-k">Quiz accuracy</p><p class="stat-v">${r.a ? Math.round((100 * r.c) / r.a) + '%' : '—'}</p><p class="stat-s">${r.a ? `${r.c} of ${r.a} questions fully right` : 'Take a quiz to start tracking'}</p></div>
+          <div class="stat"><p class="stat-k">Due for review</p><p class="stat-v">${r.due}</p><p class="stat-s">${r.due ? 'Questions you missed, or are due again' : 'Nothing due right now'}</p>${r.due ? '<button type="button" class="primary" id="rv-due">Review due questions</button>' : ''}</div>
+        </section>
+        ${r.weak.length ? `<section class="rev-weak"><h2>Weakest topics</h2><ul>${r.weak.map((w) => `<li><a href="#${w.id}">${esc(byId[w.id]?.title || w.id)}</a> <span class="pl-prog">${Math.round(100 * w.acc)}% of ${w.n}</span> <a class="ghost-btn" href="#q-${w.worked}">Drill</a></li>`).join('')}</ul></section>` : ''}
+        <section class="rev-plan">
+          <h2>Exam plan</h2>
+          <label class="plan-date" for="exam-date"><span>Exam date</span> <input type="date" id="exam-date" value="${esc(examDate)}"></label>
+          <div id="plan-body">${planFor(examDate)}</div>
+        </section>
+        <section class="rev-sheets">
+          <h2>Block revision sheets</h2>
+          <div class="btn-row"><button type="button" class="ghost-btn" id="rv-open">Open all</button><button type="button" class="ghost-btn" id="rv-close">Close all</button><button type="button" class="ghost-btn" id="rv-reset">${resetArmed ? 'Click again to clear all progress' : 'Reset revision progress'}</button></div>
+          ${['Microeconomics', 'Macroeconomics'].map((part) => `<h3 class="rev-part">${part}</h3>${SHEETS.filter((sh) => sh.part === part).map((sh) => sheetHtml(sh, openSheets.has(sh.id))).join('')}`).join('')}
+        </section>
+      </article>`;
+
+    $('#rv-due')?.addEventListener('click', () => { const d = shuffle(dueItems()); startQuiz(d, Math.min(15, d.length), 'questions due for review'); location.hash = 'quiz'; });
+    $('#exam-date').addEventListener('change', (e) => { store.set('mn-exam-date', e.target.value); $('#plan-body').innerHTML = planFor(e.target.value); });
+    $('#rv-open').addEventListener('click', () => { SHEETS.forEach((sh) => openSheets.add(sh.id)); main.querySelectorAll('details.rev').forEach((d) => { d.open = true; }); });
+    $('#rv-close').addEventListener('click', () => { openSheets.clear(); main.querySelectorAll('details.rev').forEach((d) => { d.open = false; }); });
+    $('#rv-reset').addEventListener('click', () => {
+      // Two-step confirmation inside the page (confirm() is unavailable in the viewer).
+      if (!resetArmed) { resetArmed = true; $('#rv-reset').textContent = 'Click again to clear all progress'; setTimeout(() => { resetArmed = false; const b = $('#rv-reset'); if (b) b.textContent = 'Reset revision progress'; }, 4000); return; }
+      resetArmed = false;
+      store.set('mn-revise-checks', {}); store.set('mn-quiz-stats', {}); store.set('mn-quiz-best', null);
+      renderRevise();
+    });
+    main.querySelectorAll('details.rev').forEach((d) => d.addEventListener('toggle', () => { if (d.open) openSheets.add(d.id); else openSheets.delete(d.id); }));
+    main.querySelectorAll('[data-test-sheet]').forEach((b) => b.addEventListener('click', () => {
+      const sh = SHEETS.find((x) => x.id === b.dataset.testSheet), items = QUIZ_ITEMS.filter((it) => sh.topics.includes(it.topic));
+      startQuiz(items, 6, `${sh.block}: ${sh.title}`); location.hash = 'quiz';
+    }));
+    main.querySelectorAll('.rev-checks input').forEach((cb) => cb.addEventListener('change', () => {
+      const all = checks(), id = cb.dataset.sheet, i = +cb.dataset.i, set = new Set(all[id] || []);
+      if (cb.checked) set.add(i); else set.delete(i);
+      all[id] = [...set]; store.set('mn-revise-checks', all);
+      const sh = SHEETS.find((x) => x.id === id), rr = readiness(), p = rr.total ? Math.round((100 * rr.done) / rr.total) : 0;
+      $('#rp-' + id).textContent = `${ticked(sh)}/${sh.outcomes.length}`;
+      $('#rd-ready').textContent = p + '%'; $('#rd-ready-s').textContent = `${rr.done} of ${rr.total} can-do statements ticked`; $('#rd-bar').style.width = p + '%';
+      if (store.get('mn-exam-date', '')) $('#plan-body').innerHTML = planFor(store.get('mn-exam-date', ''));
+    }));
+    if (focus) { const el = document.getElementById(focus); if (el) requestAnimationFrame(() => el.scrollIntoView({ block: 'start' })); }
   }
 
   /* ── Flashcards ── */
@@ -634,7 +780,8 @@
     const mode = h === 'formulas' ? 'sheet' : h === 'flashcards' ? 'cards'
       : h === 'glossary' || h.startsWith('g-') ? 'glossary'
       : h === 'worked' || WORKED.some((w) => w.id === h) ? 'worked'
-      : h === 'quiz' || h.startsWith('q-') ? 'quiz' : 'graphs';
+      : h === 'quiz' || h.startsWith('q-') ? 'quiz'
+      : h === 'revise' || SHEETS.some((sh) => sh.id === h) ? 'revise' : 'graphs';
     currentMode = mode;
     document.querySelectorAll('.modes a').forEach((a) => a.setAttribute('aria-current', a.dataset.mode === mode ? 'page' : 'false'));
     document.body.classList.remove('nav-open');
@@ -642,6 +789,7 @@
     if (mode === 'sheet') { renderNav(null); renderSheet(); }
     else if (mode === 'glossary') { renderNav(null); renderGlossary(h.startsWith('g-') ? h : null); }
     else if (mode === 'worked') { renderNav(null); renderWorked(h === 'worked' ? null : h); }
+    else if (mode === 'revise') { renderNav(null); renderRevise(h === 'revise' ? null : h); }
     else if (mode === 'quiz') {
       renderNav(null);
       if (h.startsWith('q-')) {
