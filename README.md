@@ -32,6 +32,12 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 - Keynesian cross above injections and leakages (shared income axis)
 - Deriving the demand curve: price–consumption curve above the demand curve (shared X axis)
 
+## Reference and practice
+
+- **Glossary**: 178 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
+- **Worked answers**: 25 exam-style run-throughs (21 calculations, 4 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
+- **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck.
+
 ## Modes
 
 - **Graphs**: move the sliders to shift curves. Equilibria, surplus areas, deadweight loss and other values update live.
@@ -50,6 +56,8 @@ js/topics.js      core study content and shared graph helpers
 js/syllabus.js    EC1002 topics, course order and block numbers
 js/markets.js     supply-and-demand graphs driven by user-entered functions
 js/linked.js      two-panel linked graphs
+js/glossary.js    reference glossary of key terms
+js/worked.js      step-by-step worked answers
 js/app.js         navigation, formula sheet, flashcards
 scripts/build.mjs bundles everything into dist/marginal-notes.html
 ```

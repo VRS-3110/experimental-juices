@@ -134,6 +134,8 @@
             <p>${esc(t.tip)}</p>
           </aside>
         </div>
+        ${termsFor(t.id).length ? `<section class="key-terms" aria-labelledby="kt-h"><h2 id="kt-h">Key terms</h2><div class="kt-chips">${termsFor(t.id).map((g) => `<a class="kt" href="#${slug(g.term)}" title="${esc(g.def)}">${rich(g.term)}</a>`).join('')}</div></section>` : ''}
+        ${WORKED.some((w) => w.topic === t.id) ? `<section class="topic-worked" aria-labelledby="tw-h"><h2 id="tw-h">Worked ${WORKED.filter((w) => w.topic === t.id).length > 1 ? 'examples' : 'example'}</h2>${WORKED.filter((w) => w.topic === t.id).map(workedCard).join('')}</section>` : ''}
         <nav class="pager" aria-label="Topic navigation">
           ${prev ? `<a href="#${prev.id}" class="pager-link"><small>Previous</small><span>${esc(prev.title)}</span></a>` : '<span></span>'}
           ${next ? `<a href="#${next.id}" class="pager-link next"><small>Next</small><span>${esc(next.title)}</span></a>` : '<span></span>'}
@@ -304,13 +306,124 @@
     input.addEventListener('input', () => { query = input.value.trim(); $('#search').value = query; renderNav(null); paint(); });
   }
 
+  /* ── Rich text: x^{2}, x_{t-1} and Q_D style sub/superscripts in plain strings ── */
+  const rich = (s) => esc(s)
+    .replace(/\^\{([^}]*)\}/g, '<sup>$1</sup>')
+    .replace(/_\{([^}]*)\}/g, '<sub>$1</sub>')
+    .replace(/_([A-Za-z0-9]+)/g, '<sub>$1</sub>');
+
+  /* ── Glossary ── */
+  const GLOSSARY = (window.GLOSSARY || []).slice().sort((a, b) => a.term.localeCompare(b.term, 'en', { sensitivity: 'base' }));
+  const slug = (s) => 'g-' + s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const termsFor = (id) => GLOSSARY.filter((g) => g.topics.includes(id));
+  const topicLinks = (ids) => ids.filter((id) => byId[id]).map((id) => `<a href="#${id}">${esc(byId[id].title)}</a>`).join(', ');
+
+  function renderGlossary(focus) {
+    // A link to one term must show it, so clear any filter that could hide it.
+    if (focus && query) { query = ''; $('#search').value = ''; renderNav(null); }
+    main.innerHTML = `
+      <article class="glossary">
+        <header class="topic-head">
+          <p class="eyebrow">Reference</p>
+          <h1>Glossary</h1>
+          <p class="lede">${GLOSSARY.length} key terms with plain-language definitions. Each links to the topics where it is used.</p>
+          <label class="sheet-filter" for="gl-filter"><span class="visually-hidden">Filter terms</span>
+            <input type="search" id="gl-filter" placeholder="Filter terms and definitions, e.g. elasticity, surplus" value="${esc(query)}">
+          </label>
+          <nav class="az" id="gl-az" aria-label="Jump to letter"></nav>
+        </header>
+        <div id="gl-body"></div>
+      </article>`;
+    const paint = () => {
+      const q = query.toLowerCase();
+      const hits = GLOSSARY.filter((g) => !q || (g.term + ' ' + g.def).toLowerCase().includes(q));
+      const groups = {};
+      hits.forEach((g) => { const L = g.term[0].toUpperCase(); (groups[L] ||= []).push(g); });
+      const letters = Object.keys(groups).sort();
+      $('#gl-az').innerHTML = letters.map((L) => `<button type="button" data-letter="${L}">${L}</button>`).join('');
+      $('#gl-body').innerHTML = letters.length ? letters.map((L) => `
+        <section class="gl-letter" id="gl-${L}">
+          <h2>${L}</h2>
+          <dl>${groups[L].map((g) => `
+            <div class="gl-entry" id="${slug(g.term)}">
+              <dt>${rich(g.term)}</dt>
+              <dd>${rich(g.def)}${g.topics.length ? `<span class="gl-topics">See: ${topicLinks(g.topics)}</span>` : ''}</dd>
+            </div>`).join('')}</dl>
+        </section>`).join('') : `<p class="empty">No term matches “${esc(query)}”.</p>`;
+    };
+    paint();
+    $('#gl-filter').addEventListener('input', (e) => { query = e.target.value.trim(); $('#search').value = query; renderNav(null); paint(); });
+    $('#gl-az').addEventListener('click', (e) => { const b = e.target.closest('[data-letter]'); if (b) $('#gl-' + b.dataset.letter)?.scrollIntoView({ block: 'start' }); });
+    if (focus) {
+      const el = document.getElementById(focus);
+      if (el) { el.classList.add('target'); requestAnimationFrame(() => el.scrollIntoView({ block: 'center' })); }
+    }
+  }
+
+  /* ── Worked answers ── */
+  const WORKED = window.WORKED || [];
+  const revealed = new Map(); // example id → number of steps shown
+  const KIND = { calc: 'Calculation', diagram: 'Diagram answer' };
+
+  function workedCard(w) {
+    const t = byId[w.topic], n = revealed.get(w.id) || 0, done = n >= w.steps.length;
+    return `
+      <article class="wk" id="${w.id}" data-wk="${w.id}">
+        <p class="card-kicker">${t ? `${esc(t.block || t.unit)} <span aria-hidden="true">·</span> <a href="#${t.id}">${esc(t.title)}</a> <span aria-hidden="true">·</span> ` : ''}${KIND[w.kind]}</p>
+        <h3>${rich(w.title)}</h3>
+        <p class="wk-q"><strong>Question.</strong> ${rich(w.question)}</p>
+        <ol class="wk-steps">${w.steps.slice(0, n).map((st) => `<li><p>${rich(st.t)}</p>${st.m ? `<div class="eq-math">${tex(st.m, true)}</div>` : ''}</li>`).join('')}</ol>
+        ${done ? `<div class="wk-answer"><p><strong>Answer.</strong> ${rich(w.answer)}</p>${w.mistakes?.length ? `<p class="wk-mistakes-h">Common mistakes</p><ul class="wk-mistakes">${w.mistakes.map((m) => `<li>${rich(m)}</li>`).join('')}</ul>` : ''}</div>` : ''}
+        <div class="btn-row">
+          ${done ? '' : `<button type="button" class="primary" data-wk-act="next">${n ? 'Next step' : 'Start the run-through'} <span class="wk-count">${n}/${w.steps.length}</span></button><button type="button" class="ghost-btn" data-wk-act="all">Show full answer</button>`}
+          ${n ? '<button type="button" class="ghost-btn" data-wk-act="hide">Hide answer</button>' : ''}
+        </div>
+      </article>`;
+  }
+  // One delegated handler serves cards on the topic page and on the Worked answers page.
+  main.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-wk-act]');
+    if (!b) return;
+    const card = b.closest('[data-wk]'), w = WORKED.find((x) => x.id === card.dataset.wk);
+    const n = revealed.get(w.id) || 0;
+    revealed.set(w.id, b.dataset.wkAct === 'next' ? n + 1 : b.dataset.wkAct === 'all' ? w.steps.length : 0);
+    card.outerHTML = workedCard(w);
+    const again = document.getElementById(w.id);
+    (again.querySelector('[data-wk-act="next"]') || again.querySelector('[data-wk-act]'))?.focus({ preventScroll: true });
+  });
+
+  const wkFilter = { unit: 'All', kind: 'all' };
+  function renderWorked(focus) {
+    const units = ['All', ...UNITS.filter((u) => WORKED.some((w) => byId[w.topic]?.unit === u))];
+    const list = WORKED.filter((w) => (wkFilter.unit === 'All' || byId[w.topic]?.unit === wkFilter.unit) && (wkFilter.kind === 'all' || w.kind === wkFilter.kind));
+    main.innerHTML = `
+      <article class="worked">
+        <header class="topic-head">
+          <p class="eyebrow">Practice</p>
+          <h1>Worked answers</h1>
+          <p class="lede">Exam-style questions solved one step at a time. Try each step yourself, then reveal it. Every run-through ends with the final answer and the mistakes examiners see most.</p>
+        </header>
+        <div class="card-bar">
+          <div class="chips" role="group" aria-label="Unit">${units.map((u) => `<button type="button" class="chip" data-wk-unit="${esc(u)}" aria-pressed="${wkFilter.unit === u}">${esc(u)}</button>`).join('')}</div>
+          <div class="seg" role="group" aria-label="Question type">
+            ${[['all', 'All'], ['calc', 'Calculations'], ['diagram', 'Diagram answers']].map(([v, l]) => `<button type="button" data-wk-kind="${v}" aria-pressed="${wkFilter.kind === v}">${l}</button>`).join('')}
+          </div>
+        </div>
+        <div class="wk-list">${list.map(workedCard).join('') || '<p class="empty">No run-throughs match this filter.</p>'}</div>
+      </article>`;
+    main.querySelectorAll('[data-wk-unit]').forEach((b) => b.addEventListener('click', () => { wkFilter.unit = b.dataset.wkUnit; renderWorked(); }));
+    main.querySelectorAll('[data-wk-kind]').forEach((b) => b.addEventListener('click', () => { wkFilter.kind = b.dataset.wkKind; renderWorked(); }));
+    if (focus) { const el = document.getElementById(focus); if (el) { el.classList.add('target'); requestAnimationFrame(() => el.scrollIntoView({ block: 'start' })); } }
+  }
+
   /* ── Flashcards ── */
   const allCards = TOPICS.flatMap((t) => t.equations.map((e) => ({ ...e, topic: t })));
-  const cards = { unit: 'All', dir: 'name', deck: [], known: 0, flipped: false };
+  const defCards = (window.GLOSSARY || []).filter((g) => byId[g.topics[0]]).map((g) => ({ name: g.term, note: g.def, def: true, topic: byId[g.topics[0]] }));
+  const cards = { unit: 'All', dir: 'name', deck: [], known: 0, flipped: false, kind: 'formulas' };
 
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   function newDeck() {
-    cards.deck = shuffle(allCards.filter((c) => cards.unit === 'All' || c.topic.unit === cards.unit));
+    cards.deck = shuffle((cards.kind === 'defs' ? defCards : allCards).filter((c) => cards.unit === 'All' || c.topic.unit === cards.unit));
     cards.known = 0;
     cards.flipped = false;
   }
@@ -322,12 +435,18 @@
     const chips = ['All', ...UNITS].map((u) => `<button type="button" class="chip" data-unit="${esc(u)}" aria-pressed="${cards.unit === u}">${esc(u)}</button>`).join('');
     let face;
     if (!card) {
-      face = `<div class="card done"><p class="card-kicker">Deck complete</p><p class="card-big">You recalled all ${total} formulas.</p><button type="button" class="primary" id="restart">Shuffle and start again</button></div>`;
+      face = `<div class="card done"><p class="card-kicker">Deck complete</p><p class="card-big">You recalled all ${total} ${cards.kind === 'defs' ? 'definitions' : 'formulas'}.</p><button type="button" class="primary" id="restart">Shuffle and start again</button></div>`;
     } else {
-      const front = cards.dir === 'name'
-        ? `<p class="card-big">${esc(card.name)}</p><p class="card-hint">Write the formula, then reveal.</p>`
-        : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-hint">Name this formula and say what it tells you.</p>`;
-      const back = `<div class="card-math">${tex(card.tex, true)}</div><p class="card-big small">${esc(card.name)}</p><p class="eq-note">${esc(card.note)}</p>`;
+      const front = card.def
+        ? (cards.dir === 'name'
+          ? `<p class="card-big">${rich(card.name)}</p><p class="card-hint">Define this term in your own words, then reveal.</p>`
+          : `<p class="card-def">${rich(card.note)}</p><p class="card-hint">Name the term being defined.</p>`)
+        : (cards.dir === 'name'
+          ? `<p class="card-big">${esc(card.name)}</p><p class="card-hint">Write the formula, then reveal.</p>`
+          : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-hint">Name this formula and say what it tells you.</p>`);
+      const back = card.def
+        ? `<p class="card-big small">${rich(card.name)}</p><p class="card-def">${rich(card.note)}</p>`
+        : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-big small">${esc(card.name)}</p><p class="eq-note">${esc(card.note)}</p>`;
       face = `<div class="card${cards.flipped ? ' flipped' : ''}">
         <p class="card-kicker">${esc(card.topic.unit)} <span aria-hidden="true">·</span> <a href="#${card.topic.id}">${esc(card.topic.title)}</a></p>
         ${cards.flipped ? back : front}
@@ -343,20 +462,25 @@
         <header class="topic-head">
           <p class="eyebrow">Practice</p>
           <h1>Flashcards</h1>
-          <p class="lede">Test recall of every formula. Cards you miss go to the back of the deck.</p>
+          <p class="lede">Test recall of every formula or definition. Cards you miss go to the back of the deck.</p>
         </header>
         <div class="card-bar">
-          <div class="chips" role="group" aria-label="Unit">${chips}</div>
-          <div class="seg" role="group" aria-label="Card direction">
-            <button type="button" data-dir="name" aria-pressed="${cards.dir === 'name'}">Name → formula</button>
-            <button type="button" data-dir="tex" aria-pressed="${cards.dir === 'tex'}">Formula → name</button>
+          <div class="seg" role="group" aria-label="Deck">
+            <button type="button" data-kind="formulas" aria-pressed="${cards.kind === 'formulas'}">Formulas</button>
+            <button type="button" data-kind="defs" aria-pressed="${cards.kind === 'defs'}">Definitions</button>
           </div>
+          <div class="seg" role="group" aria-label="Card direction">
+            <button type="button" data-dir="name" aria-pressed="${cards.dir === 'name'}">${cards.kind === 'defs' ? 'Term → definition' : 'Name → formula'}</button>
+            <button type="button" data-dir="tex" aria-pressed="${cards.dir === 'tex'}">${cards.kind === 'defs' ? 'Definition → term' : 'Formula → name'}</button>
+          </div>
+          <div class="chips" role="group" aria-label="Unit">${chips}</div>
         </div>
         <div class="card-meter"><span>${cards.known} of ${total} recalled</span><div class="bar"><i style="width:${total ? (cards.known / total) * 100 : 0}%"></i></div></div>
         ${face}
       </article>`;
 
     main.querySelectorAll('.chip').forEach((b) => b.addEventListener('click', () => { cards.unit = b.dataset.unit; newDeck(); renderCards(); }));
+    main.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => { cards.kind = b.dataset.kind; newDeck(); renderCards(); }));
     main.querySelectorAll('[data-dir]').forEach((b) => b.addEventListener('click', () => { cards.dir = b.dataset.dir; cards.flipped = false; renderCards(); }));
     $('#flip')?.addEventListener('click', flip);
     $('#again')?.addEventListener('click', again);
@@ -378,11 +502,16 @@
   let currentMode = 'graphs';
   function route() {
     const h = location.hash.slice(1);
-    const mode = h === 'formulas' ? 'sheet' : h === 'flashcards' ? 'cards' : 'graphs';
+    const mode = h === 'formulas' ? 'sheet' : h === 'flashcards' ? 'cards'
+      : h === 'glossary' || h.startsWith('g-') ? 'glossary'
+      : h === 'worked' || WORKED.some((w) => w.id === h) ? 'worked' : 'graphs';
     currentMode = mode;
     document.querySelectorAll('.modes a').forEach((a) => a.setAttribute('aria-current', a.dataset.mode === mode ? 'page' : 'false'));
     document.body.classList.remove('nav-open');
+    window.scrollTo(0, 0);
     if (mode === 'sheet') { renderNav(null); renderSheet(); }
+    else if (mode === 'glossary') { renderNav(null); renderGlossary(h.startsWith('g-') ? h : null); }
+    else if (mode === 'worked') { renderNav(null); renderWorked(h === 'worked' ? null : h); }
     else if (mode === 'cards') { renderNav(null); renderCards(); }
     else {
       const t = byId[h] || byId[store.get('mn-last', '')] || TOPICS[0];
@@ -391,14 +520,14 @@
       renderTopic(t);
       $('.modes a[data-mode=graphs]').setAttribute('href', '#' + t.id);
     }
-    window.scrollTo(0, 0);
   }
 
   $('#search').addEventListener('input', (e) => {
     query = e.target.value.trim();
     const active = currentMode === 'graphs' ? (location.hash.slice(1) || store.get('mn-last', '')) : null;
     renderNav(active);
-    if (currentMode === 'sheet') { const f = $('#sheet-filter'); if (f) { f.value = query; f.dispatchEvent(new Event('input')); } }
+    const f = currentMode === 'sheet' ? $('#sheet-filter') : currentMode === 'glossary' ? $('#gl-filter') : null;
+    if (f) { f.value = query; f.dispatchEvent(new Event('input')); }
   });
   $('#menu-btn').addEventListener('click', () => {
     const open = document.body.classList.toggle('nav-open');
