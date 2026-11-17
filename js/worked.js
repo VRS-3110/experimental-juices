@@ -538,5 +538,34 @@
       answer: 'In a competitive market a binding minimum wage reduces employment; under monopsony a moderate one can raise both wages and employment.',
       mistakes: ['Applying the competitive result to every labour market.', 'Drawing the minimum wage below the market wage and calling it binding.'],
     },
+    {
+      id: 'w-monopsony', topic: 'monopsony', kind: 'calc',
+      title: 'Monopsony employment, wages and a minimum wage',
+      question: 'A single employer faces labour supply w = 10 + L, and the marginal revenue product of labour is MRP = 70 − L. (a) Find the marginal factor cost. (b) Find employment and the wage under monopsony, and the gap between MRP and the wage. (c) Find the competitive outcome and the deadweight loss of monopsony. (d) What happens to employment with a minimum wage of 36? Of 45? Of 55?',
+      steps: [
+        { t: '(a) The wage bill is wL = 10L + L², so:', m: R`MFC = \frac{d(wL)}{dL} = 10 + 2L` },
+        { t: '(b) Hire where MFC = MRP, then read the wage off the supply curve:', m: R`10 + 2L = 70 - L \;\Rightarrow\; L_m = 20,\qquad w_m = 10 + 20 = 30,\qquad MRP = 70 - 20 = 50` },
+        { t: 'Each worker adds 50 to revenue but is paid 30: a gap of 20 (a rate of exploitation of 20/30 ≈ 67%).' },
+        { t: '(c) Competitive: supply = MRP:', m: R`10 + L = 70 - L \;\Rightarrow\; L_c = 30,\quad w_c = 40,\qquad DWL = \tfrac{1}{2}(50 - 30)(30 - 20) = 100` },
+        { t: '(d) A minimum wage makes MFC flat at that wage up to the supply curve. The employer hires the smaller of the number willing to work, L_S = w − 10, and the number it wants, L_D = 70 − w:', m: R`\begin{aligned} w = 36&: \; L = \min\{26,\,34\} = 26 \\ w = 45&: \; L = \min\{35,\,25\} = 25 \\ w = 55&: \; L = \min\{45,\,15\} = 15 \end{aligned}` },
+        { t: 'So 36 raises employment from 20 to 26; 45 (above the competitive wage) gives 25, still above 20; 55 is above the MRP at the monopsony employment (50) and cuts employment to 15.' },
+      ],
+      answer: 'MFC = 10 + 2L. Monopsony: L = 20, w = 30, MRP = 50 (gap 20). Competitive: L = 30, w = 40; DWL = 100. Minimum wage 36 → L = 26; 45 → L = 25; 55 → L = 15. Employment rises with the minimum wage up to 40, then falls, and drops below 20 once the minimum is above 50.',
+      mistakes: ['Reading the wage where MFC meets MRP (50) instead of off the supply curve (30).', 'Drawing MFC parallel to supply: with linear supply it has the same intercept and twice the slope.', 'Assuming any minimum wage cuts employment, as it would in a competitive market.'],
+    },
+    {
+      id: 'w-bilateral', topic: 'bilateral-monopoly', kind: 'calc',
+      title: 'Bilateral monopoly: a union facing a monopsonist',
+      question: 'The employer in the monopsony example (supply w = 10 + L, MRP = 70 − L) now bargains with a union that represents all its workers. (a) What wage does the employer want? (b) Treating MRP as its demand curve, what wage and employment does the union want? (c) What employment follows from an agreed wage of 40? Of 45? (d) What decides the wage?',
+      steps: [
+        { t: '(a) The employer’s preferred outcome is the monopsony one: MFC = MRP gives L = 20 and w = 30.' },
+        { t: '(b) The union is a monopoly seller of labour. Its marginal revenue from the demand curve MRP = 70 − L is MR = 70 − 2L; it sets this equal to the supply price:', m: R`70 - 2L = 10 + L \;\Rightarrow\; L_U = 20,\qquad w_U = 70 - 20 = 50` },
+        { t: '(c) At an agreed wage w the employer hires min{L_S(w), L_D(w)} = min{w − 10, 70 − w}:', m: R`\begin{aligned} w = 40&: \; L = \min\{30,\,30\} = 30 \\ w = 45&: \; L = \min\{35,\,25\} = 25 \end{aligned}` },
+        { t: 'An agreed wage of 40 reproduces the competitive outcome: both pay and employment are higher than under monopsony.' },
+        { t: '(d) Theory gives only the range, 30 ≤ w ≤ 50. Where the wage settles depends on bargaining power: strike threats, the employer’s profits, the state of the labour market and the law.' },
+      ],
+      answer: 'Employer: w = 30, L = 20. Union: w = 50, L = 20. The wage lies between 30 and 50 and is set by bargaining power. At w = 40 employment is 30 (the competitive outcome); at w = 45 it is 25. A union facing a monopsonist can raise both wages and employment.',
+      mistakes: ['Expecting supply and demand to pin down a unique wage: bilateral monopoly is indeterminate.', 'Using MFC for the union: the union’s marginal revenue comes from the employer’s labour demand (MRP).', 'Assuming a union always cuts employment, as it would in a competitive labour market.'],
+    },
   ];
 })();

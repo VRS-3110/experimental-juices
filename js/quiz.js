@@ -369,6 +369,54 @@
       },
     },
     {
+      worked: 'w-monopsony', topic: 'monopsony',
+      gen() {
+        const c0 = pick([5, 10, 20]), b = pick([1, 2]), d = pick([1, 2]), Lm = int(8, 25), a = c0 + (2 * b + d) * Lm;
+        const wm = c0 + b * Lm, mrpM = a - d * Lm, Lc = (a - c0) / (b + d), wc = c0 + b * Lc;
+        const room = Math.floor(wc - wm - 0.5);
+        if (room < 1) return this.gen();
+        const mw = wm + int(1, room), Lmw = Math.min((mw - c0) / b, (a - mw) / d);
+        const sup = b === 1 ? `${c0} + L` : `${c0} + ${b}L`, dem = d === 1 ? `${a} − L` : `${a} − ${d}L`;
+        return {
+          q: `A monopsony employer faces labour supply w = ${sup}; the marginal revenue product of labour is MRP = ${dem}.`,
+          parts: [
+            { label: 'Employment under monopsony', answer: Lm },
+            { label: 'Wage under monopsony', answer: wm },
+            { label: 'Gap between MRP and the wage', answer: mrpM - wm },
+            { label: `Employment with a minimum wage of ${mw}`, answer: Lmw },
+          ],
+          solution: [
+            `MFC = ${c0} + ${2 * b}L. MFC = MRP: ${c0} + ${2 * b}L = ${a} − ${d}L → L = ${Lm}.`,
+            `Wage from supply: w = ${c0} + ${b} × ${Lm} = ${wm}. MRP = ${a} − ${d} × ${Lm} = ${mrpM}, a gap of ${mrpM - wm}.`,
+            `Minimum wage ${mw} (between ${wm} and the competitive wage ${n(wc)}): MFC is flat at ${mw}, so L = min{(${mw} − ${c0})/${b}, (${a} − ${mw})/${d}} = ${n(Lmw)}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-bilateral', topic: 'bilateral-monopoly',
+      gen() {
+        const c0 = pick([5, 10, 20]), b = pick([1, 2]), d = pick([1, 2]), Lm = int(8, 25), a = c0 + (2 * b + d) * Lm;
+        const wm = c0 + b * Lm, Lu = (a - c0) / (b + 2 * d), wu = a - d * Lu;
+        if (wu - wm < 3) return this.gen();
+        const w = Math.round(wm + (0.25 + 0.5 * Math.random()) * (wu - wm)), L = Math.min((w - c0) / b, (a - w) / d);
+        const sup = b === 1 ? `${c0} + L` : `${c0} + ${b}L`, dem = d === 1 ? `${a} − L` : `${a} − ${d}L`;
+        return {
+          q: `A monopsony employer (labour supply w = ${sup}, MRP = ${dem}) bargains with a union that acts as a monopoly seller of labour.`,
+          parts: [
+            { label: 'Employer’s preferred wage', answer: wm },
+            { label: 'Union’s preferred wage', answer: wu },
+            { label: `Employment if they agree a wage of ${w}`, answer: L },
+          ],
+          solution: [
+            `Employer: MFC = ${c0} + ${2 * b}L = MRP → L = ${Lm}, w = ${wm} from supply.`,
+            `Union: MR from MRP is ${a} − ${2 * d}L; set equal to supply ${sup}: L = ${n(Lu)}, wage on MRP = ${n(wu)}.`,
+            `At w = ${w}: L = min{(${w} − ${c0})/${b}, (${a} − ${w})/${d}} = ${n(L)}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-game-theory', topic: 'game-theory',
       gen() {
         const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
@@ -682,6 +730,10 @@
     { worked: 'w-fiscal-regimes', topic: 'money-ismp', q: 'With a fixed money supply (an upward-sloping LM), a fiscal expansion…', choices: ['Lowers the interest rate', 'Raises output by more than the multiplier', 'Raises the interest rate, partly crowding out investment', 'Has no effect on money demand'], correct: 2, why: 'Higher income raises money demand; with M/P fixed, r must rise, reducing investment.' },
     { worked: 'w-minimum-wage', topic: 'labour-market', q: 'In a competitive labour market a minimum wage above the market wage will…', choices: ['Raise employment', 'Reduce employment and create unemployment', 'Have no effect', 'Lower the wage'], correct: 1, why: 'Firms move up their MRP curves and hire fewer workers, while more people want to work.' },
     { worked: 'w-minimum-wage', topic: 'labour-market', q: 'Under monopsony, a minimum wage set between the monopsony wage and the competitive wage can…', choices: ['Only reduce employment', 'Raise both the wage and employment', 'Cause the firm to shut down', 'Leave the wage unchanged'], correct: 1, why: 'It flattens the firm’s marginal factor cost, so hiring more no longer raises the wage it pays to everyone.' },
+    { worked: 'w-monopsony', topic: 'monopsony', q: 'Why does a monopsonist’s marginal factor cost lie above the labour supply curve?', choices: ['Because MRP falls as more workers are hired', 'Because to hire one more worker it must raise the wage for all its workers', 'Because of the minimum wage', 'Because labour supply is perfectly elastic'], correct: 1, why: 'MFC = w + L·Δw/ΔL: the extra worker’s wage plus the rise paid to everyone already employed.' },
+    { worked: 'w-monopsony', topic: 'monopsony', q: 'Where does a monopsonist set the wage?', choices: ['Where MFC = MRP', 'On the labour supply curve at the employment where MFC = MRP', 'On the MRP curve at the employment where MFC = MRP', 'Where supply = MRP'], correct: 1, why: 'Employment comes from MFC = MRP; the wage is the lowest that attracts that many workers, read off the supply curve.' },
+    { worked: 'w-bilateral', topic: 'bilateral-monopoly', q: 'In a bilateral monopoly between a union and a monopsony employer, the wage is…', choices: ['Always the competitive wage', 'Always the monopsony wage', 'Somewhere between the employer’s and the union’s preferred wages, depending on bargaining power', 'Set where MFC = MRP'], correct: 2, why: 'Theory gives the range; relative bargaining strength picks the point. The outcome is indeterminate.' },
+    { worked: 'w-bilateral', topic: 'bilateral-monopoly', q: 'What does countervailing power mean in a labour market?', choices: ['The government setting wages', 'A union offsetting a monopsony employer’s power, which can raise both wages and employment', 'Firms merging to cut costs', 'Workers moving to another town'], correct: 1, why: 'A negotiated wage between the monopsony and competitive wages makes MFC flat, so the employer hires more workers at a higher wage.' },
     { worked: 'w-specific-tax', topic: 'tax-incidence', q: 'Demand is very inelastic and supply is elastic. Who bears most of a per-unit tax?', choices: ['Sellers', 'Buyers', 'It is always split equally', 'Whoever is legally liable'], correct: 1, why: 'The less elastic side bears more: the buyers’ share is E_s/(E_s + |E_d|).' },
     { worked: 'w-comparative-advantage', topic: 'ppf', q: 'A country should specialise in the good for which it has…', choices: ['The highest output per worker', 'The lowest opportunity cost', 'The highest price', 'An absolute advantage'], correct: 1, why: 'Comparative advantage, the lower opportunity cost, determines the gains from specialisation.' },
     { worked: 'w-multiplier', topic: 'keynesian-cross', q: 'Full-employment output is 1,000, equilibrium is 860 and the multiplier is 2. The deflationary gap is…', choices: ['140', '70', '280', '1,000'], correct: 1, why: 'The deflationary gap is the shortfall of AD at Y_f: 140 ÷ 2 = 70. The 140 is the output gap.' },

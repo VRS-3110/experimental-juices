@@ -350,6 +350,7 @@ input[type="range"] { width: 100%; accent-color: var(--ochre); margin: 2px 0; }
 .wk-steps:empty { display: none; }
 .wk-steps li::marker { font: 600 13px var(--mono); color: var(--ochre); }
 .wk-steps p { margin: 0; }
+.wk, .wk-list > *, .wk-steps > li { min-width: 0; }
 .wk-answer { padding: 12px 14px; border-left: 3px solid var(--good); background: var(--grid); border-radius: 4px; }
 .wk-answer p { margin: 0; }
 .wk-mistakes-h { margin-top: 10px !important; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--bad); }
