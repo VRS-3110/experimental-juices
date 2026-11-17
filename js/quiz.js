@@ -460,6 +460,48 @@
       },
     },
     {
+      worked: 'w-unions', topic: 'trade-unions',
+      gen() {
+        const c = pick([5, 10, 15, 20]), a = c + 2 * int(10, 25), k = int(2, 8);
+        const wc = (a + c) / 2, wu = wc + k, LD = a - wu, LS = wu - c;
+        return {
+          q: `In a competitive labour market, labour demand is w = ${a} − L and labour supply is w = ${c} + L. A union negotiates a wage of ${wu}.`,
+          parts: [
+            { label: 'Competitive wage', answer: wc },
+            { label: 'Employment at the union wage', answer: LD },
+            { label: 'Workers who want a job at the union wage but are not hired', answer: LS - LD },
+          ],
+          solution: [
+            `Competitive: ${a} − L = ${c} + L → L = ${(a - c) / 2}, w = ${wc}.`,
+            `At w = ${wu} employers hire L_D = ${a} − ${wu} = ${LD}.`,
+            `Labour supplied L_S = ${wu} − ${c} = ${LS}, so ${LS - LD} want work but are not hired.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-efficiency-wage', topic: 'efficiency-wages',
+      gen() {
+        const beta = pick([0.25, 0.5]), u = int(2, 8), ws = u / (1 - beta), es = (ws - u) ** beta;
+        const wc = Math.floor(ws) - int(1, 2);
+        if (wc < 1) return this.gen();
+        const A = 4 * wc;
+        return {
+          q: `A worker’s effort is e = (w − ${u})^${beta} for wages above ${u}. Labour demand is L_D = ${A} − 2w and labour supply is L_S = 2w.`,
+          parts: [
+            { label: 'Efficiency wage (minimises the wage per unit of effort)', answer: ws },
+            { label: 'Effort at the efficiency wage', answer: es },
+            { label: 'Involuntary unemployment if firms pay the efficiency wage', answer: 4 * ws - A },
+          ],
+          solution: [
+            `Solow condition: ${beta}w/(w − ${u}) = 1 → w* = ${u}/(1 − ${beta}) = ${n(ws)}.`,
+            `Effort: (${n(ws)} − ${u})^${beta} = ${n(es, 3)}.`,
+            `Market clears at ${A} − 2w = 2w → w = ${wc}. At w* = ${n(ws)}: L_D = ${n(A - 2 * ws)}, L_S = ${n(2 * ws)}, unemployment ${n(4 * ws - A)}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-game-theory', topic: 'game-theory',
       gen() {
         const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
@@ -781,6 +823,10 @@
     { worked: 'w-compensating', topic: 'wage-differentials', q: 'Which of these is most likely to cause a disequilibrium wage differential?', choices: ['Danger at work', 'Geographical immobility after a rise in demand in one region', 'The skill a job requires', 'Unsocial hours'], correct: 1, why: 'Immobility stops workers moving to where wages have risen; the gap narrows as they move. The others persist in equilibrium.' },
     { worked: 'w-human-capital', topic: 'human-capital', q: 'Which change would make a degree a better investment, other things equal?', choices: ['A rise in the interest rate', 'A rise in tuition fees', 'A rise in the graduate earnings premium', 'A shorter working life after graduating'], correct: 2, why: 'A larger premium raises the PV of the gains; the other changes raise costs or shrink the PV of gains.' },
     { worked: 'w-human-capital', topic: 'human-capital', q: 'The signalling view of education says that…', choices: ['Education raises productivity, which raises wages', 'Education may raise wages mainly by showing employers who is able, so the social return can be lower than the private return', 'Education has no effect on wages', 'Firms always pay for general training'], correct: 1, why: 'In Spence’s model a degree sorts workers by ability; it pays the individual but adds less to output than the human-capital view implies.' },
+    { worked: 'w-unions', topic: 'trade-unions', q: 'A union in a competitive labour market raises the wage above equilibrium. Employment falls least when…', choices: ['Labour is easy to replace with machines', 'Labour is a large share of the firm’s costs', 'Demand for the firm’s product is price-inelastic', 'Demand for the product is very elastic'], correct: 2, why: 'Marshall’s rules: inelastic product demand makes labour demand inelastic, so a higher wage costs fewer jobs.' },
+    { worked: 'w-unions', topic: 'trade-unions', q: 'Which union strategy can raise both wages and employment in a competitive labour market?', choices: ['Bargaining for a wage above the market wage', 'A closed shop that limits entry', 'Raising labour productivity and so the demand for labour', 'Longer apprenticeships'], correct: 2, why: 'Shifting labour demand right raises both; the other strategies move along demand or shift supply left, cutting employment.' },
+    { worked: 'w-efficiency-wage', topic: 'efficiency-wages', q: 'Why might a firm pay more than the market-clearing wage?', choices: ['Because the minimum wage forces it to', 'Because higher pay raises effort, cuts quits or attracts better workers enough to lower the cost per unit of effort', 'Because it has monopsony power', 'Because labour supply is perfectly elastic'], correct: 1, why: 'Efficiency wage theories: shirking, turnover, adverse selection and fairness.' },
+    { worked: 'w-efficiency-wage', topic: 'efficiency-wages', q: 'With efficiency wages, why does unemployment not push wages down?', choices: ['Unions block wage cuts', 'Cutting the wage would reduce effort by more, raising the cost per unit of effort', 'Unemployed workers do not want jobs', 'The government fixes wages'], correct: 1, why: 'At w* the firm is already at its lowest cost per unit of effort, so it gains nothing by hiring cheaper workers.' },
     { worked: 'w-specific-tax', topic: 'tax-incidence', q: 'Demand is very inelastic and supply is elastic. Who bears most of a per-unit tax?', choices: ['Sellers', 'Buyers', 'It is always split equally', 'Whoever is legally liable'], correct: 1, why: 'The less elastic side bears more: the buyers’ share is E_s/(E_s + |E_d|).' },
     { worked: 'w-comparative-advantage', topic: 'ppf', q: 'A country should specialise in the good for which it has…', choices: ['The highest output per worker', 'The lowest opportunity cost', 'The highest price', 'An absolute advantage'], correct: 1, why: 'Comparative advantage, the lower opportunity cost, determines the gains from specialisation.' },
     { worked: 'w-multiplier', topic: 'keynesian-cross', q: 'Full-employment output is 1,000, equilibrium is 860 and the multiplier is 2. The deflationary gap is…', choices: ['140', '70', '280', '1,000'], correct: 1, why: 'The deflationary gap is the shortfall of AD at Y_f: 140 ÷ 2 = 70. The 140 is the output gap.' },

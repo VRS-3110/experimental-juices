@@ -380,6 +380,196 @@
     tip: 'Draw both age–earnings profiles and shade the cost (fees and forgone earnings) and the gain. Then compare present values: discounting shrinks the later gains far more than the early costs, so a higher interest rate can turn a positive NPV negative.',
   };
 
+  /* ── Trade unions in a competitive labour market ── */
+  // Demand w = 14 − b_d(L − 20) and supply w = 14 + 0.5(L − 20): both pass through the competitive
+  // point (L = 20, w = 14), so changing the demand slope b_d keeps that point fixed.
+  // Methods: 0 set a wage above the market wage; 1 restrict labour supply; 2 raise labour demand.
+  const UW = 14, UL = 20, US = 0.5;
+  const unionOut = (s) => {
+    const bd = s.bd, dem = (L) => UW - bd * (L - UL), sup = (L) => UW + US * (L - UL);
+    if (s.m === 0) {
+      const wu = UW + 8 * s.k, LD = UL - (wu - UW) / bd, LS = UL + (wu - UW) / US;
+      return { dem, sup, w: wu, L: LD, LS, unemp: LS - LD };
+    }
+    if (s.m === 1) {
+      const shift = 16 * s.k, x = -US * shift / (bd + US);      // supply moves left by `shift` workers
+      return { dem, sup, sup2: (L) => sup(L + shift), shift, L: UL + x, w: dem(UL + x), unemp: 0 };
+    }
+    const shift = 16 * s.k, x = (bd * shift) / (bd + US);       // demand moves right by `shift` workers
+    return { dem, sup, dem2: (L) => dem(L - shift), shift, L: UL + x, w: sup(UL + x), unemp: 0 };
+  };
+  const tradeUnions = {
+    id: 'trade-unions',
+    title: 'Trade unions in a competitive labour market',
+    summary: 'A trade union can raise its members’ pay in three ways: by bargaining for a wage above the market wage, by restricting the supply of labour to the occupation, or by raising the demand for its members’ labour. In a competitive labour market the first two raise wages only at the cost of jobs; raising demand can lift both. How many jobs are lost depends on how elastic the demand for labour is.',
+    model: 'Labour demand w = 14 − b(L − 20) and labour supply w = 14 + 0.5(L − 20), so the competitive outcome is L = 20 at a wage of 14 whatever the demand slope b. Union strength k (0 to 1) sets how far the union pushes: a wage up to 8 above the market, or a shift of supply or demand by up to 16 workers.',
+    graph: {
+      x: { range: [0, 44], label: 'Workers (L)', ticks: range(0, 44, 4) },
+      y: { range: [0, 28], label: 'Wage ($)', ticks: range(0, 28, 4) },
+      params: [
+        { id: 'm', label: 'How the union acts', options: [{ v: 0, label: 'Sets a wage' }, { v: 1, label: 'Restricts supply' }, { v: 2, label: 'Raises demand' }], value: 0 },
+        { id: 'k', label: 'Union strength (k)', min: 0, max: 1, step: 0.01, value: 0.5 },
+        { id: 'bd', label: 'Slope of labour demand (b)', min: 0.2, max: 2, step: 0.05, value: 0.5, hint: 'steeper = less elastic' },
+      ],
+      valid(s) {
+        const z = unionOut(s);
+        if (z.L < 1) return 'At this wage employers would hire almost no one: demand for labour is too elastic for such a large rise.';
+        if (z.w > 27.5) return 'The wage would go off the top of the chart.';
+        return true;
+      },
+      draw(s) {
+        const z = unionOut(s), out = [];
+        if (s.m === 0) {
+          out.push(C(z.dem, 'd', 'D_L = MRP', { to: 44, labelAt: Math.min(40, UL + 13 / s.bd) }), C(z.sup, 'g', 'S_L', { to: 44, labelAt: 40 }));
+          if (s.k > 0.005) {
+            out.push(Hl(z.w, 'o', 'Union wage', { dash: true, labelLeft: true }));
+            out.push(S(z.L, z.w, z.LS, z.w, 'r', '', { bold: true }));
+            if (z.unemp > 3) out.push(T((z.L + z.LS) / 2, z.w + 0.9, 'Unemployed', 'r', { anchor: 'middle' }));
+            out.push(P(z.LS, z.w, '', 'g', { small: true }), G(z.LS, z.w, 'L_S', null, 'g'));
+          }
+        } else if (s.m === 1) {
+          out.push(C(z.dem, 'd', 'D_L = MRP', { to: 44, labelAt: Math.min(40, UL + 13 / s.bd) }), C(z.sup, 'ghost', 'S_L', { to: 44, labelAt: 40 }));
+          if (s.k > 0.005) out.push(C(z.sup2, 'g', 'S_L (restricted)', { to: 44, labelAt: Math.max(4, 34 - z.shift) }));
+        } else {
+          out.push(C(z.sup, 'g', 'S_L', { to: 44, labelAt: 40 }), C(z.dem, 'ghost', 'D_L', { to: 44, labelAt: Math.min(36, UL + 10 / s.bd) }));
+          if (s.k > 0.005) out.push(C(z.dem2, 'd', 'D_L (raised)', { to: 44, labelAt: Math.min(40, UL + z.shift + 8 / s.bd) }));
+        }
+        out.push(P(UL, UW, 'Competitive', 'n', { small: true, dx: s.m === 2 ? -9 : 9, dy: s.m === 0 ? 16 : -8 }));
+        out.push(G(z.L, z.w, 'L', 'w'), P(z.L, z.w, 'Union outcome', 'o', s.m === 0 && s.k > 0.005 ? { dx: -9, dy: 18 } : {}));
+        return out;
+      },
+      readout(s) {
+        const z = unionOut(s);
+        const rows = [
+          ['Wage (competitive 14)', money(z.w)],
+          ['Employment (competitive 20)', f(z.L)],
+          ['Union wage premium', pct((100 * (z.w - UW)) / UW)],
+          ['Change in employment', `${z.L >= UL ? '+' : '−'}${f(Math.abs(z.L - UL))}`],
+          ['Wage bill wL (competitive 280)', money(z.w * z.L)],
+        ];
+        if (s.m === 0) rows.push(['Workers wanting jobs but not hired', f(z.unemp)]);
+        let status, tone = 'info';
+        if (s.k < 0.005) status = 'No union effect: the market sets a wage of 14 and employs 20.';
+        else if (s.m === 0) { status = `The union wage is above the market wage, so employers move up the labour demand curve and hire ${f(UL - z.L)} fewer workers, while ${f(z.LS - UL)} more want jobs. The less elastic the demand for labour (steeper b), the fewer jobs are lost.`; tone = 'warn'; }
+        else if (s.m === 1) { status = `Restricting entry (a closed shop, licensing, long apprenticeships) shifts supply left: the wage rises to ${money(z.w)} and employment falls to ${f(z.L)}. Excluded workers crowd into other occupations and push wages down there.`; tone = 'warn'; }
+        else { status = `Raising the demand for labour (productivity deals, campaigns to buy the product) lifts both the wage (${money(z.w)}) and employment (${f(z.L)}).`; tone = 'good'; }
+        return { rows, status, tone };
+      },
+    },
+    equations: [
+      { name: 'Employment at a union wage', tex: R`L = L_D(w_U) < L^*,\qquad \text{unemployment} = L_S(w_U) - L_D(w_U)`, note: 'In a competitive market the employer chooses employment on its demand curve.' },
+      { name: 'Jobs lost and the elasticity of labour demand', tex: R`\frac{\%\Delta L}{\%\Delta w} = \varepsilon_D`, note: 'The smaller |ε_D|, the less employment falls for a given wage rise.' },
+      { name: 'Union wage premium', tex: R`\text{premium} = \frac{w_U - w_N}{w_N}`, note: 'Union wage w_U against the non-union wage w_N for similar workers.' },
+      { name: 'Wage-bill-maximising union', tex: R`MR_L = 0 \iff |\varepsilon_D| = 1`, note: 'A union that maximises its members’ total pay picks the point of unit elasticity on labour demand, if that is above the competitive wage.' },
+    ],
+    points: [
+      'Marshall’s rules: labour demand is less elastic, and unions stronger, when labour is hard to substitute, labour is a small share of total cost, demand for the product is inelastic, and other inputs are inelastically supplied.',
+      'Union goals differ: maximise members’ employment, the wage, the wage bill, or members’ total rent. Higher wages for insiders can mean fewer jobs for outsiders (insider–outsider theory).',
+      'The UK union wage premium has fallen as membership fell from over half of workers in 1979 to about a fifth today.',
+      'Against monopsony, a union can raise both wages and employment (see bilateral monopoly).',
+      'Possible benefits: a collective voice for workers (Freeman and Medoff), lower quit rates, better training and safety. Possible costs: lost jobs, strikes and restrictive practices.',
+    ],
+    tip: 'Say which kind of labour market you are in. In a competitive market, show the union wage as a horizontal line above equilibrium, mark employment on the demand curve and the excess supply of labour. State that the job loss depends on the elasticity of labour demand.',
+  };
+
+  /* ── Efficiency wages ── */
+  // Effort e(w) = 10((w − u)/24)^β for w > u, where u is the worker's outside option.
+  // The firm minimises the wage per unit of effort w/e: the Solow condition (elasticity of effort = 1)
+  // gives w* = u/(1 − β). Labour market: L_D = 40 − 2w (w = 20 − 0.5L), L_S = 2w (w = 0.5L).
+  const effort = (s) => (w) => (w > s.u ? 10 * ((w - s.u) / 24) ** s.beta : 0);
+  const eff = (s) => {
+    const ws = s.u / (1 - s.beta), es = effort(s)(ws), wc = 10;
+    const paid = Math.max(ws, wc), L = 40 - 2 * paid, LS = 2 * paid;
+    return { ws, es, perEffort: ws / es, wc, paid, L, LS, unemp: LS - L, binding: ws > wc };
+  };
+  const efficiencyWages = {
+    id: 'efficiency-wages',
+    title: 'Efficiency wages',
+    summary: 'An efficiency wage is a wage set above the market-clearing level because paying more raises productivity. Better-paid workers shirk less (they have more to lose if caught and sacked), quit less, attract better applicants and feel fairly treated. A firm sets the wage that minimises its cost per unit of effort. Because every firm pays above the market wage, more people want jobs than there are jobs: involuntary unemployment that does not go away by itself.',
+    model: 'Effort e(w) = 10((w − u)/24)^β for wages above the worker’s outside option u, so effort rises with the wage at a falling rate. The firm minimises the wage per unit of effort, w/e(w), which gives the Solow condition: the elasticity of effort with respect to the wage equals 1, so w* = u/(1 − β). Labour market: demand L_D = 40 − 2w, supply L_S = 2w, clearing at w = 10.',
+    graph: {
+      layout: 'row',
+      params: [
+        { id: 'u', label: 'Worker’s outside option (u)', min: 2, max: 12, step: 0.5, value: 6, hint: 'benefits, or pay elsewhere' },
+        { id: 'beta', label: 'How strongly effort responds to pay (β)', min: 0.2, max: 0.7, step: 0.05, value: 0.5 },
+      ],
+      valid(s) {
+        if (eff(s).ws > 19) return 'The efficiency wage would be so high that firms would hire almost no one.';
+        return true;
+      },
+      panels: [
+        {
+          title: 'The firm: effort and the wage',
+          x: { range: [0, 24], label: 'Wage (w)', ticks: range(0, 24, 4) },
+          y: { range: [0, 10], label: 'Effort per worker (e)', ticks: range(0, 10, 2) },
+          draw(s) {
+            const z = eff(s), e = effort(s), slope = z.es / z.ws;
+            return [
+              C(e, 'g', '', { from: s.u, to: 24 }),
+              T(Math.min(19, z.ws + 5), e(Math.min(19, z.ws + 5)) - 0.9, 'Effort e(w)', 'g'),
+              C((w) => slope * w, 'o', '', { to: Math.min(24, 10 / slope), dash: true }),
+              T(0.8 * Math.min(24, 10 / slope) - 0.3, slope * 0.8 * Math.min(24, 10 / slope) + 0.35, 'Ray from origin', 'o', { anchor: 'end' }),
+              V(s.u, 'ghost', 'u'),
+              G(z.ws, z.es, 'w*', 'e*'),
+              P(z.ws, z.es, 'Lowest wage per unit of effort', 'o', { dx: 9, dy: 20 }),
+            ];
+          },
+        },
+        {
+          title: 'The labour market: unemployment',
+          x: { range: [0, 40], label: 'Workers (L)', ticks: range(0, 40, 5) },
+          y: { range: [0, 24], label: 'Wage (w)', ticks: range(0, 24, 4) },
+          draw(s) {
+            const z = eff(s), out = [
+              C((L) => 20 - 0.5 * L, 'd', 'D_L', { to: 40, labelAt: 33 }),
+              C((L) => 0.5 * L, 'g', 'S_L', { to: 40, labelAt: 36 }),
+              P(20, 10, 'Market-clearing', 'n', { small: true, dx: 9, dy: 16 }),
+            ];
+            if (z.binding) {
+              out.push(Hl(z.ws, 'o', 'Efficiency wage', { dash: true, labelLeft: true }));
+              out.push(S(z.L, z.ws, z.LS, z.ws, 'r', '', { bold: true }));
+              if (z.unemp > 4) out.push(T((z.L + z.LS) / 2, z.ws + 0.9, 'Unemployed', 'r', { anchor: 'middle' }));
+              out.push(G(z.L, z.ws, 'L', null), P(z.L, z.ws, 'Employed', 'o', { dx: -9, dy: 18 }), P(z.LS, z.ws, '', 'g', { small: true }));
+            }
+            return out;
+          },
+        },
+      ],
+      readout(s) {
+        const z = eff(s);
+        return {
+          rows: [
+            ['Efficiency wage w* = u/(1 − β)', money(z.ws)],
+            ['Effort at w*', f(z.es)],
+            ['Wage per unit of effort at w*', money(z.perEffort)],
+            ['Market-clearing wage', money(z.wc)],
+            ['Wage paid / employment', `${money(z.paid)} / ${f(z.L)}`],
+            ['Involuntary unemployment', f(Math.max(0, z.unemp))],
+          ],
+          status: z.binding
+            ? `Firms pay ${money(z.ws)}, above the market-clearing wage of ${money(z.wc)}, because the extra effort more than pays for itself. ${f(z.unemp)} workers would take a job at that wage but cannot get one, and wages do not fall: a firm that cut pay would get less effort per pound.`
+            : `The efficiency wage (${money(z.ws)}) is below the market-clearing wage, so firms simply pay the market wage of ${money(z.wc)} and the labour market clears.`,
+          tone: z.binding ? 'warn' : 'info',
+        };
+      },
+    },
+    equations: [
+      { name: 'Firm’s problem', tex: R`\min_w \; \frac{w}{e(w)}`, note: 'Cost per unit of effort, not cost per worker.' },
+      { name: 'Solow condition', tex: R`\frac{de}{dw}\cdot\frac{w}{e} = 1 \iff \frac{de}{dw} = \frac{e}{w}`, note: 'At w* the ray from the origin is tangent to the effort curve.' },
+      { name: 'This model', tex: R`e = 10\Big(\frac{w - u}{24}\Big)^{\beta} \;\Rightarrow\; \frac{\beta w}{w - u} = 1 \;\Rightarrow\; w^* = \frac{u}{1 - \beta}` },
+      { name: 'Involuntary unemployment', tex: R`L_S(w^*) - L_D(w^*) > 0 \quad \text{when } w^* > w_c` },
+    ],
+    points: [
+      'Shirking model (Shapiro and Stiglitz): if monitoring is imperfect, a wage above the outside option makes the threat of dismissal costly, so workers put in effort. Unemployment is the discipline device.',
+      'Turnover model: higher pay cuts quits, saving hiring and training costs.',
+      'Adverse selection model: a higher wage attracts a better pool of applicants when the firm cannot observe ability.',
+      'Gift exchange (Akerlof): workers respond to a fair wage with extra effort.',
+      'Example often cited: Henry Ford’s $5 day in 1914 halved quit rates and raised productivity.',
+      'Macroeconomic implication: wages are rigid downward and unemployment can persist, because cutting wages would cut effort. A higher outside option (better benefits, lower unemployment) raises the efficiency wage.',
+    ],
+    tip: 'Draw effort against the wage with a ray from the origin tangent to it: the tangency is the efficiency wage. Then show it as a horizontal line above equilibrium in the labour market and label the gap as involuntary unemployment. Explain one mechanism (shirking, turnover, selection) in words.',
+  };
+
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
     window.TOPICS.splice(i + 1, 0, Object.assign(topic, { unit, block }));
@@ -389,4 +579,6 @@
   insertAfter('monopsony', bilateralMonopoly, MICRO, block);
   insertAfter('bilateral-monopoly', wageDifferentials, MICRO, block);
   insertAfter('wage-differentials', humanCapital, MICRO, block);
+  insertAfter('human-capital', tradeUnions, MICRO, block);
+  insertAfter('trade-unions', efficiencyWages, MICRO, block);
 })();

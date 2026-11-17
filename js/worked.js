@@ -595,5 +595,36 @@
       answer: 'C = 30 (fees 10 + forgone earnings 20). At 5%: PV of gains 60, NPV 30. IRR = 10%, so invest when r < 10%: yes at 5%, no at 12% (NPV −5). With a 40-year horizon at 5%, PV = 51.5 and NPV = 21.5, still worth it.',
       mistakes: ['Leaving out earnings forgone, often the largest cost of education.', 'Not discounting future earnings, which overstates the return.', 'Comparing the IRR with zero instead of with the interest rate.'],
     },
+    {
+      id: 'w-unions', topic: 'trade-unions', kind: 'calc',
+      title: 'A union in a competitive labour market',
+      question: 'In a competitive labour market, labour demand is w = 50 − L and labour supply is w = 10 + L. (a) Find the competitive wage and employment. (b) A union negotiates a wage of 36. Find employment and the number of workers who want a job but cannot get one. (c) Instead the union restricts entry so that supply becomes w = 22 + L. Find the outcome. (d) Instead the union agrees a productivity deal that raises demand to w = 62 − L. Find the outcome. (e) Redo (b) if demand is w = 70 − 2L (same competitive point, less elastic).',
+      steps: [
+        { t: '(a) Demand = supply:', m: R`50 - L = 10 + L \;\Rightarrow\; L^* = 20,\qquad w^* = 30` },
+        { t: '(b) At w = 36 employers hire off their demand curve and more people want work:', m: R`L_D = 50 - 36 = 14,\qquad L_S = 36 - 10 = 26,\qquad \text{excess supply} = 12` },
+        { t: 'The wage rises by 20% but 6 jobs are lost.' },
+        { t: '(c) Restricted supply:', m: R`50 - L = 22 + L \;\Rightarrow\; L = 14,\qquad w = 36` },
+        { t: 'The same wage and employment as (b), but with no queue: the excluded workers are kept out of the occupation altogether.' },
+        { t: '(d) Higher demand:', m: R`62 - L = 10 + L \;\Rightarrow\; L = 26,\qquad w = 36` },
+        { t: '(e) Check the competitive point: 70 − 2(20) = 30. At w = 36:', m: R`L_D = \frac{70 - 36}{2} = 17` },
+        { t: 'Only 3 jobs are lost instead of 6: the less elastic the demand for labour, the smaller the employment cost of a union wage.' },
+      ],
+      answer: 'Competitive: w = 30, L = 20. Union wage 36: L = 14 with 26 wanting work (excess supply 12). Restricting supply: also w = 36, L = 14. Raising demand: w = 36, L = 26, so both rise. With less elastic demand (w = 70 − 2L), the union wage of 36 cuts employment only to 17.',
+      mistakes: ['Reading employment off the supply curve at the union wage: employers choose how many to hire.', 'Assuming every union strategy costs jobs: raising demand does not.', 'Ignoring the elasticity of labour demand when judging the job losses.'],
+    },
+    {
+      id: 'w-efficiency-wage', topic: 'efficiency-wages', kind: 'calc',
+      title: 'Finding the efficiency wage and the unemployment it causes',
+      question: 'A worker’s effort is e = (w − 4)^0.5 for wages above 4. (a) Find the wage that minimises the cost per unit of effort. (b) Find effort and the wage per unit of effort, and compare with wages of 6 and 12. (c) Labour demand is L_D = 28 − 2w and supply is L_S = 2w. Find the market-clearing wage, and employment and unemployment if every firm pays the efficiency wage.',
+      steps: [
+        { t: '(a) Minimise w/e. The first-order condition is the Solow condition, elasticity of effort = 1:', m: R`\frac{de}{dw}\cdot\frac{w}{e} = \frac{0.5\,w}{w - 4} = 1 \;\Rightarrow\; w^* = 8` },
+        { t: '(b) At w = 8:', m: R`e = \sqrt{4} = 2,\qquad \frac{w}{e} = 4` },
+        { t: 'At w = 6: e = √2 ≈ 1.41, w/e ≈ 4.24. At w = 12: e = √8 ≈ 2.83, w/e ≈ 4.24. Both cost more per unit of effort than 8.' },
+        { t: '(c) Market clearing:', m: R`28 - 2w = 2w \;\Rightarrow\; w_c = 7,\qquad L = 14` },
+        { t: 'At the efficiency wage of 8:', m: R`L_D = 28 - 16 = 12,\qquad L_S = 16,\qquad \text{involuntary unemployment} = 4` },
+      ],
+      answer: 'w* = 8 (Solow condition), where effort is 2 and the wage per unit of effort is 4, lower than at 6 or 12 (both ≈ 4.24). The market would clear at 7 with 14 employed; at the efficiency wage 12 are employed and 4 are involuntarily unemployed.',
+      mistakes: ['Minimising the wage per worker instead of the wage per unit of effort.', 'Expecting the unemployed to bid wages down: firms will not cut pay below w* because effort would fall more.', 'Forgetting that the efficiency wage matters only if it is above the market-clearing wage.'],
+    },
   ];
 })();

@@ -190,6 +190,8 @@
         'Show the employer’s and the union’s preferred outcomes in a bilateral monopoly and explain why the wage depends on bargaining power.',
         'Distinguish compensating (equilibrium) from disequilibrium wage differentials, and find the allocation of workers between two sectors with free movement.',
         'Evaluate an investment in education with NPV and the internal rate of return, including earnings forgone, and discuss signalling.',
+        'Show three ways a union can raise wages in a competitive labour market and explain how the elasticity of labour demand affects job losses.',
+        'Derive the efficiency wage from the Solow condition and show the involuntary unemployment it causes.',
       ],
       examFocus: ['Multiply marginal product by price (or MR) before comparing with the wage.', 'Under monopsony, employment comes from MFC = MRP but the wage is read off the supply curve.'],
       equations: [
@@ -199,6 +201,8 @@
         { name: 'Bilateral monopoly wage range', tex: R`w_m \le w \le w_U` },
         { name: 'Compensating differential (free movement)', tex: R`w_B - w_A = \theta` },
         { name: 'Net present value of education', tex: R`NPV = \sum_{t=0}^{T} \frac{B_t - C_t}{(1 + r)^t}` },
+        { name: 'Union wage: employment and excess supply', tex: R`L = L_D(w_U),\qquad L_S(w_U) - L_D(w_U)` },
+        { name: 'Efficiency wage (Solow condition)', tex: R`\frac{de}{dw}\cdot\frac{w}{e} = 1` },
       ],
       graphs: [
         { label: 'Labour market beside one firm, with a minimum wage', topic: 'labour-market' },
@@ -206,8 +210,10 @@
         { label: 'Bilateral monopoly: employer’s and union’s preferred wages', topic: 'bilateral-monopoly' },
         { label: 'Two-sector diagram: compensating and disequilibrium differentials', topic: 'wage-differentials' },
         { label: 'Age–earnings profiles and the return to education', topic: 'human-capital' },
+        { label: 'Union wage, restricted supply and raised demand', topic: 'trade-unions' },
+        { label: 'Efficiency wage: effort curve and the unemployment it causes', topic: 'efficiency-wages' },
       ],
-      topics: ['labour-market', 'monopsony', 'bilateral-monopoly', 'wage-differentials', 'human-capital'],
+      topics: ['labour-market', 'monopsony', 'bilateral-monopoly', 'wage-differentials', 'human-capital', 'trade-unions', 'efficiency-wages'],
     },
     {
       id: 'b-10', block: 'Block 10', part: 'Microeconomics', title: 'Welfare economics and externalities',
