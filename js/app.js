@@ -207,7 +207,24 @@
       });
     });
     main.querySelectorAll('.ctrl .seg button').forEach((b) => {
-      b.addEventListener('click', () => { s[b.dataset.param] = parseFloat(b.dataset.v); sync(); });
+      b.addEventListener('click', () => {
+        s[b.dataset.param] = parseFloat(b.dataset.v);
+        // A switch can make the current slider values invalid (e.g. Giffen at a high price):
+        // walk each slider back toward its default, one step at a time, until valid again.
+        const verdict = g.valid ? g.valid(s) : true;
+        if (verdict !== true) {
+          for (const p of g.params) {
+            if (p.options) continue;
+            const home = rv(p.value, s), step = rv(p.step, s);
+            for (let i = 0; i < 2000 && g.valid(s) !== true && Math.abs(s[p.id] - home) > 1e-9; i++) {
+              s[p.id] = +(s[p.id] + Math.sign(home - s[p.id]) * Math.min(step, Math.abs(home - s[p.id]))).toFixed(10);
+            }
+            if (g.valid(s) === true) break;
+          }
+        }
+        sync();
+        if (verdict !== true) draw(verdict);
+      });
     });
     main.querySelectorAll('[data-action]').forEach((b) => {
       b.addEventListener('click', () => { g.actions[+b.dataset.action].run(s); sync(); });

@@ -62,53 +62,138 @@
     {
       id: 'income-substitution',
       title: 'Income and substitution effects',
-      summary: 'A price change has two parts. The substitution effect is the move along the original indifference curve to the new relative prices. The income effect is the move from there to the new budget line.',
-      model: 'U = √(XY), income M = 40, PY = 4, PX starts at 4. The compensated budget line (Hicks) keeps utility at U₀.',
-      graph: {
-        x: { range: [0, 12], label: 'Good X' },
-        y: { range: [0, 12], label: 'Good Y' },
-        params: [{ id: 'px', label: 'New price of X (PX₁)', min: 2, max: 8, step: 0.1, value: 8, hint: 'Starting price is 4' }],
-        draw(s) {
-          const M = 40, py = 4, u0 = 5;
-          const x2 = M / (2 * s.px), y2 = M / (2 * py);
-          const xc = u0 * Math.sqrt(py / s.px), yc = u0 * Math.sqrt(s.px / py), mc = 2 * u0 * Math.sqrt(s.px * py);
-          const u1 = x2 * y2;
-          return [
-            C((X) => (M - 4 * X) / py, 'n', 'BL₀', { to: 10, labelAt: 1.2 }),
-            C((X) => (M - s.px * X) / py, 'd', 'BL₁', { to: M / s.px }),
-            changed(s.px, 4) ? C((X) => (mc - s.px * X) / py, 'g', 'Compensated', { dash: true, to: mc / s.px }) : null,
-            C((X) => 25 / X, 's', 'U₀', { from: 0.3 }),
-            changed(s.px, 4) ? C((X) => u1 / X, 's', 'U₁', { from: 0.3, dash: true }) : null,
-            changed(s.px, 4) ? S(5, 0.7, xc, 0.7, 'g', 'SE', { bold: true, below: true }) : null,
-            changed(s.px, 4) ? S(xc, 1.6, x2, 1.6, 'd', 'IE', { bold: true, below: true }) : null,
-            G(5, 5, 'X₀', null, 'n'),
-            changed(s.px, 4) ? G(xc, yc, "X'", null, 'g') : null,
-            changed(s.px, 4) ? G(x2, y2, 'X₁', null, 'd') : null,
-            P(5, 5, 'E₀', 'n'),
-            changed(s.px, 4) ? P(xc, yc, "E'", 'g') : null,
-            changed(s.px, 4) ? P(x2, y2, 'E₁', 'o', { dx: -9, dy: -9 }) : null,
-          ];
-        },
-        readout(s) {
-          const xc = 5 * Math.sqrt(4 / s.px), x2 = 20 / s.px;
-          return {
-            rows: [['X before (E₀)', f(5)], ['X compensated (E′)', f(xc)], ['X after (E₁)', f(x2)], ['Substitution effect', f(xc - 5)], ['Income effect', f(x2 - xc)], ['Total effect', f(x2 - 5)]],
-            status: s.px > 4 ? 'Price rise: both effects reduce X, so X is a normal good here.' : s.px < 4 ? 'Price fall: both effects raise X, so X is a normal good here.' : 'Move the slider to change the price of X.',
-          };
-        },
-      },
+      summary: 'A price change has two parts. The substitution effect is the move along the original indifference curve to the new relative prices; it always goes against the price change. The income effect is the move from there to the new budget line, and its direction depends on whether the good is normal, inferior or Giffen.',
+      model: 'M = 40, P_Y = 4, P_X starts at 4 with E₀ = (5, 5) on U₀: XY = 25. E′ is where the compensated (Hicks) budget line touches U₀. The income effect is set by the type of good: normal (Cobb–Douglas), inferior (opposes the substitution effect at half its size) or Giffen (opposes it at 1.5 times its size).',
+      graph: (function () {
+        const M = 40, PY = 4, P0 = 4, X0 = 5;
+        // Quantity of X at price p for each type of good; all pass through E₀ at p = 4.
+        const xComp = (p) => X0 * Math.sqrt(P0 / p);                // on U₀ at the new price ratio
+        const demand = [
+          (p) => M / (2 * p),                                        // normal (Cobb–Douglas)
+          (p) => xComp(p) - 0.5 * (xComp(p) - X0),                   // inferior: IE = −½ SE
+          (p) => xComp(p) - 1.5 * (xComp(p) - X0),                   // Giffen:   IE = −1½ SE
+        ];
+        const y1Of = (type, p) => (M - p * demand[type](p)) / PY;
+        const feasible = (type, p) => y1Of(type, p) >= 0.25;
+        const NAMES = ['normal', 'inferior', 'Giffen'];
+
+        // An indifference curve through E₁ tangent to the new budget line. Normal goods use the
+        // Cobb–Douglas curve; otherwise a shifted hyperbola y = b + m·w²/(x − x₁ + w), with w chosen
+        // so the curve stays strictly on the right side of U₀ (below it after a price rise, above it
+        // after a fall) and the two curves never cross.
+        function u1Curve(type, p) {
+          const x1 = demand[type](p), y1 = y1Of(type, p), m = p / PY;
+          if (type === 0) return (x) => (x1 * y1) / x;
+          const want = p > P0 ? -1 : 1;
+          let best = null, bestBad = Infinity;
+          for (const k of [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1, 1.25, 1.5, 2, 3, 5, 8, 12]) {
+            const w = k * x1, a = x1 - w, b = y1 - m * w;
+            const fn = (x) => (x > a ? b + (m * w * w) / (x - a) : NaN);
+            let bad = 0;
+            for (let x = 0.15; x <= 12; x += 0.05) {
+              const v = fn(x);
+              if (Number.isFinite(v) && Math.sign(v - 25 / x) !== want) bad++;
+            }
+            if (bad < bestBad) { bestBad = bad; best = fn; }
+            if (bad === 0) break;
+          }
+          return best;
+        }
+        // The demand curve each case implies, as price on the vertical axis against X.
+        const inverse = [
+          (x) => M / (2 * x),
+          (x) => (x > 2.5 ? (5 / (x - 2.5)) ** 2 : NaN),
+          (x) => (x < 7.5 ? (5 / (7.5 - x)) ** 2 : NaN),
+        ];
+        const pMax = (type) => { let p = 2; while (p < 8 && feasible(type, p + 0.01)) p += 0.01; return p; };
+
+        return {
+          layout: 'column',
+          params: [
+            { id: 'type', label: 'Type of good', options: [{ v: 0, label: 'Normal' }, { v: 1, label: 'Inferior' }, { v: 2, label: 'Giffen' }], value: 0 },
+            { id: 'px', label: 'New price of X (P_X₁)', min: 2, max: 8, step: 0.1, value: 6, hint: 'Starting price is 4' },
+          ],
+          valid(s) {
+            if (!feasible(s.type, s.px)) return 'A Giffen good means buying more X when its price rises, which needs more spending on X. Past this price that spending would use up all income, so the case cannot continue.';
+            return true;
+          },
+          panels: [
+            {
+              title: 'Indifference curves and budget lines',
+              x: { range: [0, 12], label: 'Good X' },
+              y: { range: [0, 12], label: 'Good Y' },
+              draw(s) {
+                const moved = changed(s.px, P0);
+                const xc = xComp(s.px), yc = 25 / xc, x1 = demand[s.type](s.px), y1 = y1Of(s.type, s.px);
+                const mc = 2 * 5 * Math.sqrt(s.px * PY); // compensated income: cost of reaching U₀ at the new prices
+                const rise = s.px > P0;
+                return [
+                  C((X) => (M - P0 * X) / PY, 'n', 'BL₀', { to: M / P0, labelAt: 1.2 }),
+                  C((X) => (M - s.px * X) / PY, 'd', 'BL₁', { to: M / s.px }),
+                  moved ? C((X) => (mc - s.px * X) / PY, 'g', 'Compensated', { dash: true, to: mc / s.px }) : null,
+                  C((X) => 25 / X, 's', 'U₀', { from: 0.3 }),
+                  moved ? C(u1Curve(s.type, s.px), 's', 'U₁', { from: 0.3, dash: true, labelAt: rise ? Math.min(10.5, x1 + 2.2) : undefined }) : null,
+                  // Effect bars sit along the bottom of the chart, which stays clear in every case.
+                  moved ? S(X0, 0.55, xc, 0.55, 'g', 'SE', { bold: true }) : null,
+                  moved ? S(xc, 1.6, x1, 1.6, 'd', 'IE', { bold: true }) : null,
+                  G(X0, 5, 'X₀', null, 'n'),
+                  moved ? G(xc, yc, "X'", null, 'g') : null,
+                  moved ? G(x1, y1, 'X₁', null, 'o') : null,
+                  P(X0, 5, 'E₀', 'n'),
+                  moved ? P(xc, yc, "E'", 'g') : null,
+                  moved ? P(x1, y1, 'E₁', 'o', { dx: -9, dy: -9 }) : null,
+                ];
+              },
+            },
+            {
+              title: 'Demand for X',
+              x: { range: [0, 12], label: 'Good X' },
+              y: { range: [0, 10], label: 'Price of X', ticks: range(0, 10, 2) },
+              draw(s) {
+                const x1 = demand[s.type](s.px), top = pMax(s.type);
+                // Draw the demand curve only over prices where the case is feasible.
+                const fn = (x) => { const p = inverse[s.type](x); return p >= 2 - 1e-9 && p <= top + 1e-9 ? p : NaN; };
+                return [
+                  C(fn, 'd', s.type === 2 ? 'd_X slopes up' : 'd_X', { from: 0.3 }),
+                  Hl(P0, 'ghost', ''),
+                  G(X0, P0, '', 'P₀', 'n'),
+                  P(X0, P0, 'E₀', 'n'),
+                  changed(s.px, P0) ? G(x1, s.px, '', 'P₁', 'o') : null,
+                  changed(s.px, P0) ? P(x1, s.px, 'E₁', 'o', { dx: -9 }) : null,
+                ];
+              },
+            },
+          ],
+          readout(s) {
+            const xc = xComp(s.px), x1 = demand[s.type](s.px), se = xc - X0, ie = x1 - xc, tot = x1 - X0;
+            const rows = [['X before (E₀)', f(X0)], ['X compensated (E′)', f(xc)], ['X after (E₁)', f(x1)], ['Substitution effect', f(se)], ['Income effect', f(ie)], ['Total effect', f(tot)]];
+            if (!changed(s.px, P0)) return { rows, status: 'Move the price slider to see the two effects.' };
+            const dir = s.px > P0 ? 'rise' : 'fall';
+            const notes = [
+              `Normal good: after a price ${dir} the income effect goes the same way as the substitution effect, so demand slopes down.`,
+              `Inferior good: the income effect works against the substitution effect but is smaller, so X still ${s.px > P0 ? 'falls' : 'rises'} overall. Demand still slopes down, just more steeply.`,
+              `Giffen good: the income effect works against the substitution effect and is larger, so X ${s.px > P0 ? 'rises when its price rises' : 'falls when its price falls'}. Demand slopes up over this range.`,
+            ];
+            return { rows, status: notes[s.type], tone: s.type === 2 ? 'warn' : 'info' };
+          },
+        };
+      })(),
       equations: [
         { name: 'Decomposition', tex: R`\Delta X = \underbrace{(X' - X_0)}_{\text{substitution}} + \underbrace{(X_1 - X')}_{\text{income}}`, note: 'E′ sits on the original indifference curve at the new price ratio.' },
         { name: 'Compensated budget line', tex: R`P_{X_1} X + P_Y Y = M'`, note: 'Parallel to the new budget line, tangent to the old indifference curve.' },
         { name: 'Sign of the substitution effect', tex: R`\frac{\partial X^{c}}{\partial P_X} \le 0`, note: 'Always opposite to the price change.' },
+        { name: 'Slutsky equation', tex: R`\frac{\partial X}{\partial P_X} = \frac{\partial X^{c}}{\partial P_X} - X\,\frac{\partial X}{\partial M}`, note: 'Total = substitution (always ≤ 0) + income term. If ∂X/∂M < 0 (inferior) the income term is positive; if it outweighs the substitution term, the good is Giffen.' },
+        { name: 'Classification for a price rise', tex: R`\text{Normal: } IE < 0;\quad \text{Inferior: } 0 < IE < |SE|;\quad \text{Giffen: } IE > |SE|`, note: 'SE is always negative for a price rise.' },
       ],
       points: [
         'Normal good: income effect reinforces the substitution effect.',
-        'Inferior good: income effect opposes the substitution effect but is smaller.',
+        'Inferior good: income effect opposes the substitution effect but is smaller, so demand still slopes down.',
         'Giffen good: an inferior good whose income effect outweighs the substitution effect, so demand slopes up.',
-        'Joining the optimum at each price traces the price-consumption curve; plotting X against PX gives the demand curve.',
+        'Every Giffen good is inferior, but most inferior goods are not Giffen.',
+        'Giffen behaviour needs the good to take a large share of the budget, so the income effect of its price change is big. That is why the Giffen case here cannot continue past a certain price.',
+        'Joining the optimum at each price traces the price-consumption curve; plotting X against P_X gives the demand curve.',
       ],
-      tip: 'Draw the compensated line parallel to the new budget line. Label E₀, E′ and E₁, then mark SE and IE along the X axis.',
+      tip: 'Draw the compensated line parallel to the new budget line. Label E₀, E′ and E₁, then mark SE and IE along the X axis. For an inferior or Giffen good, show IE pointing the opposite way to SE, and say which is larger.',
     },
     {
       id: 'market-demand',
