@@ -132,6 +132,8 @@
         'Explain the Bertrand paradox and how product differentiation or capacity limits resolve it.',
         'Show first- and third-degree price discrimination and explain the conditions they need.',
         'Use the kinked demand curve to explain sticky prices in oligopoly.',
+        'Find dominant strategies and Nash equilibria in a payoff matrix, and solve a sequential game by backward induction.',
+        'Explain why cartels are a prisoner’s dilemma and when repetition can sustain collusion (δ ≥ (T − R)/(T − P)).',
         'Find the Stackelberg leader and follower outputs and compare them with Cournot.',
         'Compare regulation options for a natural monopoly.',
       ],
@@ -143,6 +145,7 @@
         { name: 'Cournot reaction function', tex: R`MR_A = a - 2bQ_A - bQ_B = MC_A` },
         { name: 'Bertrand (identical goods)', tex: R`p_A = p_B = MC` },
         { name: 'Third-degree price discrimination', tex: R`MR_1 = MR_2 = MC` },
+        { name: 'Collusion in a repeated prisoner’s dilemma', tex: R`\delta \ge \frac{T - R}{T - P}` },
         { name: 'Stackelberg (equal costs)', tex: R`q_L = \frac{a - c}{2b},\quad q_F = \frac{a - c}{4b}` },
       ],
       graphs: [
@@ -156,8 +159,10 @@
         { label: 'Bertrand price reaction functions', topic: 'bertrand' },
         { label: 'Stackelberg leader’s isoprofit and the follower’s reaction function', topic: 'stackelberg' },
         { label: 'Kinked demand curve and the MR gap', topic: 'kinked-demand' },
+        { label: 'Payoff matrices, Nash equilibrium and the entry game', topic: 'game-theory' },
+        { label: 'Prisoner’s dilemma and the repeated-game condition', topic: 'prisoners-dilemma' },
       ],
-      topics: ['costs', 'lr-industry', 'monopoly', 'price-discrimination', 'natural-monopoly', 'monopolistic-competition', 'cournot', 'bertrand', 'stackelberg', 'kinked-demand'],
+      topics: ['costs', 'lr-industry', 'monopoly', 'price-discrimination', 'natural-monopoly', 'monopolistic-competition', 'cournot', 'bertrand', 'stackelberg', 'kinked-demand', 'game-theory', 'prisoners-dilemma'],
     },
     {
       id: 'b-9', block: 'Block 9', part: 'Microeconomics', title: 'Factor and labour markets',

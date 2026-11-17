@@ -259,6 +259,54 @@
       },
     },
     {
+      worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma',
+      gen() {
+        const S = int(0, 3), P = S + int(1, 4), R = P + int(2, 6), T = R + int(1, 6);
+        const dc = (T - R) / (T - P), d = pick([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+        if (Math.abs(d - dc) < 0.02) return this.gen();
+        return {
+          q: `A two-firm cartel, repeated for ever with grim-trigger strategies. Profits per period: both collude ${R} each; both cheat ${P} each; a lone cheat earns ${T} while the colluder gets ${S}. The discount factor is δ = ${d}.`,
+          parts: [
+            { label: 'Critical discount factor δ*', answer: dc },
+            { label: 'Present value of colluding for ever', answer: R / (1 - d) },
+            { label: `Can collusion be sustained at δ = ${d}?`, choices: ['Yes', 'No'], correct: d >= dc ? 0 : 1 },
+          ],
+          solution: [
+            `Collusion holds if R/(1 − δ) ≥ T + δP/(1 − δ), i.e. δ ≥ (T − R)/(T − P) = (${T} − ${R})/(${T} − ${P}) = ${n(dc, 3)}.`,
+            `PV of colluding = ${R}/(1 − ${d}) = ${n(R / (1 - d))}; PV of cheating = ${T} + ${d} × ${P}/(1 − ${d}) = ${n(T + (d * P) / (1 - d))}.`,
+            `δ = ${d} is ${d >= dc ? 'at least' : 'below'} δ*, so collusion ${d >= dc ? 'can' : 'cannot'} be sustained.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-game-theory', topic: 'game-theory',
+      gen() {
+        const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
+        // Avoid ties in best responses so the answer is clear-cut.
+        if (pay[0][0][0] === pay[1][0][0] || pay[0][1][0] === pay[1][1][0] || pay[0][0][1] === pay[0][1][1] || pay[1][0][1] === pay[1][1][1]) return this.gen();
+        const rows = ['Up', 'Down'], cols = ['Left', 'Right'];
+        const ne = [];
+        for (const i of [0, 1]) for (const j of [0, 1]) if (pay[i][j][0] > pay[1 - i][j][0] && pay[i][j][1] > pay[i][1 - j][1]) ne.push([i, j]);
+        const opts = ['(Up, Left) only', '(Up, Right) only', '(Down, Left) only', '(Down, Right) only', 'Two equilibria', 'None in pure strategies'];
+        const correct = ne.length === 0 ? 5 : ne.length === 2 ? 4 : ne[0][0] * 2 + ne[0][1];
+        const dom = [0, 1].findIndex((i) => pay[i][0][0] > pay[1 - i][0][0] && pay[i][1][0] > pay[1 - i][1][0]);
+        const cell = (i, j) => `(${rows[i]}, ${cols[j]}) → (${pay[i][j][0]}, ${pay[i][j][1]})`;
+        return {
+          q: `Payoffs (Row, Column): ${cell(0, 0)}; ${cell(0, 1)}; ${cell(1, 0)}; ${cell(1, 1)}.`,
+          parts: [
+            { label: 'Pure-strategy Nash equilibria', choices: opts, correct },
+            { label: 'Does Row have a dominant strategy?', choices: ['Yes, Up', 'Yes, Down', 'No'], correct: dom === -1 ? 2 : dom },
+          ],
+          solution: [
+            `Row’s best responses: to Left → ${rows[pay[0][0][0] > pay[1][0][0] ? 0 : 1]}; to Right → ${rows[pay[0][1][0] > pay[1][1][0] ? 0 : 1]}.`,
+            `Column’s best responses: to Up → ${cols[pay[0][0][1] > pay[0][1][1] ? 0 : 1]}; to Down → ${cols[pay[1][0][1] > pay[1][1][1] ? 0 : 1]}.`,
+            `Cells where both are best responses: ${ne.length ? ne.map(([i, j]) => `(${rows[i]}, ${cols[j]})`).join(' and ') : 'none'}. Row ${dom === -1 ? 'has no dominant strategy (its best response changes)' : `always does best with ${rows[dom]}`}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-price-discrimination', topic: 'price-discrimination',
       gen() {
         const c = pick([10, 20]), b1 = pick([1, 2]), b2 = pick([1, 2]);
@@ -551,6 +599,11 @@
     { worked: 'w-monopoly', topic: 'monopoly', q: 'Having found output where MR = MC, a monopolist sets price…', choices: ['On the MR curve', 'Equal to MC', 'On the demand curve above that output', 'Equal to average cost'], correct: 2, why: 'The price is the most buyers will pay for that quantity, read from demand.' },
     { worked: 'w-solow', topic: 'solow', q: 'In the Solow model, a permanent rise in the saving rate…', choices: ['Permanently raises the growth rate of output per worker', 'Raises the steady-state level of output per worker but not its long-run growth rate', 'Has no effect', 'Lowers steady-state capital'], correct: 1, why: 'Higher s raises k* and y* (a level effect); only technological progress sustains growth.' },
     { worked: 'w-externality', topic: 'externalities', q: 'With a negative production externality, the free market produces…', choices: ['Too little', 'The efficient amount', 'Too much', 'Nothing'], correct: 2, why: 'Firms ignore the external cost, so they produce where MPC = MSB, beyond the point where MSC = MSB.' },
+    { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'What makes a game a prisoner’s dilemma?', choices: ['Neither player has a dominant strategy', 'Each player has a dominant strategy, but the resulting equilibrium is worse for both than another outcome', 'The game has two Nash equilibria', 'One player always wins'], correct: 1, why: 'Individually rational (dominant) choices produce a Pareto-inefficient equilibrium.' },
+    { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'In an infinitely repeated cartel game with grim-trigger strategies, collusion is easier to sustain when…', choices: ['Firms are impatient (low discount factor)', 'The one-off gain from cheating is large', 'Firms value future profits highly (high discount factor)', 'The game has a known last round'], correct: 2, why: 'Collusion needs δ ≥ (T − R)/(T − P): patient firms lose more from future punishment than they gain from cheating once.' },
+    { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'A cartel game is repeated exactly 10 times and both firms know it. Backward induction predicts…', choices: ['Collusion in every round', 'Collusion until round 10, then cheating', 'Cheating in every round', 'Random play'], correct: 2, why: 'Both cheat in the last round, so the ninth is effectively the last, and so on back to round 1.' },
+    { worked: 'w-game-theory', topic: 'game-theory', q: 'Which statement about Nash equilibrium is correct?', choices: ['Every Nash equilibrium uses dominant strategies', 'A dominant-strategy equilibrium is a Nash equilibrium, but a Nash equilibrium need not involve dominant strategies', 'A Nash equilibrium always maximises joint payoffs', 'Every game has exactly one pure-strategy Nash equilibrium'], correct: 1, why: 'Nash only requires each strategy to be a best response to the others, which holds for dominant strategies but also in games like coordination games.' },
+    { worked: 'w-game-theory', topic: 'game-theory', q: 'An incumbent threatens to start a price war if a rival enters, but once entry happens a price war would lower its own profit. The threat is…', choices: ['Credible, so the rival stays out', 'Not credible, so backward induction predicts entry and accommodation', 'Credible only if the rival is larger', 'Irrelevant to the outcome in every case'], correct: 1, why: 'At the incumbent’s decision node, accommodating pays more, so the rival anticipates that and enters. A credible deterrent needs a commitment that changes the incumbent’s payoffs.' },
     { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Under third-degree price discrimination, which group pays the higher price?', choices: ['The group with more elastic demand', 'The group with less elastic demand', 'The larger group', 'Both pay the same, because MC is the same'], correct: 1, why: 'Each market sets MR = MC, so (P − MC)/P = 1/|PED|: a lower elasticity means a higher markup.' },
     { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Compared with a single-price monopoly, perfect (first-degree) price discrimination…', choices: ['Lowers output and raises deadweight loss', 'Raises output to the competitive level, removes deadweight loss and leaves consumers no surplus', 'Leaves output unchanged but raises price', 'Gives all the surplus to consumers'], correct: 1, why: 'Every unit with willingness to pay above MC is sold, so output is efficient, but the firm captures all of the surplus.' },
     { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Which condition is needed for price discrimination to work?', choices: ['Perfect competition', 'Identical demand elasticities in every group', 'Buyers cannot resell the good to each other', 'Constant returns to scale'], correct: 2, why: 'If low-price buyers could resell to high-price buyers, arbitrage would remove the price difference. Market power and different elasticities are also needed.' },

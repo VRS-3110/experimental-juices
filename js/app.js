@@ -91,6 +91,7 @@
 
     const figure = g ? `
           <section class="panel graph-panel" aria-label="Interactive graph">
+            ${t.game && t.game.fromState ? '<div id="game-box"></div>' : ''}
             <div class="graph-wrap" id="graph"></div>
             ${t.market ? marketPanel(t, s) : `<p class="model"><span>Model</span> ${sub(t.model)}</p>`}
             <div class="controls">${controls}</div>
@@ -99,7 +100,7 @@
               <p class="status" id="status" hidden></p>
             </div>
             <div class="btn-row">${actions}<button type="button" class="ghost-btn" id="reset">Reset</button></div>
-          </section>` : `
+          </section>` : t.game ? gamePanel(t) : `
           <section class="panel graph-panel" aria-label="Diagram">
             <div class="graph-wrap">${t.diagram}</div>
             ${t.model ? `<p class="model"><span>Read it</span> ${esc(t.model)}</p>` : ''}
@@ -124,6 +125,7 @@
             </ul>
           </section>
         </div>
+        ${t.extra ? `<section class="topic-extra panel">${t.extra}</section>` : ''}
         <div class="notes">
           <section>
             <h2>Remember</h2>
@@ -144,12 +146,14 @@
       </article>`;
 
     bindMastered(t);
+    if (t.game && t.game.editable) bindGame(t);
     if (!g) return;
 
     const draw = (limit) => {
       $('#graph').innerHTML = g.panels
         ? `<div class="panes ${g.layout || 'row'}">${g.panels.map((pn) => `<figure class="pane"><figcaption>${esc(rv(pn.title, s))}</figcaption>${window.renderGraph({ ...pn, aria: pn.title }, s)}</figure>`).join('')}</div>`
         : window.renderGraph({ ...g, aria: t.title + ' graph' }, s);
+      if (t.game && t.game.fromState) $('#game-box').innerHTML = gameHtml(t.game.fromState(s), false);
       const r = g.readout(s);
       $('#readout').innerHTML = r.rows.map(([k, v]) => `<div><dt>${sub(k)}</dt><dd>${sub(v)}</dd></div>`).join('');
       const st = $('#status');
@@ -246,6 +250,108 @@
       $('#fn-example').addEventListener('click', () => apply(t.market.demand, t.market.supply));
       ['#fn-d', '#fn-s'].forEach((id) => $(id).addEventListener('input', () => { $('#fn-error').hidden = true; $('#fn-note').hidden = true; }));
     }
+  }
+
+  /* ── Game matrices (2×2) ── */
+  const fmtPay = (v) => String(+(+v).toFixed(2)).replace('-', '−');
+  // Best responses, pure Nash equilibria, strict dominance, Pareto efficiency and the 2×2 mixed equilibrium.
+  function analyzeGame(G) {
+    const Pm = G.pay, ix = [0, 1];
+    const rowBR = ix.map((j) => { const m = Math.max(Pm[0][j][0], Pm[1][j][0]); return ix.filter((i) => Pm[i][j][0] === m); });
+    const colBR = ix.map((i) => { const m = Math.max(Pm[i][0][1], Pm[i][1][1]); return ix.filter((j) => Pm[i][j][1] === m); });
+    const cells = [[0, 0], [0, 1], [1, 0], [1, 1]];
+    const ne = cells.filter(([i, j]) => rowBR[j].includes(i) && colBR[i].includes(j));
+    const domRow = ix.findIndex((i) => ix.every((j) => Pm[i][j][0] > Pm[1 - i][j][0]));
+    const domCol = ix.findIndex((j) => ix.every((i) => Pm[i][j][1] > Pm[i][1 - j][1]));
+    const better = ([k, l], [i, j]) => Pm[k][l][0] >= Pm[i][j][0] && Pm[k][l][1] >= Pm[i][j][1] && (Pm[k][l][0] > Pm[i][j][0] || Pm[k][l][1] > Pm[i][j][1]);
+    const pareto = cells.filter((c) => !cells.some((d) => better(d, c)));
+    const dp = Pm[0][0][1] - Pm[1][0][1] - Pm[0][1][1] + Pm[1][1][1], dq = Pm[0][0][0] - Pm[0][1][0] - Pm[1][0][0] + Pm[1][1][0];
+    let mixed = null;
+    if (dp !== 0 && dq !== 0) {
+      const p = (Pm[1][1][1] - Pm[1][0][1]) / dp, q = (Pm[1][1][0] - Pm[0][1][0]) / dq;
+      if (p > 0 && p < 1 && q > 0 && q < 1) mixed = { p, q };
+    }
+    return { rowBR, colBR, ne, domRow, domCol, pareto, better, mixed };
+  }
+  function gameAnalysis(G, An) {
+    const nm = ([i, j]) => `(${G.rows[i]}, ${G.cols[j]})`, inList = (L, [i, j]) => L.some(([a, b]) => a === i && b === j);
+    const mixed = An.mixed;
+    const items = [
+      `<li><strong>${esc(G.rowName)}</strong>: ${An.domRow >= 0 ? `dominant strategy <em>${esc(G.rows[An.domRow])}</em>` : 'no dominant strategy'}.</li>`,
+      `<li><strong>${esc(G.colName)}</strong>: ${An.domCol >= 0 ? `dominant strategy <em>${esc(G.cols[An.domCol])}</em>` : 'no dominant strategy'}.</li>`,
+      `<li><strong>Pure-strategy Nash equilibria</strong>: ${An.ne.length ? An.ne.map((c) => esc(nm(c))).join('; ') : 'none'}.</li>`,
+    ];
+    if (mixed && An.ne.length !== 1) items.push(`<li><strong>Mixed-strategy equilibrium</strong>: ${esc(G.rowName)} plays <em>${esc(G.rows[0])}</em> with probability ${mixed.p.toFixed(2)}; ${esc(G.colName)} plays <em>${esc(G.cols[0])}</em> with probability ${mixed.q.toFixed(2)}.</li>`);
+    items.push(`<li><strong>Pareto-efficient outcomes</strong>: ${An.pareto.map((c) => esc(nm(c))).join('; ')}.</li>`);
+    let verdict = '';
+    const inefficient = An.ne.filter((c) => !inList(An.pareto, c));
+    if (An.ne.length === 1 && inefficient.length === 1) {
+      const fix = An.pareto.find((c) => An.better(c, An.ne[0]));
+      verdict = `<p class="g-verdict bad">Dilemma: the only equilibrium ${esc(nm(An.ne[0]))} is Pareto inefficient${fix ? `; both players would prefer ${esc(nm(fix))}` : ''}. This is the prisoner’s dilemma structure.</p>`;
+    } else if (An.ne.length > 1) {
+      verdict = '<p class="g-verdict">More than one equilibrium: the theory alone does not say which will occur. Conventions, communication or a first move can select one.</p>';
+    } else if (!An.ne.length) {
+      verdict = '<p class="g-verdict">No pure-strategy equilibrium: each player wants to be unpredictable, so the equilibrium is in mixed strategies.</p>';
+    } else {
+      verdict = '<p class="g-verdict good">The equilibrium is Pareto efficient: no outcome makes both players better off.</p>';
+    }
+    return `<ul class="g-list">${items.join('')}</ul>${verdict}`;
+  }
+  function gameHtml(G, editable) {
+    const An = analyzeGame(G);
+    const val = (i, j, k, best) => editable
+      ? `<input class="g-in ${k ? 'pc' : 'pr'}${best ? ' best' : ''}" data-i="${i}" data-j="${j}" data-k="${k}" value="${fmtPay(G.pay[i][j][k])}" inputmode="decimal" autocomplete="off" aria-label="${esc(k ? G.colName : G.rowName)} payoff at ${esc(G.rows[i])}, ${esc(G.cols[j])}">`
+      : `<span class="${k ? 'pc' : 'pr'}${best ? ' best' : ''}">${fmtPay(G.pay[i][j][k])}</span>`;
+    const cell = (i, j) => {
+      const isNE = An.ne.some(([a, b]) => a === i && b === j);
+      return `<td class="g-cell${isNE ? ' ne' : ''}" data-cell="${i}-${j}">${val(i, j, 0, An.rowBR[j].includes(i))}<span class="g-sep">,</span>${val(i, j, 1, An.colBR[i].includes(j))}<span class="g-tag"${isNE ? '' : ' hidden'}>Nash</span></td>`;
+    };
+    return `<div class="g-wrap"><table class="game">
+        <thead><tr><th></th><th colspan="2" class="g-col">${esc(G.colName)}</th></tr>
+        <tr><th class="g-row">${esc(G.rowName)}</th><th>${esc(G.cols[0])}</th><th>${esc(G.cols[1])}</th></tr></thead>
+        <tbody>${[0, 1].map((i) => `<tr><th>${esc(G.rows[i])}</th>${cell(i, 0)}${cell(i, 1)}</tr>`).join('')}</tbody>
+      </table></div>
+      <p class="g-key"><span class="pr">Blue</span>: ${esc(G.rowName)}’s payoff. <span class="pc">Red</span>: ${esc(G.colName)}’s. Underlined: a best response. A cell with both underlined is a Nash equilibrium.</p>
+      <div class="g-analysis">${gameAnalysis(G, An)}</div>`;
+  }
+  const gameStates = {};
+  const cloneGame = (g) => JSON.parse(JSON.stringify(g));
+  function gamePanel(t) {
+    const st = (gameStates[t.id] ||= { preset: 0, G: cloneGame(t.game.presets[0]) });
+    const pre = t.game.presets;
+    return `
+      <section class="panel graph-panel game-panel" aria-label="Payoff matrix">
+        <div class="chips" role="group" aria-label="Example games">${pre.map((p, i) => `<button type="button" class="chip" data-preset="${i}" aria-pressed="${st.preset === i}">${esc(p.name)}</button>`).join('')}</div>
+        <p class="model"><span>This game</span> ${esc(pre[st.preset].note)}</p>
+        <div id="game-box">${gameHtml(st.G, true)}</div>
+        <p class="fn-help">Change any payoff to see how the best responses and equilibria move.</p>
+        <div class="btn-row"><button type="button" class="ghost-btn" id="game-reset">Reset payoffs</button></div>
+      </section>`;
+  }
+  function bindGame(t) {
+    const st = gameStates[t.id], box = $('#game-box');
+    main.querySelectorAll('[data-preset]').forEach((b) => b.addEventListener('click', () => {
+      st.preset = +b.dataset.preset; st.G = cloneGame(t.game.presets[st.preset]); renderTopic(t);
+    }));
+    $('#game-reset').addEventListener('click', () => { st.G = cloneGame(t.game.presets[st.preset]); renderTopic(t); });
+    box.addEventListener('input', (e) => {
+      const inp = e.target.closest('.g-in');
+      if (!inp) return;
+      const v = Number(String(inp.value).replace(/[−–]/g, '-').trim());
+      if (!Number.isFinite(v) || inp.value.trim() === '') return;
+      st.G.pay[+inp.dataset.i][+inp.dataset.j][+inp.dataset.k] = v;
+      // Update highlights in place so the field being typed in keeps focus.
+      const An = analyzeGame(st.G);
+      box.querySelectorAll('.g-in').forEach((x) => {
+        const i = +x.dataset.i, j = +x.dataset.j, k = +x.dataset.k;
+        x.classList.toggle('best', k === 0 ? An.rowBR[j].includes(i) : An.colBR[i].includes(j));
+      });
+      box.querySelectorAll('.g-cell').forEach((td) => {
+        const [i, j] = td.dataset.cell.split('-').map(Number), isNE = An.ne.some(([a, b]) => a === i && b === j);
+        td.classList.toggle('ne', isNE); td.querySelector('.g-tag').hidden = !isNE;
+      });
+      box.querySelector('.g-analysis').innerHTML = gameAnalysis(st.G, An);
+    });
   }
 
   function marketPanel(t, s) {
