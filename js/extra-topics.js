@@ -430,6 +430,168 @@
     tip: 'Draw both demand segments meeting at the kink, then both MR segments with a vertical dashed gap below the kink. Show two MC curves inside the gap giving the same P and Q.',
   };
 
+  /* ── Entry barriers and limit pricing ── */
+  // Market demand P = 12 − 0.5Q, MC = 2 for both firms. The entrant must sink a fixed entry cost F,
+  // so its AC = 2 + F/q. Sylos-Labini: the entrant expects the incumbent to keep its output q_I,
+  // so it faces the residual demand P = (12 − 0.5q_I) − 0.5q_E.
+  const EB_C = 2;
+  const eb = (s) => {
+    const aRes = 12 - 0.5 * s.qi, qe = Math.max(0, (aRes - EB_C) / (2 * 0.5));
+    const pe = aRes - 0.5 * qe, profitE = (pe - EB_C) * qe - s.F;
+    const pL = EB_C + Math.sqrt(2 * s.F), qL = 2 * (12 - pL); // limit output: entrant's best profit = 0
+    const qm = 10, pm = 7;                                     // monopoly: MR = 12 − Q = 2
+    const blockaded = qL <= qm;
+    return { aRes, qe, pe, profitE, pL, qL, qm, pm, blockaded, pNoEntry: 12 - 0.5 * s.qi, entry: profitE > 1e-9 };
+  };
+  const entryBarriers = {
+    id: 'entry-barriers',
+    title: 'Barriers to entry and limit pricing',
+    summary: 'Barriers to entry let firms keep supernormal profit in the long run. Some are structural (economies of scale, sunk costs), some legal (patents, licences) and some strategic: an incumbent can set a limit price low enough, and an output high enough, that a would-be entrant could not cover its costs on the demand that is left.',
+    model: 'Market demand P = 12 − 0.5Q; both firms have MC = 2. The entrant must sink an entry cost F, so its average cost is 2 + F/q. It expects the incumbent to keep its output q_I (the Sylos-Labini assumption) and so faces the residual demand P = (12 − 0.5q_I) − 0.5q_E. Both panels share the price axis.',
+    graph: {
+      layout: 'row',
+      params: [
+        { id: 'qi', label: 'Incumbent output (q_I)', min: 4, max: 20, step: 0.1, value: 12 },
+        { id: 'F', label: 'Entrant’s sunk entry cost (F)', min: 2, max: 20, step: 0.5, value: 8 },
+      ],
+      panels: [
+        {
+          title: 'Market: incumbent’s output and price',
+          x: { range: [0, 24], label: 'Market output (Q)' },
+          y: { range: [0, 12], label: 'Price ($)', ticks: range(0, 12, 2) },
+          draw(s) {
+            const z = eb(s);
+            return [
+              C((q) => 12 - 0.5 * q, 'd', 'Market demand', { to: 24, labelAt: 4 }),
+              Hl(EB_C, 's', 'MC', { labelLeft: true }),
+              Hl(z.pm, 'ghost', 'Monopoly price'),
+              Hl(z.pL, 'o', 'Limit price', { dash: true }),
+              C((q) => (q >= s.qi ? 12 - 0.5 * q : NaN), 'g', 'Residual demand', { from: s.qi, to: 24, dash: true, labelAt: Math.min(22, s.qi + 7) }),
+              G(s.qi, z.pNoEntry, 'q_I', null, 'o'),
+              P(s.qi, z.pNoEntry, 'Incumbent'),
+            ];
+          },
+        },
+        {
+          title: 'Entrant: residual demand and costs',
+          x: { range: [0, 16], label: 'Entrant output (q_E)' },
+          y: { range: [0, 12], label: 'Price and cost ($)', ticks: range(0, 12, 2) },
+          draw(s) {
+            const z = eb(s), acE = (q) => EB_C + s.F / q;
+            const out = [];
+            if (z.qe > 0.05 && Math.abs(z.profitE) > 0.02) out.push(A([[0, z.pe], [z.qe, z.pe], [z.qe, acE(z.qe)], [0, acE(z.qe)]], z.profitE > 0 ? 'g' : 'r', Math.abs(z.pe - acE(z.qe)) > 0.6 ? (z.profitE > 0 ? 'Profit' : 'Loss') : ''));
+            out.push(
+              C((q) => z.aRes - 0.5 * q, 'd', 'Residual demand', { to: z.aRes / 0.5, labelAt: 10 }),
+              C((q) => z.aRes - q, 'g', 'MR', { to: z.aRes, labelAt: Math.min(z.aRes * 0.7, 6) }),
+              C(acE, 'n', 'Entrant AC', { from: 0.3, labelAt: 14 }),
+              Hl(EB_C, 's', 'MC', { labelLeft: true }),
+            );
+            if (z.qe > 0.05) out.push(G(z.qe, z.pe, 'q_E*', null), P(z.qe, z.pe, z.entry ? 'Enters' : 'Stays out', z.entry ? 'g' : 'r'));
+            return out;
+          },
+        },
+      ],
+      readout(s) {
+        const z = eb(s);
+        const rows = [
+          ['Price if the entrant stays out', money(z.pNoEntry)],
+          ['Entrant’s best output on residual demand', f(z.qe)],
+          ['Entrant’s best profit (after sunk cost)', money(z.profitE)],
+          ['Limit output / limit price', `${f(z.qL)} / ${money(z.pL)}`],
+          ['Monopoly output / price', `${f(z.qm)} / ${money(z.pm)}`],
+        ];
+        let status, tone;
+        if (z.blockaded) {
+          status = `Entry is blockaded: even the monopoly output (${f(z.qm)}) leaves the entrant unable to cover its sunk cost, so the incumbent can charge the monopoly price with no threat.`;
+          tone = 'good';
+          if (s.qi < z.qm - 0.05 && z.entry) { status = 'The incumbent is producing below even the monopoly output, so entry would pay. At the monopoly output entry is blockaded.'; tone = 'warn'; }
+        } else if (z.entry) {
+          status = `Entry pays: the incumbent’s output (${f(s.qi)}) is below the limit output (${f(z.qL)}), so the residual demand reaches above the entrant’s AC.`;
+          tone = 'warn';
+        } else {
+          status = `Entry is deterred by limit pricing: at q_I ≥ ${f(z.qL)} the price is no more than ${money(z.pL)}, and the residual demand never rises above the entrant’s AC. The incumbent gives up some monopoly profit to keep the market.`;
+          tone = 'good';
+        }
+        return { rows, status, tone };
+      },
+    },
+    equations: [
+      { name: 'Residual demand facing the entrant', tex: R`P = \big(a - b\,q_I\big) - b\,q_E`, note: 'Market demand minus the incumbent’s output, which the entrant expects to stay fixed.' },
+      { name: 'Entrant’s best profit', tex: R`\pi_E = \frac{(a - b\,q_I - c)^2}{4b} - F`, note: 'From MR = MC on the residual demand, minus the sunk entry cost.' },
+      { name: 'Limit output and limit price', tex: R`\pi_E = 0 \;\Rightarrow\; q_L = \frac{a - c - 2\sqrt{bF}}{b},\qquad P_L = c + 2\sqrt{bF}`, note: 'Any output at or above q_L keeps the entrant out.' },
+      { name: 'Blockaded entry', tex: R`q_L \le q_m \;\Rightarrow\; \text{monopoly output already deters entry}`, note: 'Large sunk costs relative to the market make entry unattractive without any strategic action.' },
+    ],
+    points: [
+      'Structural barriers: economies of scale (an entrant must come in large), sunk costs, absolute cost advantages, control of key inputs or outlets, network effects.',
+      'Legal barriers: patents, copyrights, licences and franchises, regulation.',
+      'Strategic barriers: limit pricing, building excess capacity, predatory pricing, brand proliferation, heavy advertising, long-term contracts with customers.',
+      'Limit pricing only works if the threat is credible: the entrant must believe the incumbent will keep its output high after entry. Sunk investment in capacity is one way to commit.',
+      'The incumbent sacrifices some monopoly profit today to protect its profits over time.',
+    ],
+    tip: 'Draw the market and the entrant side by side with the same price axis. Show the residual demand just touching the entrant’s AC curve at the limit output, and say why the incumbent’s output must be credible.',
+  };
+
+  /* ── Contestable markets ── */
+  // Natural monopoly: demand P = 12 − 0.5Q, MC = 2, fixed cost 32, so AC = 2 + 32/Q.
+  // Teaching rule: the incumbent can keep profit up to the sunk cost an entrant would have to lose,
+  // so the sustainable price rises from P = AC (no sunk cost) to the monopoly price.
+  const contest = (S) => {
+    const pm = 7, qm = 10, piM = 18; // monopoly
+    if (S >= piM) return { q: qm, p: pm, profit: piM, capped: true };
+    const q = 10 + Math.sqrt(36 - 2 * S); // (P − AC)·Q = S on the high-output branch
+    return { q, p: 12 - 0.5 * q, profit: S, capped: false };
+  };
+  const contestableMarkets = {
+    id: 'contestable-markets',
+    title: 'Contestable markets',
+    summary: 'A market is contestable when firms can enter and leave freely, without sunk costs. Then even a monopolist must behave competitively: if it made supernormal profit, an entrant could come in, undercut it, take the profit and leave before the incumbent reacted (hit-and-run entry). What matters for performance is the threat of entry, not the number of firms.',
+    model: 'Natural monopoly: demand P = 12 − 0.5Q, MC = 2, fixed cost 32 (AC = 2 + 32/Q). Teaching rule: the incumbent can earn supernormal profit up to the sunk cost an entrant would lose, so the price it can sustain rises from P = AC (perfectly contestable) to the monopoly price as sunk costs grow.',
+    graph: {
+      x: { range: [0, 24], label: 'Quantity (Q)' },
+      y: { range: [0, 12], label: 'Price and cost ($)', ticks: range(0, 12, 2) },
+      params: [{ id: 'S', label: 'Sunk cost an entrant would lose (S)', min: 0, max: 24, step: 0.5, value: 0, hint: '0 = perfectly contestable' }],
+      draw(s) {
+        const z = contest(s.S), ac = (q) => 2 + 32 / q;
+        return [
+          z.profit > 0.05 ? A([[0, z.p], [z.q, z.p], [z.q, ac(z.q)], [0, ac(z.q)]], 'g', z.profit > 4 ? 'Profit' : '') : null,
+          C((q) => 12 - 0.5 * q, 'd', 'D', { to: 24 }),
+          C((q) => 12 - q, 'g', 'MR', { to: 12, labelAt: 9 }),
+          C(ac, 'n', 'AC', { from: 2.7, labelAt: 22.5 }),
+          Hl(2, 's', 'MC', { labelLeft: true }),
+          P(16, 4, 'P = AC (contestable)', 'n', { small: true, dx: 9, dy: -6 }),
+          P(10, 7, 'Monopoly', 'n', { small: true, dx: 9 }),
+          G(z.q, z.p, 'Q', 'P'),
+          P(z.q, z.p, ''),
+        ];
+      },
+      readout(s) {
+        const z = contest(s.S), dwl = 0.5 * (z.p - 2) * (20 - z.q);
+        return {
+          rows: [['Sustainable price', money(z.p)], ['Output', f(z.q)], ['Supernormal profit', money(z.profit)], ['Deadweight loss (against P = MC)', money(dwl)]],
+          status: s.S < 0.01
+            ? 'Perfectly contestable: any profit would invite hit-and-run entry, so the incumbent prices at average cost and earns only normal profit, although it is the only firm.'
+            : z.capped
+              ? 'Sunk costs are so high that the threat of entry no longer binds: the incumbent charges the full monopoly price.'
+              : `Sunk costs give partial protection: an entrant would lose up to ${money(s.S)} if it had to leave, so the incumbent can earn that much supernormal profit without inviting entry.`,
+          tone: s.S < 0.01 ? 'good' : z.capped ? 'warn' : 'info',
+        };
+      },
+    },
+    equations: [
+      { name: 'Perfect contestability', tex: R`\text{no sunk costs} \;\Rightarrow\; P = AC,\quad \pi = 0`, note: 'Any supernormal profit would be competed away by hit-and-run entry.' },
+      { name: 'Sustainable price in this teaching model', tex: R`(P - AC)\,Q = S,\qquad 0 \le S \le \pi_m`, note: 'Profit can rise to the sunk cost an entrant would lose, up to the monopoly profit.' },
+      { name: 'Efficiency in a contestable market', tex: R`P = AC = \min\text{ feasible cost},\quad \text{no X-inefficiency}`, note: 'An inefficient incumbent would be replaced by a lower-cost entrant.' },
+    ],
+    points: [
+      'Conditions for perfect contestability: no sunk costs (exit is costless), entrants have the same technology and costs as the incumbent, and the incumbent cannot cut price before an entrant has made its profit.',
+      'Fixed costs need not be sunk: an aircraft can be moved to another route, but a railway track cannot. Only sunk costs block contestability.',
+      'Predictions: normal profit only, productive efficiency, no cross-subsidy between products, even with very few firms.',
+      'Policy lesson: rather than breaking up large firms, lower sunk costs and barriers, for example access to airport slots, networks and infrastructure.',
+      'Criticism: few markets are perfectly contestable; incumbents can usually respond quickly, and advertising and R&D create sunk costs.',
+    ],
+    tip: 'Contrast contestable markets with monopoly theory: market structure (number of firms) matters less than the threat of entry. Name the condition that fails in practice, usually sunk costs.',
+  };
+
   /* ── Install in course order ── */
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
@@ -440,4 +602,6 @@
   insertAfter('bertrand', stackelbergTopic, MICRO, 'Blocks 6–8');
   insertAfter('stackelberg', kinkedDemand, MICRO, 'Blocks 6–8');
   insertAfter('monopoly', priceDiscrimination, MICRO, 'Blocks 6–8');
+  insertAfter('natural-monopoly', entryBarriers, MICRO, 'Blocks 6–8');
+  insertAfter('entry-barriers', contestableMarkets, MICRO, 'Blocks 6–8');
 })();

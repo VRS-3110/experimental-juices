@@ -4,11 +4,11 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 
 ## What's inside
 
-42 topics. The first 37 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
+44 topics. The first 39 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
 
 | Part | Topics |
 | --- | --- |
-| Microeconomics (Blocks 1–10) | PPF (linear and concave), supply and demand, price ceilings and floors, elasticities, tax incidence, consumer choice, income and substitution effects (normal, inferior and Giffen goods, with the demand curve each implies), market demand by horizontal summation, isoquants and isocosts, total cost curves above per-unit cost curves, short-run costs and perfect competition (all five short-run cases), LAC envelope (U-shaped, L-shaped, flat, falling, rising), perfect competition in the long run (constant, increasing and decreasing cost industries), monopoly, price discrimination (perfect and third degree), natural monopoly and regulation (none, P = MC, P = AC), monopolistic competition, Cournot duopoly, Bertrand price competition (identical and differentiated goods), Stackelberg leader and follower, kinked demand curve, game theory (payoff matrices, Nash equilibrium, entry game), prisoner’s dilemma and repeated games, labour demand (MRP), Edgeworth box, externalities |
+| Microeconomics (Blocks 1–10) | PPF (linear and concave), supply and demand, price ceilings and floors, elasticities, tax incidence, consumer choice, income and substitution effects (normal, inferior and Giffen goods, with the demand curve each implies), market demand by horizontal summation, isoquants and isocosts, total cost curves above per-unit cost curves, short-run costs and perfect competition (all five short-run cases), LAC envelope (U-shaped, L-shaped, flat, falling, rising), perfect competition in the long run (constant, increasing and decreasing cost industries), monopoly, price discrimination (perfect and third degree), natural monopoly and regulation (none, P = MC, P = AC), barriers to entry and limit pricing (deterred, entry, blockaded), contestable markets (sunk costs and hit-and-run entry), monopolistic competition, Cournot duopoly, Bertrand price competition (identical and differentiated goods), Stackelberg leader and follower, kinked demand curve, game theory (payoff matrices, Nash equilibrium, entry game), prisoner’s dilemma and repeated games, labour demand (MRP), Edgeworth box, externalities |
 | Macroeconomics (Blocks 11–20) | Circular flow and national income, Solow growth, Keynesian cross and multipliers, injections and leakages, money and banking (Block 14), IS–MP, AD–AS with shock adjustment, Phillips curve, foreign exchange (floating and fixed) |
 | Further topics | Price indices and growth rates, loanable funds, Lorenz curve, tariffs |
 
@@ -38,8 +38,8 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 
 The **Revision** tab has one sheet per study block of the EC1002 guide breakdown (Blocks 1–5, 6–8, 9–16, 17–18 and 19–20). The breakdown did not list Block 14, so its money-and-banking sheet uses standard material and says so. Each sheet has:
 
-- a "you should be able to" checklist to tick off (75 statements in all)
-- the key equations for that block (54 in all)
+- a "you should be able to" checklist to tick off (77 statements in all)
+- the key equations for that block (55 in all)
 - the graphs to practise, each linked to its interactive topic
 - exam focus points, the block's worked answers and key terms
 - a **Test this block** button that starts a 6-question quiz on the block's topics
@@ -54,9 +54,9 @@ Topic pages link to the sheet that covers them. Progress, results and the exam d
 
 ## Reference and practice
 
-- **Glossary**: 219 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
-- **Worked answers**: 32 exam-style run-throughs (28 calculations, 4 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
-- **Quiz**: 62 question types built on the worked answers. 28 calculation types generate new numbers every time, so you practise the method rather than the example; 34 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
+- **Glossary**: 231 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
+- **Worked answers**: 34 exam-style run-throughs (30 calculations, 4 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
+- **Quiz**: 67 question types built on the worked answers. 29 calculation types generate new numbers every time, so you practise the method rather than the example; 38 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
 - **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck.
 
 ## Modes
@@ -77,7 +77,7 @@ js/topics.js      core study content and shared graph helpers
 js/syllabus.js    EC1002 topics, course order and block numbers
 js/markets.js     supply-and-demand graphs driven by user-entered functions
 js/linked.js      two-panel linked graphs
-js/extra-topics.js total/per-unit cost curves, price discrimination, Bertrand, Stackelberg, kinked demand
+js/extra-topics.js total/per-unit cost curves, price discrimination, Bertrand, Stackelberg, kinked demand, entry barriers, contestable markets
 js/games.js       game theory and the prisoner's dilemma (rendered as interactive payoff matrices)
 js/glossary.js    reference glossary of key terms
 js/worked.js      step-by-step worked answers

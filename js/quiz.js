@@ -259,6 +259,26 @@
       },
     },
     {
+      worked: 'w-limit-pricing', topic: 'entry-barriers',
+      gen() {
+        const c = pick([10, 20]), m = int(15, 30), a = c + 4 * m, k = int(3, 2 * m - 3), F = k * k;
+        const qL = a - c - 2 * k, pL = c + 2 * k, qm = (a - c) / 2;
+        return {
+          q: `Market demand is P = ${a} − Q. An incumbent and a potential entrant both have MC = ${c}; the entrant must sink an entry cost of ${F} and expects the incumbent’s output to stay fixed.`,
+          parts: [
+            { label: 'Limit output (smallest incumbent output that deters entry)', answer: qL },
+            { label: 'Limit price', answer: pL },
+            { label: 'Does the incumbent need to limit price, or is entry blockaded?', choices: ['Must limit price: the monopoly output would invite entry', 'Entry is blockaded: the monopoly output already deters it'], correct: qL > qm ? 0 : 1 },
+          ],
+          solution: [
+            `Residual demand: P = (${a} − q_I) − q_E. Entrant’s best output (${a - c} − q_I)/2, profit ((${a - c} − q_I)/2)² − ${F}.`,
+            `Deterred when (${a - c} − q_I)/2 ≤ √${F} = ${k}, i.e. q_I ≥ ${a - c} − ${2 * k} = ${qL}. Limit price = ${a} − ${qL} = ${pL}.`,
+            `Monopoly output is (${a} − ${c})/2 = ${qm}, which is ${qL > qm ? 'below' : 'at or above'} the limit output, so ${qL > qm ? 'the incumbent must limit price' : 'entry is blockaded'}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma',
       gen() {
         const S = int(0, 3), P = S + int(1, 4), R = P + int(2, 6), T = R + int(1, 6);
@@ -599,6 +619,10 @@
     { worked: 'w-monopoly', topic: 'monopoly', q: 'Having found output where MR = MC, a monopolist sets price…', choices: ['On the MR curve', 'Equal to MC', 'On the demand curve above that output', 'Equal to average cost'], correct: 2, why: 'The price is the most buyers will pay for that quantity, read from demand.' },
     { worked: 'w-solow', topic: 'solow', q: 'In the Solow model, a permanent rise in the saving rate…', choices: ['Permanently raises the growth rate of output per worker', 'Raises the steady-state level of output per worker but not its long-run growth rate', 'Has no effect', 'Lowers steady-state capital'], correct: 1, why: 'Higher s raises k* and y* (a level effect); only technological progress sustains growth.' },
     { worked: 'w-externality', topic: 'externalities', q: 'With a negative production externality, the free market produces…', choices: ['Too little', 'The efficient amount', 'Too much', 'Nothing'], correct: 2, why: 'Firms ignore the external cost, so they produce where MPC = MSB, beyond the point where MSC = MSB.' },
+    { worked: 'w-contestable', topic: 'contestable-markets', q: 'In a perfectly contestable market served by a single firm, the price will be…', choices: ['The monopoly price, since there is only one firm', 'Equal to average cost, giving only normal profit', 'Equal to marginal cost, with the firm making a loss', 'Set by the government'], correct: 1, why: 'Any supernormal profit would attract hit-and-run entry, so the incumbent prices at average cost even though it is alone.' },
+    { worked: 'w-contestable', topic: 'contestable-markets', q: 'Which condition is essential for a market to be perfectly contestable?', choices: ['A large number of firms', 'No sunk costs, so firms can leave without loss', 'Identical products', 'Government price regulation'], correct: 1, why: 'Hit-and-run entry only works if an entrant can exit and recover what it spent. Sunk costs make entry risky and protect the incumbent.' },
+    { worked: 'w-limit-pricing', topic: 'entry-barriers', q: 'Which of these is a strategic barrier to entry, rather than a structural or legal one?', choices: ['A patent', 'Economies of scale in the industry’s technology', 'Building excess capacity to threaten a price war', 'A government licence'], correct: 2, why: 'Strategic barriers are deliberate actions by incumbents; patents and licences are legal, and scale economies are structural.' },
+    { worked: 'w-limit-pricing', topic: 'entry-barriers', q: 'Why might an incumbent set a price below the profit-maximising monopoly price?', choices: ['To raise short-run profit', 'To deter entry by leaving too little residual demand for an entrant to cover its costs', 'Because demand is inelastic', 'To meet a legal requirement'], correct: 1, why: 'Limit pricing sacrifices some profit now to keep the market, and the profit stream, in future.' },
     { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'What makes a game a prisoner’s dilemma?', choices: ['Neither player has a dominant strategy', 'Each player has a dominant strategy, but the resulting equilibrium is worse for both than another outcome', 'The game has two Nash equilibria', 'One player always wins'], correct: 1, why: 'Individually rational (dominant) choices produce a Pareto-inefficient equilibrium.' },
     { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'In an infinitely repeated cartel game with grim-trigger strategies, collusion is easier to sustain when…', choices: ['Firms are impatient (low discount factor)', 'The one-off gain from cheating is large', 'Firms value future profits highly (high discount factor)', 'The game has a known last round'], correct: 2, why: 'Collusion needs δ ≥ (T − R)/(T − P): patient firms lose more from future punishment than they gain from cheating once.' },
     { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'A cartel game is repeated exactly 10 times and both firms know it. Backward induction predicts…', choices: ['Collusion in every round', 'Collusion until round 10, then cheating', 'Cheating in every round', 'Random play'], correct: 2, why: 'Both cheat in the last round, so the ninth is effectively the last, and so on back to round 1.' },
