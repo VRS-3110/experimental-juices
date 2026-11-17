@@ -188,6 +188,8 @@
         'Show the effect of a minimum wage in a competitive market and explain how monopsony differs.',
         'Derive MFC from a linear supply curve, find monopsony employment and wage, and show how a minimum wage can raise employment.',
         'Show the employer’s and the union’s preferred outcomes in a bilateral monopoly and explain why the wage depends on bargaining power.',
+        'Distinguish compensating (equilibrium) from disequilibrium wage differentials, and find the allocation of workers between two sectors with free movement.',
+        'Evaluate an investment in education with NPV and the internal rate of return, including earnings forgone, and discuss signalling.',
       ],
       examFocus: ['Multiply marginal product by price (or MR) before comparing with the wage.', 'Under monopsony, employment comes from MFC = MRP but the wage is read off the supply curve.'],
       equations: [
@@ -195,13 +197,17 @@
         { name: 'Hiring rule', tex: R`MRP_L = w` },
         { name: 'Monopsony', tex: R`w = c + bL \;\Rightarrow\; MFC = c + 2bL;\qquad MFC = MRP_L` },
         { name: 'Bilateral monopoly wage range', tex: R`w_m \le w \le w_U` },
+        { name: 'Compensating differential (free movement)', tex: R`w_B - w_A = \theta` },
+        { name: 'Net present value of education', tex: R`NPV = \sum_{t=0}^{T} \frac{B_t - C_t}{(1 + r)^t}` },
       ],
       graphs: [
         { label: 'Labour market beside one firm, with a minimum wage', topic: 'labour-market' },
         { label: 'Monopsony: S, MFC and MRP, with a minimum wage', topic: 'monopsony' },
         { label: 'Bilateral monopoly: employer’s and union’s preferred wages', topic: 'bilateral-monopoly' },
+        { label: 'Two-sector diagram: compensating and disequilibrium differentials', topic: 'wage-differentials' },
+        { label: 'Age–earnings profiles and the return to education', topic: 'human-capital' },
       ],
-      topics: ['labour-market', 'monopsony', 'bilateral-monopoly'],
+      topics: ['labour-market', 'monopsony', 'bilateral-monopoly', 'wage-differentials', 'human-capital'],
     },
     {
       id: 'b-10', block: 'Block 10', part: 'Microeconomics', title: 'Welfare economics and externalities',

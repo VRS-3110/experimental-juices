@@ -567,5 +567,33 @@
       answer: 'Employer: w = 30, L = 20. Union: w = 50, L = 20. The wage lies between 30 and 50 and is set by bargaining power. At w = 40 employment is 30 (the competitive outcome); at w = 45 it is 25. A union facing a monopsonist can raise both wages and employment.',
       mistakes: ['Expecting supply and demand to pin down a unique wage: bilateral monopoly is indeterminate.', 'Using MFC for the union: the union’s marginal revenue comes from the employer’s labour demand (MRP).', 'Assuming a union always cuts employment, as it would in a competitive labour market.'],
     },
+    {
+      id: 'w-compensating', topic: 'wage-differentials', kind: 'calc',
+      title: 'Compensating and disequilibrium wage differentials',
+      question: 'A town has 40 workers and two kinds of job. Labour demand in office jobs (A) is w_A = 50 − L_A; in night-shift factory jobs (B) it is w_B = 60 − L_B. Workers need an extra 6 to accept night shifts. (a) With free movement, how many work in each sector and at what wages? (b) What if night shifts needed no extra pay? (c) Suppose instead workers are stuck at 20 in each sector. Find the wage gap and split it into its compensating and disequilibrium parts.',
+      steps: [
+        { t: '(a) Free movement: workers move until the night-shift wage exceeds the office wage by exactly 6. Use L_B = 40 − L_A:', m: R`(60 - (40 - L_A)) - (50 - L_A) = 6 \;\Rightarrow\; 2L_A - 30 = 6 \;\Rightarrow\; L_A = 18` },
+        { t: 'So L_B = 22, w_A = 50 − 18 = 32 and w_B = 60 − 22 = 38. The gap of 6 is entirely compensating.' },
+        { t: '(b) With θ = 0 wages equalise:', m: R`20 + L_A = 50 - L_A \;\Rightarrow\; L_A = 15,\quad L_B = 25,\quad w_A = w_B = 35` },
+        { t: '(c) With 20 in each sector:', m: R`w_A = 30,\qquad w_B = 40,\qquad w_B - w_A = 10 = \underbrace{6}_{\text{compensating}} + \underbrace{4}_{\text{disequilibrium}}` },
+        { t: 'Office workers would gain by moving to night shifts (40 − 6 = 34 > 30). If the barrier went, 2 would move and the extra 4 would disappear, returning to part (a).' },
+      ],
+      answer: 'Free movement: 18 in offices at 32, 22 on night shifts at 38, a purely compensating gap of 6. With no disamenity: 15 and 25, both at 35. With 20 in each: wages 30 and 40, a gap of 10 = 6 compensating + 4 disequilibrium, which would close if workers could move.',
+      mistakes: ['Treating every wage gap as unfair: compensating differentials persist in equilibrium.', 'Setting w_A = w_B when the jobs differ in their non-wage features.', 'Forgetting that the two sectors share a fixed workforce (L_B = 40 − L_A).'],
+    },
+    {
+      id: 'w-human-capital', topic: 'human-capital', kind: 'calc',
+      title: 'Is a course worth it? Present value and rate of return',
+      question: 'A one-year course costs 10 in fees and means giving up 20 of earnings this year. Afterwards it raises earnings by 3 a year for ever, starting next year. (a) Find the present value of the extra earnings and the NPV at an interest rate of 5%. (b) Find the internal rate of return. (c) Should the student take the course at 5%? At 12%? (d) What if the extra earnings last only 40 years, at 5%?',
+      steps: [
+        { t: '(a) Total cost now is fees plus earnings forgone: C = 10 + 20 = 30. Extra earnings of 3 a year for ever, starting next year, are a perpetuity:', m: R`PV = \frac{3}{0.05} = 60,\qquad NPV = 60 - 30 = 30` },
+        { t: '(b) The internal rate of return i makes NPV zero:', m: R`\frac{3}{i} = 30 \;\Rightarrow\; i = 10\%` },
+        { t: '(c) At 5%, i = 10% > r: invest (NPV = 30). At 12%:', m: R`PV = \frac{3}{0.12} = 25 < 30 \;\Rightarrow\; NPV = -5` },
+        { t: 'So at 12% the course does not pay: the return (10%) is below the interest rate.' },
+        { t: '(d) Over 40 years at 5%:', m: R`PV = 3 \times \frac{1 - 1.05^{-40}}{0.05} = 3 \times 17.16 = 51.5,\qquad NPV = 21.5` },
+      ],
+      answer: 'C = 30 (fees 10 + forgone earnings 20). At 5%: PV of gains 60, NPV 30. IRR = 10%, so invest when r < 10%: yes at 5%, no at 12% (NPV −5). With a 40-year horizon at 5%, PV = 51.5 and NPV = 21.5, still worth it.',
+      mistakes: ['Leaving out earnings forgone, often the largest cost of education.', 'Not discounting future earnings, which overstates the return.', 'Comparing the IRR with zero instead of with the interest rate.'],
+    },
   ];
 })();

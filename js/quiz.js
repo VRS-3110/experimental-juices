@@ -417,6 +417,49 @@
       },
     },
     {
+      worked: 'w-compensating', topic: 'wage-differentials',
+      gen() {
+        const N = 40, theta = pick([2, 4, 6, 8]), a = int(40, 60), bI = a + 2 * int(-5, 5);
+        const LA = (theta + a + N - bI) / 2, LB = N - LA, wA = a - LA, wB = bI - LB;
+        if (LA < 5 || LB < 5 || wA < 5) return this.gen();
+        return {
+          q: `A labour market has ${N} workers and two kinds of job. Demand in pleasant jobs is w_A = ${a} − L_A; in unpleasant jobs it is w_B = ${bI} − L_B. Workers need an extra ${theta} to take an unpleasant job, and can move freely between them.`,
+          parts: [
+            { label: 'Workers in pleasant jobs (L_A)', answer: LA },
+            { label: 'Wage in pleasant jobs', answer: wA },
+            { label: 'Wage in unpleasant jobs', answer: wB },
+          ],
+          solution: [
+            `Free movement: w_B − w_A = ${theta}, with L_B = ${N} − L_A.`,
+            `(${bI} − ${N} + L_A) − (${a} − L_A) = ${theta} → 2L_A = ${theta + a + N - bI} → L_A = ${LA}, L_B = ${LB}.`,
+            `w_A = ${a} − ${LA} = ${wA}; w_B = ${bI} − ${LB} = ${wB}. The gap ${wB - wA} is the compensating differential.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-human-capital', topic: 'human-capital',
+      gen() {
+        const fees = pick([5, 8, 10, 12]), forgone = pick([15, 20, 25]), C0 = fees + forgone, X = int(2, 6), r = pick([4, 5, 8, 10, 12]);
+        const pv = X / (r / 100), irr = (100 * X) / C0;
+        if (Math.abs(irr - r) < 0.5) return this.gen();
+        return {
+          q: `A course costs ${fees} in fees and ${forgone} in earnings given up this year. It raises earnings by ${X} a year for ever, starting next year. The interest rate is ${r}%.`,
+          parts: [
+            { label: 'Present value of the extra earnings', answer: pv },
+            { label: 'Net present value of the course', answer: pv - C0 },
+            { label: 'Internal rate of return (%)', answer: irr },
+            { label: 'Is the course worth taking?', choices: ['Yes', 'No'], correct: irr > r ? 0 : 1 },
+          ],
+          solution: [
+            `Cost now: ${fees} + ${forgone} = ${C0}. PV of a perpetuity of ${X}: ${X}/${r / 100} = ${n(pv)}.`,
+            `NPV = ${n(pv)} − ${C0} = ${n(pv - C0)}.`,
+            `IRR: ${X}/i = ${C0} → i = ${n(irr)}%, which is ${irr > r ? 'above' : 'below'} ${r}%, so ${irr > r ? 'invest' : 'do not invest'}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-game-theory', topic: 'game-theory',
       gen() {
         const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
@@ -734,6 +777,10 @@
     { worked: 'w-monopsony', topic: 'monopsony', q: 'Where does a monopsonist set the wage?', choices: ['Where MFC = MRP', 'On the labour supply curve at the employment where MFC = MRP', 'On the MRP curve at the employment where MFC = MRP', 'Where supply = MRP'], correct: 1, why: 'Employment comes from MFC = MRP; the wage is the lowest that attracts that many workers, read off the supply curve.' },
     { worked: 'w-bilateral', topic: 'bilateral-monopoly', q: 'In a bilateral monopoly between a union and a monopsony employer, the wage is…', choices: ['Always the competitive wage', 'Always the monopsony wage', 'Somewhere between the employer’s and the union’s preferred wages, depending on bargaining power', 'Set where MFC = MRP'], correct: 2, why: 'Theory gives the range; relative bargaining strength picks the point. The outcome is indeterminate.' },
     { worked: 'w-bilateral', topic: 'bilateral-monopoly', q: 'What does countervailing power mean in a labour market?', choices: ['The government setting wages', 'A union offsetting a monopsony employer’s power, which can raise both wages and employment', 'Firms merging to cut costs', 'Workers moving to another town'], correct: 1, why: 'A negotiated wage between the monopsony and competitive wages makes MFC flat, so the employer hires more workers at a higher wage.' },
+    { worked: 'w-compensating', topic: 'wage-differentials', q: 'Two jobs need the same skills, but one involves night shifts. With free movement between them, the night-shift job pays more because…', choices: ['Workers in it are more productive', 'A compensating differential is needed to attract workers to less pleasant work', 'Night-shift employers have monopsony power', 'The labour market is in disequilibrium'], correct: 1, why: 'Equal-skill jobs that differ in non-wage features settle at a gap that just compensates for the disadvantage.' },
+    { worked: 'w-compensating', topic: 'wage-differentials', q: 'Which of these is most likely to cause a disequilibrium wage differential?', choices: ['Danger at work', 'Geographical immobility after a rise in demand in one region', 'The skill a job requires', 'Unsocial hours'], correct: 1, why: 'Immobility stops workers moving to where wages have risen; the gap narrows as they move. The others persist in equilibrium.' },
+    { worked: 'w-human-capital', topic: 'human-capital', q: 'Which change would make a degree a better investment, other things equal?', choices: ['A rise in the interest rate', 'A rise in tuition fees', 'A rise in the graduate earnings premium', 'A shorter working life after graduating'], correct: 2, why: 'A larger premium raises the PV of the gains; the other changes raise costs or shrink the PV of gains.' },
+    { worked: 'w-human-capital', topic: 'human-capital', q: 'The signalling view of education says that…', choices: ['Education raises productivity, which raises wages', 'Education may raise wages mainly by showing employers who is able, so the social return can be lower than the private return', 'Education has no effect on wages', 'Firms always pay for general training'], correct: 1, why: 'In Spence’s model a degree sorts workers by ability; it pays the individual but adds less to output than the human-capital view implies.' },
     { worked: 'w-specific-tax', topic: 'tax-incidence', q: 'Demand is very inelastic and supply is elastic. Who bears most of a per-unit tax?', choices: ['Sellers', 'Buyers', 'It is always split equally', 'Whoever is legally liable'], correct: 1, why: 'The less elastic side bears more: the buyers’ share is E_s/(E_s + |E_d|).' },
     { worked: 'w-comparative-advantage', topic: 'ppf', q: 'A country should specialise in the good for which it has…', choices: ['The highest output per worker', 'The lowest opportunity cost', 'The highest price', 'An absolute advantage'], correct: 1, why: 'Comparative advantage, the lower opportunity cost, determines the gains from specialisation.' },
     { worked: 'w-multiplier', topic: 'keynesian-cross', q: 'Full-employment output is 1,000, equilibrium is 860 and the multiplier is 2. The deflationary gap is…', choices: ['140', '70', '280', '1,000'], correct: 1, why: 'The deflationary gap is the shortfall of AD at Y_f: 140 ÷ 2 = 70. The 140 is the output gap.' },
