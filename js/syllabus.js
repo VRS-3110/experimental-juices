@@ -515,7 +515,7 @@
         { name: 'Firm A’s marginal revenue', tex: R`MR_A = a - 2bQ_A - bQ_B`, note: 'Holding Q_B constant.' },
         { name: 'Reaction function', tex: R`MR_A = MC_A \Rightarrow Q_A = \frac{a - MC_A - bQ_B}{2b}`, note: 'Best response of A to each Q_B.' },
         { name: 'Symmetric Nash equilibrium', tex: R`Q_A = Q_B = \frac{a - c}{3b}`, note: 'Total output 2(a − c)/3b lies between monopoly and competition.' },
-        { name: 'Output ranking', tex: R`Q_{mon} = \tfrac{a-c}{2b} < Q_{Cournot} = \tfrac{2(a-c)}{3b} < Q_{comp} = \tfrac{a-c}{b}`, note: 'Useful check on your algebra.' },
+        { name: 'Output ranking', tex: R`\begin{aligned} Q_{mon} &= \frac{1}{2}\cdot\frac{a-c}{b} \\[4pt] Q_{Cournot} &= \frac{2}{3}\cdot\frac{a-c}{b} \\[4pt] Q_{comp} &= \frac{a-c}{b} \end{aligned}`, note: 'As shares of the competitive output (a − c)/b: monopoly ½ < Cournot duopoly ⅔ < competition 1. A useful check on your algebra.' },
       ],
       points: [
         'Nash equilibrium: neither firm can gain by changing output given the other’s output.',

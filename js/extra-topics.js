@@ -250,7 +250,7 @@
       { name: 'Leader’s problem', tex: R`\max_{q_L}\; \big(a - b\,q_L - b\,q_F(q_L) - c_L\big)\,q_L`, note: 'The leader substitutes the follower’s reaction into its own profit.' },
       { name: 'Equal costs: outputs', tex: R`q_L = \frac{a - c}{2b},\qquad q_F = \frac{a - c}{4b}`, note: 'The leader produces the monopoly output; the follower half of that.' },
       { name: 'Equal costs: profits', tex: R`\pi_L = \frac{(a - c)^2}{8b} > \pi^{Cournot} = \frac{(a - c)^2}{9b} > \pi_F = \frac{(a - c)^2}{16b}`, note: 'First-mover advantage.' },
-      { name: 'Total output ranking', tex: R`Q_{mon} < Q_{Cournot} = \tfrac{2(a-c)}{3b} < Q_{Stackelberg} = \tfrac{3(a-c)}{4b} < Q_{comp}`, note: 'Stackelberg is closer to competition than Cournot.' },
+      { name: 'Total output: how the models rank', tex: R`\begin{aligned} Q_{mon} &= \frac{1}{2}\cdot\frac{a-c}{b} \\[4pt] Q_{Cournot} &= \frac{2}{3}\cdot\frac{a-c}{b} \\[4pt] Q_{Stackelberg} &= \frac{3}{4}\cdot\frac{a-c}{b} \\[4pt] Q_{comp} &= \frac{a-c}{b} \end{aligned}`, note: 'Each model produces a fixed share of the competitive output (a − c)/b: monopoly ½, Cournot ⅔, Stackelberg ¾, competition all of it. So output ranks monopoly < Cournot < Stackelberg < competition, and price ranks the other way: the Stackelberg leader’s commitment brings the market closer to the competitive outcome than Cournot. Example: P = 24 − Q and c = 4 give outputs of 10, 13.3, 15 and 20.' },
     ],
     points: [
       'Leadership needs commitment: the leader’s output must be fixed before the follower chooses (for example, capacity already built).',

@@ -259,7 +259,7 @@
       { name: 'Incentive to cheat', tex: R`MR_i = P_m - b\,q_i > MC \;\text{ at the quota}`, note: 'On its residual demand, each member’s MR at the quota is above MC, so producing more raises its own profit.' },
       { name: 'Cheat’s best response (linear demand)', tex: R`q_{cheat} = \frac{a - c - (n - 1)\,\text{quota}}{2b}`, note: 'MR = MC on the residual demand left by the other members’ quotas.' },
       { name: 'Grim-trigger condition', tex: R`\frac{\pi_C}{1 - \delta} \ge \pi_D + \frac{\delta\,\pi_P}{1 - \delta} \iff \delta \ge \delta^* = \frac{\pi_D - \pi_C}{\pi_D - \pi_P}`, note: 'π_C cartel share, π_D profit from cheating, π_P profit once punished. Same as (T − R)/(T − P).' },
-      { name: 'Two firms, linear demand, Cournot punishment', tex: R`\pi_C = \tfrac{8}{64}\tfrac{(a-c)^2}{b},\; \pi_D = \tfrac{9}{64}\tfrac{(a-c)^2}{b},\; \pi_N = \tfrac{1}{9}\tfrac{(a-c)^2}{b} \;\Rightarrow\; \delta^* = \tfrac{9}{17}`, note: 'A price war (π_P = 0) instead gives δ* = 1/9.' },
+      { name: 'Two firms, linear demand, Cournot punishment', tex: R`\begin{aligned} \pi_C &= \frac{(a-c)^2}{8b} \\[4pt] \pi_D &= \frac{9(a-c)^2}{64b} \\[4pt] \pi_N &= \frac{(a-c)^2}{9b} \\[4pt] \delta^* &= \frac{\pi_D - \pi_C}{\pi_D - \pi_N} = \frac{9}{17} \approx 0.53 \end{aligned}`, note: 'Top to bottom: each firm’s profit in the cartel, a cheat’s profit while its rival keeps to its quota, each firm’s profit under Cournot, and the critical discount factor. If the punishment is a price war (zero profit after cheating), the critical discount factor falls to 1/9 ≈ 0.11.' },
     ],
     points: [
       'A cartel restricts output and raises price to the monopoly level: consumers lose and there is a deadweight loss, just as under monopoly.',
