@@ -259,6 +259,47 @@
       },
     },
     {
+      worked: 'w-stackelberg', topic: 'stackelberg',
+      gen() {
+        const c = pick([10, 20, 30]), a = c + 4 * int(10, 25), k = a - c;
+        const qL = k / 2, qF = k / 4, p = a - qL - qF;
+        return {
+          q: `Market demand is P = ${a} − Q. Both firms have MC = ${c}. The leader chooses output first, then the follower.`,
+          parts: [
+            { label: 'Leader output', answer: qL },
+            { label: 'Follower output', answer: qF },
+            { label: 'Market price', answer: p },
+            { label: 'Leader profit', answer: (p - c) * qL },
+          ],
+          solution: [
+            `Follower: q_F = (${k} − q_L)/2.`,
+            `Leader’s profit: (${a} − q_L − (${k} − q_L)/2 − ${c})q_L = (${k / 2} − q_L/2)q_L → q_L = ${n(qL)}.`,
+            `q_F = (${k} − ${n(qL)})/2 = ${n(qF)}. P = ${a} − ${n(qL + qF)} = ${n(p)}.`,
+            `Leader profit = (${n(p)} − ${c}) × ${n(qL)} = ${n((p - c) * qL)}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-bertrand', topic: 'bertrand',
+      gen() {
+        const c = pick([5, 10, 15]), p = c + int(5, 20), a = 3 * p - 2 * c, q = a - p;
+        return {
+          q: `Two firms sell differentiated goods with demand q_A = ${a} − 2p_A + p_B and q_B = ${a} − 2p_B + p_A. Both have MC = ${c}. They set prices simultaneously.`,
+          parts: [
+            { label: 'Equilibrium price of each firm', answer: p },
+            { label: 'Output of each firm', answer: q },
+            { label: 'Profit of each firm', answer: (p - c) * q },
+          ],
+          solution: [
+            `A maximises (p_A − ${c})(${a} − 2p_A + p_B): ${a} − 4p_A + p_B + ${2 * c} = 0 → p_A = (${a + 2 * c} + p_B)/4.`,
+            `Symmetric: p = (${a + 2 * c} + p)/4 → 3p = ${a + 2 * c} → p = ${p}.`,
+            `q = ${a} − 2(${p}) + ${p} = ${q}. Profit = (${p} − ${c}) × ${q} = ${(p - c) * q}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-labour-mrp', topic: 'labour-market',
       gen() {
         const A = pick([20, 24, 30]), P = pick([2, 4, 5]), L = int(4, A - 4), w = P * (A - L);
@@ -465,6 +506,11 @@
     { worked: 'w-monopoly', topic: 'monopoly', q: 'Having found output where MR = MC, a monopolist sets price…', choices: ['On the MR curve', 'Equal to MC', 'On the demand curve above that output', 'Equal to average cost'], correct: 2, why: 'The price is the most buyers will pay for that quantity, read from demand.' },
     { worked: 'w-solow', topic: 'solow', q: 'In the Solow model, a permanent rise in the saving rate…', choices: ['Permanently raises the growth rate of output per worker', 'Raises the steady-state level of output per worker but not its long-run growth rate', 'Has no effect', 'Lowers steady-state capital'], correct: 1, why: 'Higher s raises k* and y* (a level effect); only technological progress sustains growth.' },
     { worked: 'w-externality', topic: 'externalities', q: 'With a negative production externality, the free market produces…', choices: ['Too little', 'The efficient amount', 'Too much', 'Nothing'], correct: 2, why: 'Firms ignore the external cost, so they produce where MPC = MSB, beyond the point where MSC = MSB.' },
+    { worked: 'w-bertrand', topic: 'bertrand', q: 'Two firms sell identical goods, have the same constant marginal cost and compete on price. The equilibrium price is…', choices: ['The monopoly price', 'Between marginal cost and the monopoly price, as in Cournot', 'Equal to marginal cost', 'Below marginal cost'], correct: 2, why: 'Any price above MC is undercut by the rival, who would take the whole market: the Bertrand paradox.' },
+    { worked: 'w-bertrand', topic: 'bertrand', q: 'With differentiated goods and price competition, the firms’ reaction functions…', choices: ['Slope down: prices are strategic substitutes', 'Slope up: prices are strategic complements', 'Are vertical', 'Do not exist'], correct: 1, why: 'If the rival raises its price, your demand rises and your best price rises too.' },
+    { worked: 'w-stackelberg', topic: 'stackelberg', q: 'Compared with Cournot, the Stackelberg leader…', choices: ['Produces less and earns less', 'Produces more and earns more', 'Produces the same and earns more', 'Produces more but earns less'], correct: 1, why: 'Committing first to a larger output makes the follower cut back, raising the leader’s profit: first-mover advantage.' },
+    { worked: 'w-stackelberg', topic: 'stackelberg', q: 'Where is the Stackelberg equilibrium on the reaction-function diagram?', choices: ['Where the two reaction functions cross', 'Where the leader’s isoprofit curve is tangent to the follower’s reaction function', 'At the monopoly output on the leader’s axis with zero follower output', 'Where the follower’s isoprofit curve touches the leader’s reaction function'], correct: 1, why: 'The leader picks its best point on the follower’s reaction function; the crossing of the two functions is Cournot.' },
+    { worked: 'w-perfect-competition', topic: 'cost-curves', q: 'On a total cost diagram, average total cost at output Q equals…', choices: ['The slope of TC at Q', 'The slope of a straight line from the origin to TC at Q', 'The vertical distance between TC and TVC', 'The height of TC at Q'], correct: 1, why: 'ATC = TC/Q, which is rise over run along the ray from the origin. The slope of TC itself is MC; the gap between TC and TVC is fixed cost.' },
     { worked: 'w-slutsky', topic: 'income-substitution', q: 'The price of an inferior good that is not a Giffen good rises. What happens to the quantity demanded?', choices: ['It rises, because the income effect dominates', 'It falls: the income effect raises it, but by less than the substitution effect lowers it', 'It falls, because both effects reduce it', 'It is unchanged'], correct: 1, why: 'For an inferior good the income effect works against the substitution effect, but here it is smaller, so demand still slopes down.' },
     { worked: 'w-slutsky', topic: 'income-substitution', q: 'Which statement about Giffen goods is correct?', choices: ['Every inferior good is a Giffen good', 'A Giffen good is a normal good with a large substitution effect', 'A Giffen good is an inferior good whose income effect outweighs its substitution effect, so demand slopes up', 'For a Giffen good the substitution effect raises demand when its price rises'], correct: 2, why: 'The substitution effect always moves against the price change; Giffen behaviour needs an inferior good with a large enough income effect to outweigh it.' },
     { worked: 'w-money-creation', topic: 'money-market', q: 'The central bank buys government bonds from commercial banks (an open market purchase). What happens?', choices: ['The monetary base and money supply fall, and interest rates rise', 'The monetary base and money supply rise, and interest rates fall', 'Only the price of bonds changes', 'The reserve ratio rises'], correct: 1, why: 'Paying for the bonds adds reserves to banks, raising the monetary base; banks lend more, the money supply rises, and higher bond prices mean lower interest rates.' },

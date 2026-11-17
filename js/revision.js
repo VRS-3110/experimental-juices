@@ -99,6 +99,7 @@
       outcomes: [
         'Find the least-cost input combination using MP_L/w = MP_K/r.',
         'Derive SATC, SAVC, SAFC and SMC from a cost function and explain why SMC cuts SATC and SAVC at their minima.',
+        'Read MC and ATC off a total cost curve: MC is the slope of TC, ATC is the slope of a ray from the origin.',
         'Draw LAC as the envelope of SAC curves and identify economies, constant returns and diseconomies of scale.',
         'Explain the difference between diminishing returns (short run) and returns to scale (long run).',
       ],
@@ -113,10 +114,11 @@
       ],
       graphs: [
         { label: 'Isoquants and isocosts: least-cost combination', topic: 'isoquant' },
+        { label: 'Total cost curves above per-unit cost curves', topic: 'cost-curves' },
         { label: 'Short-run cost curves SMC, SATC, SAVC, SAFC', topic: 'costs' },
         { label: 'LAC envelope: economies, constant returns, diseconomies', topic: 'lac-envelope' },
       ],
-      topics: ['isoquant', 'costs', 'lac-envelope'],
+      topics: ['isoquant', 'cost-curves', 'costs', 'lac-envelope'],
     },
     {
       id: 'b-6-8', block: 'Blocks 6–8', part: 'Microeconomics', title: 'Market structures and imperfect competition',
@@ -127,14 +129,18 @@
         'Derive MR = a − 2bQ and find monopoly price, output, profit and deadweight loss.',
         'Draw short-run profit and the long-run tangency in monopolistic competition.',
         'Derive Cournot reaction functions and find the Nash equilibrium.',
+        'Explain the Bertrand paradox and how product differentiation or capacity limits resolve it.',
+        'Find the Stackelberg leader and follower outputs and compare them with Cournot.',
         'Compare regulation options for a natural monopoly.',
       ],
-      examFocus: ['A monopolist reads price off the demand curve, not MR.', 'Compare outputs: monopoly < Cournot < competition with linear demand and equal costs.'],
+      examFocus: ['A monopolist reads price off the demand curve, not MR.', 'Compare outputs: monopoly < Cournot < Stackelberg < competition with linear demand and equal costs.', 'Say whether firms choose quantities (Cournot, Stackelberg) or prices (Bertrand).'],
       equations: [
         { name: 'Profit maximisation', tex: R`MR = MC` },
         { name: 'Perfect competition', tex: R`P = MR = MC \quad\text{(long run: } P = MC = \min LAC,\ \pi = 0)` },
         { name: 'Monopoly MR', tex: R`P = a - bQ \;\Rightarrow\; MR = a - 2bQ` },
         { name: 'Cournot reaction function', tex: R`MR_A = a - 2bQ_A - bQ_B = MC_A` },
+        { name: 'Bertrand (identical goods)', tex: R`p_A = p_B = MC` },
+        { name: 'Stackelberg (equal costs)', tex: R`q_L = \frac{a - c}{2b},\quad q_F = \frac{a - c}{4b}` },
       ],
       graphs: [
         { label: 'Perfectly competitive firm: profit, break-even, shutdown', topic: 'costs' },
@@ -143,8 +149,10 @@
         { label: 'Natural monopoly and regulation', topic: 'natural-monopoly' },
         { label: 'Monopolistic competition: short run and long-run tangency', topic: 'monopolistic-competition' },
         { label: 'Cournot reaction curves and Nash equilibrium', topic: 'cournot' },
+        { label: 'Bertrand price reaction functions', topic: 'bertrand' },
+        { label: 'Stackelberg leader’s isoprofit and the follower’s reaction function', topic: 'stackelberg' },
       ],
-      topics: ['costs', 'lr-industry', 'monopoly', 'natural-monopoly', 'monopolistic-competition', 'cournot'],
+      topics: ['costs', 'lr-industry', 'monopoly', 'natural-monopoly', 'monopolistic-competition', 'cournot', 'bertrand', 'stackelberg'],
     },
     {
       id: 'b-9', block: 'Block 9', part: 'Microeconomics', title: 'Factor and labour markets',
