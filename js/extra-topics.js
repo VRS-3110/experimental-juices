@@ -261,6 +261,175 @@
     tip: 'Draw both reaction functions, mark Cournot at their intersection, then move along the follower’s function to the leader’s isoprofit tangency and label it Stackelberg.',
   };
 
+  /* ── Price discrimination ── */
+  // Single market: P = 12 − Q. Third degree: market 1 P = 12 − Q (less elastic), market 2 P = 6 − 0.5Q (more elastic).
+  const PD_MARKETS = [{ a: 12, b: 1 }, { a: 6, b: 0.5 }];
+  const pd = (s) => {
+    const c = s.c, m = PD_MARKETS.map(({ a, b }) => {
+      const q = (a - c) / (2 * b), p = (a + c) / 2;
+      return { a, b, q, p, e: p / (b * q), profit: (p - c) * q, cs: 0.5 * (a - p) * q };
+    });
+    // Best single price: either serve both markets (combined demand Q = 24 − 3P, valid while P ≤ 6)
+    // or serve only market 1 at its own monopoly price. The firm picks whichever earns more;
+    // above MC ≈ 2.54 that is market 1 alone, so a single price leaves market 2 unserved.
+    const pBoth = 4 + c / 2, profBoth = (pBoth - c) * (24 - 3 * pBoth);
+    const pOne = (12 + c) / 2, profOne = (pOne - c) * (12 - pOne);
+    const both = profBoth >= profOne, pu = both ? pBoth : pOne;
+    return { c, m, pu, both, qu1: 12 - pu, qu2: both ? 12 - 2 * pu : 0, profitU: Math.max(profBoth, profOne), qm: (12 - c) / 2, pm: (12 + c) / 2, qc: 12 - c };
+  };
+  const pdPanel = (k) => ({
+    title: (s) => (s.mode === 0 ? ['Single-price monopoly', 'Perfect (first-degree) price discrimination'][k] : ['Market 1: less elastic demand', 'Market 2: more elastic demand'][k]),
+    x: { range: [0, 14], label: 'Quantity (Q)' },
+    y: { range: [0, 13], label: 'Price ($)' },
+    draw(s) {
+      const z = pd(s), c = s.c;
+      if (s.mode === 0) {
+        if (k === 0) {
+          return [
+            A([[0, 12], [0, z.pm], [z.qm, z.pm]], 'd', 'CS'),
+            A([[0, z.pm], [z.qm, z.pm], [z.qm, c], [0, c]], 'g', 'Profit'),
+            A([[z.qm, z.pm], [z.qm, c], [z.qc, c]], 'o', 'DWL'),
+            C((q) => 12 - q, 'd', 'D', { to: 12 }),
+            C((q) => 12 - 2 * q, 'g', 'MR', { to: 6, labelAt: 4.6 }),
+            Hl(c, 's', 'MC', { labelLeft: true }),
+            G(z.qm, z.pm, 'Q_m', 'P_m'),
+            P(z.qm, z.pm, ''),
+          ];
+        }
+        return [
+          A([[0, 12], [0, c], [z.qc, c]], 'g', 'Profit = all surplus'),
+          C((q) => 12 - q, 'd', 'D = MR', { to: 12 }),
+          Hl(c, 's', 'MC', { labelLeft: true }),
+          G(z.qc, c, 'Q = Q_c', null),
+          P(z.qc, c, 'Last unit at MC', 'o', { dx: -9 }),
+        ];
+      }
+      const mk = z.m[k], a = mk.a, b = mk.b;
+      return [
+        A([[0, a], [0, mk.p], [mk.q, mk.p]], 'd', 'CS'),
+        A([[0, mk.p], [mk.q, mk.p], [mk.q, c], [0, c]], 'g', 'Profit'),
+        C((q) => a - b * q, 'd', `D_${k + 1}`, { to: a / b }),
+        C((q) => a - 2 * b * q, 'g', `MR_${k + 1}`, { to: a / (2 * b), labelAt: (a / (2 * b)) * 0.75 }),
+        Hl(c, 's', 'MC', { labelLeft: true }),
+        Hl(z.pu, 'ghost', k === 1 && !z.both ? 'uniform price: not served' : 'uniform price'),
+        G(mk.q, mk.p, `Q_${k + 1}`, `P_${k + 1}`),
+        P(mk.q, c, '', 'g', { small: true }),
+        P(mk.q, mk.p, ''),
+      ];
+    },
+  });
+  const priceDiscrimination = {
+    id: 'price-discrimination',
+    title: 'Price discrimination',
+    summary: 'Price discrimination is charging different prices for the same good when the difference is not explained by cost. A firm can do it only if it has market power, can tell buyers (or groups) apart, and can stop resale. It turns consumer surplus into profit, and it can raise output compared with a single price.',
+    model: 'Perfect: demand P = 12 − Q, constant MC. Third degree: market 1 has P = 12 − Q (less elastic at the optimum), market 2 has P = 6 − 0.5Q (more elastic), same MC. The dashed line in each market is the price a non-discriminating monopolist would charge across both.',
+    graph: {
+      layout: 'row',
+      params: [
+        { id: 'mode', label: 'Type of discrimination', options: [{ v: 0, label: 'Perfect (1st degree)' }, { v: 1, label: 'Third degree' }], value: 1 },
+        { id: 'c', label: 'Marginal cost (MC)', min: 0, max: 4, step: 0.1, value: 2 },
+      ],
+      panels: [pdPanel(0), pdPanel(1)],
+      readout(s) {
+        const z = pd(s);
+        if (s.mode === 0) {
+          const single = (z.pm - s.c) * z.qm, perfect = 0.5 * (12 - s.c) * z.qc;
+          return {
+            rows: [['Single price: P, Q', `${money(z.pm)}, ${f(z.qm)}`], ['Single price: profit', money(single)], ['Single price: CS', money(0.5 * (12 - z.pm) * z.qm)], ['Single price: DWL', money(0.5 * (z.pm - s.c) * (z.qc - z.qm))], ['Perfect: output', f(z.qc)], ['Perfect: profit (CS = 0, DWL = 0)', money(perfect)]],
+            status: 'Perfect discrimination charges every buyer their maximum willingness to pay. Output rises to the competitive level, so there is no deadweight loss, but the firm takes all the surplus.',
+          };
+        }
+        const [m1, m2] = z.m, disc = m1.profit + m2.profit;
+        return {
+          rows: [
+            ['Market 1: P, Q', `${money(m1.p)}, ${f(m1.q)}`], ['Market 1: |PED| at optimum', f(m1.e)],
+            ['Market 2: P, Q', `${money(m2.p)}, ${f(m2.q)}`], ['Market 2: |PED| at optimum', f(m2.e)],
+            ['Profit with discrimination', money(disc)], ['Profit with one uniform price', `${money(z.profitU)} at P = ${money(z.pu)}`],
+          ],
+          status: `Each market sets MR = MC. The less elastic market (|PED| ${f(m1.e)}) pays the higher price; the more elastic one (|PED| ${f(m2.e)}) pays less. Discrimination earns ${money(disc - z.profitU)} more than a single price.`
+            + (z.both ? '' : ' At this cost the best single price serves market 1 only, so discrimination also brings market 2 into the market: a case where it raises total welfare.'),
+        };
+      },
+    },
+    equations: [
+      { name: 'Third degree: profit maximisation', tex: R`MR_1 = MR_2 = MC`, note: 'If MR differed, moving a unit to the market with the higher MR would raise revenue.' },
+      { name: 'Inverse elasticity rule in each market', tex: R`\frac{P_i - MC}{P_i} = \frac{1}{|E_i|} \;\Rightarrow\; P_i = \frac{MC}{1 - 1/|E_i|}`, note: 'The less elastic market gets the higher markup.' },
+      { name: 'Perfect (first-degree) discrimination', tex: R`P = WTP \text{ for each unit},\quad MR = D,\quad Q = Q_c,\quad CS = 0,\ DWL = 0`, note: 'Every unit is sold at its buyer’s reservation price.' },
+      { name: 'Second-degree discrimination', tex: R`\text{price depends on the quantity or version bought}`, note: 'Quantity discounts, block pricing, versioning: buyers sort themselves.' },
+      { name: 'Two-part tariff', tex: R`T(q) = F + p\,q`, note: 'A fixed fee F captures surplus while the unit price p can be set at MC.' },
+    ],
+    points: [
+      'Conditions: market power, a way to separate buyers into groups with different elasticities, and no resale (arbitrage) between them.',
+      'First degree: one price per buyer (or unit). Second degree: prices depend on quantity or version, and buyers choose. Third degree: different prices for identifiable groups, such as student, peak and off-peak, or domestic and export prices.',
+      'Welfare: perfect discrimination removes deadweight loss but gives all surplus to the firm. Third-degree discrimination can raise or lower total welfare; it raises it if it lets a market be served that a single price would leave out.',
+      'Examples: airline fares, student discounts, cinema tickets, software versions, bulk discounts, utility tariffs.',
+    ],
+    tip: 'Draw the two markets side by side with the same MC line. Show MR₁ = MR₂ = MC, then read each price off its own demand curve, and say which market is less elastic.',
+  };
+
+  /* ── Kinked demand (Sweezy) ── */
+  // Demand kinks at Q = 6, P = 8: above, rivals ignore rises (P = 10 − Q/3, elastic);
+  // below, rivals match cuts (P = 14 − Q, inelastic). MR jumps from 6 down to 2 at the kink.
+  const kink = (c) => {
+    if (c > 6) { const q = 1.5 * (10 - c); return { q, p: 10 - q / 3, zone: 'above' }; }
+    if (c < 2) { const q = (14 - c) / 2; return { q, p: 14 - q, zone: 'below' }; }
+    return { q: 6, p: 8, zone: 'gap' };
+  };
+  const kinkedDemand = {
+    id: 'kinked-demand',
+    title: 'Kinked demand curve',
+    summary: 'The kinked demand model explains why prices in oligopoly can be sticky. Each firm expects rivals to ignore a price rise (so it loses many customers) but to match a price cut (so it gains few). Demand is elastic above the current price and inelastic below it, which opens a vertical gap in marginal revenue. Marginal cost can move anywhere within that gap without changing the profit-maximising price.',
+    model: 'Above the kink (rivals do not follow a rise): P = 10 − Q/3. Below the kink (rivals match a cut): P = 14 − Q. The kink is at Q = 6, P = 8. MR jumps from 6 to 2 at the kink. MC is constant.',
+    graph: {
+      x: { range: [0, 14], label: 'Quantity (Q)' },
+      y: { range: [0, 14], label: 'Price and cost ($)' },
+      params: [{ id: 'c', label: 'Marginal cost (MC)', min: 0, max: 8, step: 0.1, value: 4, hint: 'The MR gap runs from 2 to 6' }],
+      draw(s) {
+        const z = kink(s.c);
+        return [
+          C((q) => 10 - q / 3, 'ghost', 'if rivals ignored cuts', { from: 6, to: 14, labelAt: 11.5 }),
+          C((q) => 14 - q, 'ghost', '', { to: 6 }),
+          C((q) => 10 - q / 3, 'd', 'D (elastic)', { to: 6, labelAt: 1 }),
+          C((q) => 14 - q, 'd', 'D (inelastic)', { from: 6, to: 14, labelAt: 9.5 }),
+          C((q) => 10 - (2 * q) / 3, 'g', 'MR', { to: 6, labelAt: 3.6 }),
+          S(6, 6, 6, 2, 'g', '', { dash: true }),
+          C((q) => 14 - 2 * q, 'g', '', { from: 6, to: 7 }),
+          T(6.25, 5.4, 'MR gap', 'g'),
+          Hl(s.c, 's', 'MC', { labelLeft: true }),
+          G(z.q, z.p, 'Q*', 'P*'),
+          P(6, 8, 'Kink', 'n', { small: true, dx: 9, dy: -9 }),
+          P(z.q, z.p, ''),
+        ];
+      },
+      readout(s) {
+        const z = kink(s.c);
+        return {
+          rows: [['Price', money(z.p)], ['Output', f(z.q)], ['MR just left of the kink', money(6)], ['MR just right of the kink', money(2)], ['MC', money(s.c)]],
+          status: z.zone === 'gap'
+            ? 'MC lies inside the MR gap, so the profit-maximising output stays at the kink and the price stays at $8.00. Cost changes in this range do not change the price: sticky prices.'
+            : z.zone === 'above'
+              ? 'MC is above the top of the gap, so MC now cuts the upper MR. Output falls and price rises above the kink.'
+              : 'MC is below the bottom of the gap, so MC cuts the lower MR. Output rises and price falls below the kink.',
+          tone: z.zone === 'gap' ? 'good' : 'warn',
+        };
+      },
+    },
+    equations: [
+      { name: 'Two demand segments', tex: R`P = \begin{cases} a_1 - b_1 Q & Q \le Q^* \;(\text{rivals ignore rises}) \\ a_2 - b_2 Q & Q > Q^* \;(\text{rivals match cuts}) \end{cases},\quad b_1 < b_2`, note: 'Flatter (more elastic) above the kink, steeper below.' },
+      { name: 'Marginal revenue', tex: R`MR = a_1 - 2b_1 Q \;\;(Q < Q^*),\qquad MR = a_2 - 2b_2 Q \;\;(Q > Q^*)`, note: 'Each segment has its own MR line.' },
+      { name: 'MR gap at the kink', tex: R`MR^{-} = a_1 - 2b_1Q^* \;>\; MR^{+} = a_2 - 2b_2Q^*`, note: 'Here MR⁻ = 6 and MR⁺ = 2.' },
+      { name: 'Price rigidity condition', tex: R`MR^{+} \le MC \le MR^{-} \;\Rightarrow\; Q = Q^*,\; P = P^*`, note: 'Any MC within the gap gives the same output and price.' },
+    ],
+    points: [
+      'Assumption: rivals match price cuts (to protect their share) but ignore price rises (to win customers).',
+      'Prediction: prices are stable even when costs change moderately, which fits observed price stickiness in some oligopolies.',
+      'Weakness: the model explains why price stays at the kink but not how that price was reached in the first place.',
+      'Weakness: evidence suggests firms often follow price rises too (for example after common cost shocks), which removes the kink.',
+      'Non-price competition (advertising, branding, quality) is common in such markets because price changes are unattractive.',
+    ],
+    tip: 'Draw both demand segments meeting at the kink, then both MR segments with a vertical dashed gap below the kink. Show two MC curves inside the gap giving the same P and Q.',
+  };
+
   /* ── Install in course order ── */
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
@@ -269,4 +438,6 @@
   insertAfter('isoquant', costCurves, MICRO, 'Block 5');
   insertAfter('cournot', bertrandTopic, MICRO, 'Blocks 6–8');
   insertAfter('bertrand', stackelbergTopic, MICRO, 'Blocks 6–8');
+  insertAfter('stackelberg', kinkedDemand, MICRO, 'Blocks 6–8');
+  insertAfter('monopoly', priceDiscrimination, MICRO, 'Blocks 6–8');
 })();

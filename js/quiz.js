@@ -259,6 +259,51 @@
       },
     },
     {
+      worked: 'w-price-discrimination', topic: 'price-discrimination',
+      gen() {
+        const c = pick([10, 20]), b1 = pick([1, 2]), b2 = pick([1, 2]);
+        const a1 = c + 2 * b1 * int(15, 30), a2 = c + 2 * b2 * int(5, 14);
+        const q1 = (a1 - c) / (2 * b1), q2 = (a2 - c) / (2 * b2), p1 = (a1 + c) / 2, p2 = (a2 + c) / 2;
+        const lin2 = (a, b, i) => `P_${i} = ${a} − ${b === 1 ? '' : b}Q_${i}`;
+        return {
+          q: `A monopolist with constant MC = ${c} sells in two separate markets with no resale: ${lin2(a1, b1, 1)} and ${lin2(a2, b2, 2)}.`,
+          parts: [
+            { label: 'Price in market 1', answer: p1 },
+            { label: 'Price in market 2', answer: p2 },
+            { label: 'Total profit', answer: (p1 - c) * q1 + (p2 - c) * q2 },
+          ],
+          solution: [
+            `MR₁ = ${a1} − ${2 * b1}Q₁ = ${c} → Q₁ = ${n(q1)}, P₁ = ${n(p1)}.`,
+            `MR₂ = ${a2} − ${2 * b2}Q₂ = ${c} → Q₂ = ${n(q2)}, P₂ = ${n(p2)}.`,
+            `Profit = (${n(p1)} − ${c})(${n(q1)}) + (${n(p2)} − ${c})(${n(q2)}) = ${n((p1 - c) * q1 + (p2 - c) * q2)}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-kinked-demand', topic: 'kinked-demand',
+      gen() {
+        const Q = pick([4, 6, 8]), P = pick([8, 10, 12]), b1 = pick([0.25, 0.5]), b2 = pick([1, 1.5]);
+        const top = P - b1 * Q, bot = P - b2 * Q;
+        if (bot <= 0.5) return this.gen();
+        const inside = Math.random() < 0.5;
+        const mc = inside ? +(bot + (top - bot) * pick([0.25, 0.5, 0.75])).toFixed(2) : +(top + pick([0.5, 1, 1.5])).toFixed(2);
+        return {
+          q: `An oligopolist sells ${Q} units at a price of ${P}. Above that price demand is P = ${n(P + b1 * Q)} − ${b1}Q; below it, P = ${n(P + b2 * Q)} − ${b2}Q. Marginal cost is ${n(mc)}.`,
+          parts: [
+            { label: 'MR just to the left of the kink (top of the gap)', answer: top },
+            { label: 'MR just to the right of the kink (bottom of the gap)', answer: bot },
+            { label: `Does the price stay at ${P}?`, choices: ['Yes: MC is inside the MR gap', 'No: MC is outside the MR gap'], correct: inside ? 0 : 1 },
+          ],
+          solution: [
+            `Upper MR = ${n(P + b1 * Q)} − ${2 * b1}Q; at Q = ${Q}: ${n(top)}.`,
+            `Lower MR = ${n(P + b2 * Q)} − ${2 * b2}Q; at Q = ${Q}: ${n(bot)}.`,
+            `MC = ${n(mc)} is ${inside ? `between ${n(bot)} and ${n(top)}, so output stays at ${Q} and price at ${P}` : `above ${n(top)}, so MC cuts the upper MR: output falls and price rises`}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-stackelberg', topic: 'stackelberg',
       gen() {
         const c = pick([10, 20, 30]), a = c + 4 * int(10, 25), k = a - c;
@@ -506,6 +551,11 @@
     { worked: 'w-monopoly', topic: 'monopoly', q: 'Having found output where MR = MC, a monopolist sets price…', choices: ['On the MR curve', 'Equal to MC', 'On the demand curve above that output', 'Equal to average cost'], correct: 2, why: 'The price is the most buyers will pay for that quantity, read from demand.' },
     { worked: 'w-solow', topic: 'solow', q: 'In the Solow model, a permanent rise in the saving rate…', choices: ['Permanently raises the growth rate of output per worker', 'Raises the steady-state level of output per worker but not its long-run growth rate', 'Has no effect', 'Lowers steady-state capital'], correct: 1, why: 'Higher s raises k* and y* (a level effect); only technological progress sustains growth.' },
     { worked: 'w-externality', topic: 'externalities', q: 'With a negative production externality, the free market produces…', choices: ['Too little', 'The efficient amount', 'Too much', 'Nothing'], correct: 2, why: 'Firms ignore the external cost, so they produce where MPC = MSB, beyond the point where MSC = MSB.' },
+    { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Under third-degree price discrimination, which group pays the higher price?', choices: ['The group with more elastic demand', 'The group with less elastic demand', 'The larger group', 'Both pay the same, because MC is the same'], correct: 1, why: 'Each market sets MR = MC, so (P − MC)/P = 1/|PED|: a lower elasticity means a higher markup.' },
+    { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Compared with a single-price monopoly, perfect (first-degree) price discrimination…', choices: ['Lowers output and raises deadweight loss', 'Raises output to the competitive level, removes deadweight loss and leaves consumers no surplus', 'Leaves output unchanged but raises price', 'Gives all the surplus to consumers'], correct: 1, why: 'Every unit with willingness to pay above MC is sold, so output is efficient, but the firm captures all of the surplus.' },
+    { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Which condition is needed for price discrimination to work?', choices: ['Perfect competition', 'Identical demand elasticities in every group', 'Buyers cannot resell the good to each other', 'Constant returns to scale'], correct: 2, why: 'If low-price buyers could resell to high-price buyers, arbitrage would remove the price difference. Market power and different elasticities are also needed.' },
+    { worked: 'w-kinked-demand', topic: 'kinked-demand', q: 'In the kinked demand model, what does each firm assume about its rivals?', choices: ['They match price rises but ignore cuts', 'They match price cuts but ignore rises', 'They match all price changes', 'They never react'], correct: 1, why: 'Matching cuts makes demand inelastic below the kink; ignoring rises makes it elastic above, which creates the kink.' },
+    { worked: 'w-kinked-demand', topic: 'kinked-demand', q: 'A kinked-demand oligopolist’s marginal cost rises but stays within the gap in MR. What happens?', choices: ['Price rises and output falls', 'Price and output are unchanged', 'Price falls', 'The firm leaves the market'], correct: 1, why: 'MC still crosses MR in the vertical gap, so the profit-maximising output stays at the kink and price is unchanged.' },
     { worked: 'w-bertrand', topic: 'bertrand', q: 'Two firms sell identical goods, have the same constant marginal cost and compete on price. The equilibrium price is…', choices: ['The monopoly price', 'Between marginal cost and the monopoly price, as in Cournot', 'Equal to marginal cost', 'Below marginal cost'], correct: 2, why: 'Any price above MC is undercut by the rival, who would take the whole market: the Bertrand paradox.' },
     { worked: 'w-bertrand', topic: 'bertrand', q: 'With differentiated goods and price competition, the firms’ reaction functions…', choices: ['Slope down: prices are strategic substitutes', 'Slope up: prices are strategic complements', 'Are vertical', 'Do not exist'], correct: 1, why: 'If the rival raises its price, your demand rises and your best price rises too.' },
     { worked: 'w-stackelberg', topic: 'stackelberg', q: 'Compared with Cournot, the Stackelberg leader…', choices: ['Produces less and earns less', 'Produces more and earns more', 'Produces the same and earns more', 'Produces more but earns less'], correct: 1, why: 'Committing first to a larger output makes the follower cut back, raising the leader’s profit: first-mover advantage.' },
