@@ -325,6 +325,50 @@
       },
     },
     {
+      worked: 'w-price-leadership', topic: 'price-leadership',
+      gen() {
+        const b = pick([2, 4, 5]), a = b * pick([20, 24, 30]), p0 = pick([1, 2]), k = pick([2, 4, 5, 10]);
+        const A0 = a + k * p0, B0 = b + k, pMax = A0 / B0;
+        if (Math.floor(pMax) - 2 < p0 + 1) return this.gen();
+        const c = int(p0 + 1, Math.floor(pMax) - 2);
+        const qL = (A0 - c * B0) / 2, p = (A0 - qL) / B0, qF = k * (p - p0);
+        return {
+          q: `Market demand is Q = ${a} − ${b}P. A competitive fringe supplies Q_F = ${k}P − ${k * p0} at prices above ${p0}. A dominant firm with constant MC = ${c} sets the price and the fringe takes it as given.`,
+          parts: [
+            { label: 'Price set by the dominant firm', answer: p },
+            { label: 'Dominant firm’s output', answer: qL },
+            { label: 'Fringe output', answer: qF },
+          ],
+          solution: [
+            `Residual demand: Q_L = (${a} − ${b}P) − (${k}P − ${k * p0}) = ${A0} − ${B0}P, so P = (${A0} − Q_L)/${B0}.`,
+            `MR = (${A0} − 2Q_L)/${B0} = ${c} → Q_L = (${A0} − ${c * B0})/2 = ${n(qL)}. P = (${A0} − ${n(qL)})/${B0} = ${n(p)}.`,
+            `Fringe: Q_F = ${k}(${n(p)}) − ${k * p0} = ${n(qF)}. Market output ${n(a - b * p)} = ${n(qL)} + ${n(qF)}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-oligopoly-compare', topic: 'oligopoly-compare',
+      gen() {
+        const c = pick([10, 20, 30]), m = 12 * int(4, 9), a = c + m, nf = pick([3, 4, 5, 9]);
+        const pN = (a + nf * c) / (nf + 1);
+        return {
+          q: `Market demand is P = ${a} − Q and every firm has constant MC = ${c}.`,
+          parts: [
+            { label: 'Market output under monopoly', answer: m / 2 },
+            { label: 'Market output in a Cournot duopoly', answer: (2 * m) / 3 },
+            { label: 'Market output in a Stackelberg duopoly', answer: (3 * m) / 4 },
+            { label: `Price with ${nf} Cournot firms`, answer: pN },
+          ],
+          solution: [
+            `Competitive output (P = MC) is ${a} − ${c} = ${m}.`,
+            `Monopoly: MR = ${a} − 2Q = ${c} → Q = ${m / 2}. Cournot duopoly: Q = (2/3)(${m}) = ${n((2 * m) / 3)}. Stackelberg: q_L = ${m / 2}, q_F = ${m / 4}, Q = ${n((3 * m) / 4)}.`,
+            `${nf} Cournot firms: Q = (${nf}/${nf + 1})(${m}) = ${n((nf * m) / (nf + 1))}, P = (${a} + ${nf} × ${c})/${nf + 1} = ${n(pN)}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-game-theory', topic: 'game-theory',
       gen() {
         const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
@@ -655,6 +699,10 @@
     { worked: 'w-cartel', topic: 'collusion', q: 'Which of these makes collusion harder to sustain?', choices: ['Few firms in the market', 'Transparent, published prices', 'A large number of firms with different costs', 'Frequent interaction between the same firms'], correct: 2, why: 'More firms raise δ* (each cheat gains more relative to its share), and different costs make a single price harder to agree.' },
     { worked: 'w-cartel', topic: 'collusion', q: 'Switching the punishment for cheating from Cournot competition to a price war at P = MC…', choices: ['Raises the critical discount factor, so collusion is harder', 'Lowers the critical discount factor, so collusion is easier, if the threat is credible', 'Has no effect on cartel stability', 'Makes cheating the dominant strategy in the repeated game'], correct: 1, why: 'δ* = (π_D − π_C)/(π_D − π_P): a lower punishment profit π_P makes the denominator larger and δ* smaller.' },
     { worked: 'w-cartel', topic: 'collusion', q: 'What is a leniency programme in competition policy?', choices: ['A cap on the fines a cartel can pay', 'Immunity or reduced fines for the first cartel member to report the cartel, which turns collusion into a prisoner’s dilemma', 'Permission for small firms to collude', 'A rule letting firms share price information'], correct: 1, why: 'Each member fears being reported first, so confessing becomes dominant and cartels are detected more often.' },
+    { worked: 'w-price-leadership', topic: 'price-leadership', q: 'In the dominant-firm price leadership model, the leader’s demand curve is…', choices: ['The market demand curve', 'Market demand minus the fringe’s supply at each price', 'The fringe’s supply curve', 'Perfectly elastic at the competitive price'], correct: 1, why: 'The fringe sells all it wants at the leader’s price, so the leader faces only the residual demand.' },
+    { worked: 'w-price-leadership', topic: 'price-leadership', q: 'Barometric price leadership is when…', choices: ['The largest firm sets a price below cost to drive rivals out', 'Firms sign an agreement to follow one firm’s price', 'Rivals follow a firm whose price changes are seen as a reliable signal of market conditions, even if it is not dominant', 'The government sets a maximum price'], correct: 2, why: 'The barometric leader reads costs and demand well; the others follow its lead without any agreement.' },
+    { worked: 'w-oligopoly-compare', topic: 'oligopoly-compare', q: 'With linear demand and equal constant MC, which ranking of market output is correct for two firms?', choices: ['Cournot < monopoly < Stackelberg < Bertrand', 'Monopoly < Stackelberg < Cournot < Bertrand', 'Monopoly < Cournot < Stackelberg < Bertrand', 'Monopoly < Cournot = Bertrand < Stackelberg'], correct: 2, why: 'Monopoly (a − c)/2b < Cournot 2(a − c)/3b < Stackelberg 3(a − c)/4b < Bertrand (a − c)/b.' },
+    { worked: 'w-oligopoly-compare', topic: 'oligopoly-compare', q: 'As the number of firms in a Cournot market rises, the market price…', choices: ['Stays at the monopoly level', 'Falls toward marginal cost', 'Falls to marginal cost as soon as there are two firms', 'Rises, because each firm has less output to sell'], correct: 1, why: 'P = (a + nc)/(n + 1) falls toward c as n grows; only Bertrand reaches P = MC with two firms.' },
     { worked: 'w-game-theory', topic: 'game-theory', q: 'Which statement about Nash equilibrium is correct?', choices: ['Every Nash equilibrium uses dominant strategies', 'A dominant-strategy equilibrium is a Nash equilibrium, but a Nash equilibrium need not involve dominant strategies', 'A Nash equilibrium always maximises joint payoffs', 'Every game has exactly one pure-strategy Nash equilibrium'], correct: 1, why: 'Nash only requires each strategy to be a best response to the others, which holds for dominant strategies but also in games like coordination games.' },
     { worked: 'w-game-theory', topic: 'game-theory', q: 'An incumbent threatens to start a price war if a rival enters, but once entry happens a price war would lower its own profit. The threat is…', choices: ['Credible, so the rival stays out', 'Not credible, so backward induction predicts entry and accommodation', 'Credible only if the rival is larger', 'Irrelevant to the outcome in every case'], correct: 1, why: 'At the incumbent’s decision node, accommodating pays more, so the rival anticipates that and enters. A credible deterrent needs a commitment that changes the incumbent’s payoffs.' },
     { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Under third-degree price discrimination, which group pays the higher price?', choices: ['The group with more elastic demand', 'The group with less elastic demand', 'The larger group', 'Both pay the same, because MC is the same'], correct: 1, why: 'Each market sets MR = MC, so (P − MC)/P = 1/|PED|: a lower elasticity means a higher markup.' },
