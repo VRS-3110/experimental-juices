@@ -3,7 +3,7 @@
    A topic's `game` is rendered by app.js as a payoff matrix with best responses marked
    and the equilibria worked out. Payoffs are listed as [row player, column player]. */
 (function () {
-  const { R, f, money, C, V, P, G, T, range } = window.TOPIC_KIT;
+  const { R, f, money, C, V, Hl, P, G, A, S, T, range } = window.TOPIC_KIT;
   const MICRO = 'Microeconomics';
 
   const PRESETS = [
@@ -166,11 +166,118 @@
     tip: 'Show the matrix, underline best responses to prove defection is dominant, then point out that (cooperate, cooperate) Pareto-dominates the equilibrium. For repeated games, compare R/(1 − δ) with T + δP/(1 − δ).',
   };
 
+  /* ── Collusion and cartels ── */
+  // Demand P = 24 − Q, n identical firms with constant MC = c. The cartel sets the monopoly output
+  // and shares it equally. A cheat takes the others' quotas as given and maximises on the residual
+  // demand. Grim trigger: after cheating, either Cournot for ever or a price war (P = MC, zero profit).
+  const CA = 24;
+  const cartel = (s) => {
+    const n = s.n, m = CA - s.c;
+    const Qm = m / 2, Pm = CA - Qm, quota = Qm / n, piC = (Pm - s.c) * quota;
+    const aRes = CA - (n - 1) * quota;                  // residual demand intercept for a cheat
+    const qD = (aRes - s.c) / 2, PD = aRes - qD, piD = (PD - s.c) * qD;
+    const piRest = (PD - s.c) * quota;                  // each loyal member's profit after the cheat
+    const qN = m / (n + 1), PN = CA - n * qN, piN = (PN - s.c) * qN;
+    const war = s.pun === 1, piP = war ? 0 : piN;
+    const dStar = (piD - piC) / (piD - piP);
+    return { n, m, Qm, Pm, quota, piC, aRes, qD, PD, piD, piRest, qN, PN, piN, piP, war, dStar };
+  };
+  const collusion = {
+    id: 'collusion',
+    title: 'Collusion and cartels',
+    summary: 'A cartel is a group of firms that agree to act like one monopolist: they cut total output to the monopoly level, share it out as quotas and split the monopoly profit. Every member, though, gains by secretly producing more than its quota, so cartels are unstable. They hold together only if cheating can be detected and punished, and firms value future profits enough.',
+    model: 'Market demand P = 24 − Q; n identical firms, each with constant MC = c. The cartel produces the monopoly output and gives each firm an equal quota. A cheat assumes the others keep to their quotas, so it faces the residual demand P = (24 − (n − 1) × quota) − q. Grim trigger: once anyone cheats, the cartel collapses for ever, either to Cournot competition or to a price war at P = MC.',
+    graph: {
+      layout: 'row',
+      params: [
+        { id: 'n', label: 'Number of firms in the cartel (n)', min: 2, max: 6, step: 1, value: 2 },
+        { id: 'c', label: 'Marginal cost (c)', min: 0, max: 16, step: 0.5, value: 4 },
+        { id: 'd', label: 'Discount factor δ', min: 0, max: 0.95, step: 0.01, value: 0.6 },
+        { id: 'pun', label: 'Punishment after cheating', options: [{ v: 0, label: 'Cournot for ever' }, { v: 1, label: 'Price war (P = MC)' }], value: 0 },
+      ],
+      panels: [
+        {
+          title: 'Industry: the cartel acts as a monopolist',
+          x: { range: [0, 24], label: 'Industry output (Q)' },
+          y: { range: [0, 24], label: 'Price ($)', ticks: range(0, 24, 4) },
+          draw(s) {
+            const z = cartel(s);
+            return [
+              A([[0, z.Pm], [z.Qm, z.Pm], [z.Qm, s.c], [0, s.c]], 'g', ''),
+              s.c <= 9.5 ? T(0.6, s.c + 0.4 * (z.Pm - s.c), 'Cartel profit', 'g') : null,
+              C((q) => CA - q, 'd', 'D', { to: 24 }),
+              C((q) => CA - 2 * q, 'g', 'MR', { to: 12, labelAt: 10.6 }),
+              Hl(s.c, 's', 'MC', { labelLeft: true }),
+              P(z.n * z.qN, z.PN, 'Cournot', 'n', { small: true, dx: 9 }),
+              P(z.m, s.c, 'P = MC', 'n', { small: true, dx: 6, dy: -8 }),
+              G(z.Qm, z.Pm, 'Q_m', 'P_m'),
+              P(z.Qm, z.Pm, 'Cartel'),
+            ];
+          },
+        },
+        {
+          title: 'One member: keep to the quota or cheat?',
+          x: { range: [0, 16], label: 'Member’s output (q)' },
+          y: { range: [0, 24], label: 'Price and cost ($)', ticks: range(0, 24, 4) },
+          draw(s) {
+            const z = cartel(s);
+            return [
+              A([[0, z.PD], [z.qD, z.PD], [z.qD, s.c], [0, s.c]], 'o', z.qD > 5.5 && z.PD - s.c > 2.5 ? 'Profit if it cheats' : ''),
+              S(0, z.Pm, z.quota, z.Pm, 'g', '', { dash: true }),
+              S(z.quota, z.Pm, z.quota, s.c, 'g', '', { dash: true }),
+              C((q) => z.aRes - q, 'd', 'Residual demand', { to: z.aRes, labelAt: Math.min(z.aRes - 3, 13) }),
+              C((q) => z.aRes - 2 * q, 'g', 'MR', { to: z.aRes / 2, labelAt: z.aRes / 2 - 1.2 }),
+              Hl(s.c, 's', 'MC'),
+              G(z.quota, z.Pm, 'quota', 'P_m', 'g'),
+              P(z.quota, z.Pm, 'Keep quota', 'g'),
+              G(z.qD, z.PD, 'q_cheat', null),
+              P(z.qD, z.PD, 'Cheat'),
+            ];
+          },
+        },
+      ],
+      readout(s) {
+        const z = cartel(s), ok = s.d >= z.dStar - 1e-9;
+        return {
+          rows: [
+            ['Cartel output / price', `${f(z.Qm)} / ${money(z.Pm)}`],
+            ['Quota and profit per member', `${f(z.quota)} / ${money(z.piC)}`],
+            ['A cheat’s best output / its profit', `${f(z.qD)} / ${money(z.piD)}`],
+            ['Each loyal member’s profit once cheated on', money(z.piRest)],
+            [z.war ? 'Profit per member in a price war' : 'Profit per member under Cournot', money(z.piP)],
+            ['Critical discount factor δ*', f(z.dStar)],
+          ],
+          status: ok
+            ? `δ = ${f(s.d)} ≥ δ* = ${f(z.dStar)}: the one-off gain from cheating (${money(z.piD - z.piC)}) is outweighed by the profit lost once the cartel collapses (${money(z.piC - z.piP)} every period), so the cartel holds.`
+            : `δ = ${f(s.d)} < δ* = ${f(z.dStar)}: each member gains ${money(z.piD - z.piC)} by cheating now and the future punishment is not enough to stop it, so the cartel breaks down.`,
+          tone: ok ? 'good' : 'warn',
+        };
+      },
+    },
+    equations: [
+      { name: 'Joint profit maximisation', tex: R`MR(Q) = MC \;\Rightarrow\; Q_m,\qquad \text{quota} = \frac{Q_m}{n}`, note: 'The cartel behaves like a multi-plant monopolist and shares out the monopoly output.' },
+      { name: 'Incentive to cheat', tex: R`MR_i = P_m - b\,q_i > MC \;\text{ at the quota}`, note: 'On its residual demand, each member’s MR at the quota is above MC, so producing more raises its own profit.' },
+      { name: 'Cheat’s best response (linear demand)', tex: R`q_{cheat} = \frac{a - c - (n - 1)\,\text{quota}}{2b}`, note: 'MR = MC on the residual demand left by the other members’ quotas.' },
+      { name: 'Grim-trigger condition', tex: R`\frac{\pi_C}{1 - \delta} \ge \pi_D + \frac{\delta\,\pi_P}{1 - \delta} \iff \delta \ge \delta^* = \frac{\pi_D - \pi_C}{\pi_D - \pi_P}`, note: 'π_C cartel share, π_D profit from cheating, π_P profit once punished. Same as (T − R)/(T − P).' },
+      { name: 'Two firms, linear demand, Cournot punishment', tex: R`\pi_C = \tfrac{8}{64}\tfrac{(a-c)^2}{b},\; \pi_D = \tfrac{9}{64}\tfrac{(a-c)^2}{b},\; \pi_N = \tfrac{1}{9}\tfrac{(a-c)^2}{b} \;\Rightarrow\; \delta^* = \tfrac{9}{17}`, note: 'A price war (π_P = 0) instead gives δ* = 1/9.' },
+    ],
+    points: [
+      'A cartel restricts output and raises price to the monopoly level: consumers lose and there is a deadweight loss, just as under monopoly.',
+      'Every member has an incentive to cheat: at the cartel price its MR on the residual demand is above MC. If all cheat, output rises towards the Cournot level. This is a prisoner’s dilemma.',
+      'Collusion is easier with few firms (δ* rises with n), similar costs and products, transparent prices so cheating is seen quickly, frequent interaction, stable demand, barriers to entry and harsh punishment.',
+      'A harsher punishment (a price war rather than Cournot) lowers δ*, so the threat makes collusion easier to sustain, provided it is credible.',
+      'Explicit collusion (price fixing, market sharing) is illegal under competition law in the UK and EU; leniency programmes reward the first member to confess, turning the cartel into a prisoner’s dilemma against itself. Tacit collusion, such as price leadership, involves no agreement and is hard to prosecute.',
+      'Example: OPEC sets production quotas for its members; quota breaking and price collapses (1986, 2014) show the instability.',
+    ],
+    tip: 'Draw the industry and one member side by side. Show the cartel price and quota, then the member’s residual demand with MR above MC at the quota, and the larger output it would choose. Finish with the repeated-game condition δ ≥ (π_D − π_C)/(π_D − π_P) and list the factors that make collusion easier.',
+  };
+
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
     window.TOPICS.splice(i + 1, 0, Object.assign(topic, { unit, block }));
   };
   insertAfter('kinked-demand', gameTheory, MICRO, 'Blocks 6–8');
   insertAfter('game-theory', prisonersDilemma, MICRO, 'Blocks 6–8');
+  insertAfter('prisoners-dilemma', collusion, MICRO, 'Blocks 6–8');
   window.GAME_PRESETS = PRESETS;
 })();

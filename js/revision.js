@@ -134,6 +134,8 @@
         'Use the kinked demand curve to explain sticky prices in oligopoly.',
         'Find dominant strategies and Nash equilibria in a payoff matrix, and solve a sequential game by backward induction.',
         'Explain why cartels are a prisoner’s dilemma and when repetition can sustain collusion (δ ≥ (T − R)/(T − P)).',
+        'Draw a cartel beside one member’s residual demand, show why each member gains by exceeding its quota, and find the cheat’s best output.',
+        'List the factors that make collusion easier or harder, and explain how competition policy and leniency programmes attack cartels.',
         'Find the Stackelberg leader and follower outputs and compare them with Cournot.',
         'Compare regulation options for a natural monopoly.',
         'Classify barriers to entry and show how limit pricing deters an entrant.',
@@ -149,6 +151,7 @@
         { name: 'Third-degree price discrimination', tex: R`MR_1 = MR_2 = MC` },
         { name: 'Limit price (linear demand, sunk cost F)', tex: R`P_L = c + 2\sqrt{bF}` },
         { name: 'Collusion in a repeated prisoner’s dilemma', tex: R`\delta \ge \frac{T - R}{T - P}` },
+        { name: 'Cartel stability (grim trigger)', tex: R`\delta \ge \frac{\pi_D - \pi_C}{\pi_D - \pi_P}` },
         { name: 'Stackelberg (equal costs)', tex: R`q_L = \frac{a - c}{2b},\quad q_F = \frac{a - c}{4b}` },
       ],
       graphs: [
@@ -166,8 +169,9 @@
         { label: 'Kinked demand curve and the MR gap', topic: 'kinked-demand' },
         { label: 'Payoff matrices, Nash equilibrium and the entry game', topic: 'game-theory' },
         { label: 'Prisoner’s dilemma and the repeated-game condition', topic: 'prisoners-dilemma' },
+        { label: 'Cartel: industry output beside a member’s incentive to cheat', topic: 'collusion' },
       ],
-      topics: ['costs', 'lr-industry', 'monopoly', 'price-discrimination', 'natural-monopoly', 'entry-barriers', 'contestable-markets', 'monopolistic-competition', 'cournot', 'bertrand', 'stackelberg', 'kinked-demand', 'game-theory', 'prisoners-dilemma'],
+      topics: ['costs', 'lr-industry', 'monopoly', 'price-discrimination', 'natural-monopoly', 'entry-barriers', 'contestable-markets', 'monopolistic-competition', 'cournot', 'bertrand', 'stackelberg', 'kinked-demand', 'game-theory', 'prisoners-dilemma', 'collusion'],
     },
     {
       id: 'b-9', block: 'Block 9', part: 'Microeconomics', title: 'Factor and labour markets',

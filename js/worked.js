@@ -239,6 +239,20 @@
       mistakes: ['Concluding the firms will collude because (collude, collude) gives the highest joint profit.', 'Forgetting the punishment payoffs after cheating, or discounting the first period.', 'Assuming repetition always helps: a known end date undoes it.'],
     },
     {
+      id: 'w-cartel', topic: 'collusion', kind: 'calc',
+      title: 'A two-firm cartel: quotas, cheating and stability',
+      question: 'Two identical firms face market demand P = 100 − Q and each has constant MC = 20. (a) They form a cartel and split the monopoly output equally. Find the cartel price, each quota and each firm’s profit. (b) Firm 1 believes firm 2 will keep to its quota. What output maximises firm 1’s profit, and what do the two firms earn? (c) Find the Cournot outcome if the cartel collapses. (d) With grim-trigger strategies (Cournot for ever after cheating), what discount factor sustains the cartel? (e) What if the punishment is a price war at P = MC?',
+      steps: [
+        { t: '(a) The cartel acts as a monopolist: MR = 100 − 2Q = 20:', m: R`Q_m = 40,\quad P_m = 60,\quad \text{quota} = 20,\quad \pi_C = (60 - 20)(20) = 800` },
+        { t: '(b) With firm 2 producing 20, firm 1’s residual demand is P = 80 − q₁, so MR₁ = 80 − 2q₁. At the quota MR₁ = 40 > MC = 20, so producing more pays. MR₁ = MC:', m: R`q_1 = 30,\quad P = 100 - 50 = 50,\quad \pi_D = (50 - 20)(30) = 900,\quad \pi_2 = (50 - 20)(20) = 600` },
+        { t: '(c) Cournot: reaction function q₁ = (80 − q₂)/2; by symmetry:', m: R`q = \frac{80}{3} \approx 26.67,\quad P \approx 46.67,\quad \pi_N = \Big(\frac{80}{3}\Big)^2 \approx 711.1` },
+        { t: '(d) Collude for ever against cheat once, then Cournot for ever:', m: R`\frac{800}{1 - \delta} \ge 900 + \frac{711.1\,\delta}{1 - \delta} \iff \delta \ge \frac{900 - 800}{900 - 711.1} = \frac{9}{17} \approx 0.53` },
+        { t: '(e) A price war gives zero profit after cheating:', m: R`\delta \ge \frac{900 - 800}{900 - 0} = \frac{1}{9} \approx 0.11` },
+      ],
+      answer: 'Cartel: P = 60, quotas of 20, profit 800 each. A cheat produces 30 (P = 50) and earns 900 while the loyal firm earns 600. Cournot: q ≈ 26.67 each, profit ≈ 711. With Cournot punishment the cartel needs δ ≥ 9/17 ≈ 0.53; with a price war only δ ≥ 1/9 ≈ 0.11.',
+      mistakes: ['Using the market demand rather than the residual demand to find the cheat’s best output.', 'Forgetting that the cheat lowers the price for the loyal member too.', 'Treating cheating as a one-off gain with no future cost: the punishment profit must enter the repeated-game condition.'],
+    },
+    {
       id: 'w-price-discrimination', topic: 'price-discrimination', kind: 'calc',
       title: 'Third-degree price discrimination',
       question: 'A monopolist with constant MC = 20 sells in two separate markets: P₁ = 100 − Q₁ and P₂ = 60 − 2Q₂, and resale between them is impossible. (a) Find the price and quantity in each market and total profit. (b) Check the result with elasticities. (c) What would profit be with one uniform price? (d) And with perfect discrimination?',

@@ -300,6 +300,31 @@
       },
     },
     {
+      worked: 'w-cartel', topic: 'collusion',
+      gen() {
+        const nf = pick([2, 3]), c = pick([10, 20, 30]), m = pick([2, 3, 4]), a = c + 24 * m, X = a - c;
+        const Qm = X / 2, Pm = a - Qm, quota = Qm / nf, piC = (Pm - c) * quota;
+        const aRes = a - (nf - 1) * quota, qD = (aRes - c) / 2, PD = aRes - qD, piD = (PD - c) * qD;
+        const qN = X / (nf + 1), piN = qN * qN, dStar = (piD - piC) / (piD - piN);
+        const names = nf === 2 ? 'Two' : 'Three';
+        return {
+          q: `${names} identical firms face market demand P = ${a} − Q, each with constant MC = ${c}. They form a cartel and share the monopoly output equally. One member considers cheating, assuming the others keep to their quotas. If anyone cheats, the cartel collapses to Cournot competition for ever.`,
+          parts: [
+            { label: 'Cartel price', answer: Pm },
+            { label: 'Each member’s quota', answer: quota },
+            { label: 'The cheat’s profit-maximising output', answer: qD },
+            { label: 'Critical discount factor δ* (Cournot punishment)', answer: dStar },
+          ],
+          solution: [
+            `Cartel: MR = ${a} − 2Q = ${c} → Q = ${n(Qm)}, P = ${n(Pm)}. Quota = ${n(Qm)}/${nf} = ${n(quota)}, profit ${n(piC)} each.`,
+            `Cheat’s residual demand: P = ${n(aRes)} − q. MR = ${n(aRes)} − 2q = ${c} → q = ${n(qD)}, P = ${n(PD)}, profit ${n(piD)}.`,
+            `Cournot with ${nf} firms: q = (${a} − ${c})/${nf + 1} = ${n(qN)}, profit ${n(piN)}.`,
+            `δ* = (π_D − π_C)/(π_D − π_N) = (${n(piD)} − ${n(piC)})/(${n(piD)} − ${n(piN)}) = ${n(dStar, 3)}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-game-theory', topic: 'game-theory',
       gen() {
         const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
@@ -626,6 +651,10 @@
     { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'What makes a game a prisoner’s dilemma?', choices: ['Neither player has a dominant strategy', 'Each player has a dominant strategy, but the resulting equilibrium is worse for both than another outcome', 'The game has two Nash equilibria', 'One player always wins'], correct: 1, why: 'Individually rational (dominant) choices produce a Pareto-inefficient equilibrium.' },
     { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'In an infinitely repeated cartel game with grim-trigger strategies, collusion is easier to sustain when…', choices: ['Firms are impatient (low discount factor)', 'The one-off gain from cheating is large', 'Firms value future profits highly (high discount factor)', 'The game has a known last round'], correct: 2, why: 'Collusion needs δ ≥ (T − R)/(T − P): patient firms lose more from future punishment than they gain from cheating once.' },
     { worked: 'w-prisoners-dilemma', topic: 'prisoners-dilemma', q: 'A cartel game is repeated exactly 10 times and both firms know it. Backward induction predicts…', choices: ['Collusion in every round', 'Collusion until round 10, then cheating', 'Cheating in every round', 'Random play'], correct: 2, why: 'Both cheat in the last round, so the ninth is effectively the last, and so on back to round 1.' },
+    { worked: 'w-cartel', topic: 'collusion', q: 'Why does each cartel member have an incentive to produce more than its quota?', choices: ['Its MR at the quota is below MC', 'Its MR on the residual demand at the quota is above MC, so extra output adds to its own profit', 'The cartel price is below the competitive price', 'Quotas are set above the monopoly output'], correct: 1, why: 'At the quota, the member’s MR (P_m − b·quota) exceeds MC; it ignores the fall in price borne by the other members.' },
+    { worked: 'w-cartel', topic: 'collusion', q: 'Which of these makes collusion harder to sustain?', choices: ['Few firms in the market', 'Transparent, published prices', 'A large number of firms with different costs', 'Frequent interaction between the same firms'], correct: 2, why: 'More firms raise δ* (each cheat gains more relative to its share), and different costs make a single price harder to agree.' },
+    { worked: 'w-cartel', topic: 'collusion', q: 'Switching the punishment for cheating from Cournot competition to a price war at P = MC…', choices: ['Raises the critical discount factor, so collusion is harder', 'Lowers the critical discount factor, so collusion is easier, if the threat is credible', 'Has no effect on cartel stability', 'Makes cheating the dominant strategy in the repeated game'], correct: 1, why: 'δ* = (π_D − π_C)/(π_D − π_P): a lower punishment profit π_P makes the denominator larger and δ* smaller.' },
+    { worked: 'w-cartel', topic: 'collusion', q: 'What is a leniency programme in competition policy?', choices: ['A cap on the fines a cartel can pay', 'Immunity or reduced fines for the first cartel member to report the cartel, which turns collusion into a prisoner’s dilemma', 'Permission for small firms to collude', 'A rule letting firms share price information'], correct: 1, why: 'Each member fears being reported first, so confessing becomes dominant and cartels are detected more often.' },
     { worked: 'w-game-theory', topic: 'game-theory', q: 'Which statement about Nash equilibrium is correct?', choices: ['Every Nash equilibrium uses dominant strategies', 'A dominant-strategy equilibrium is a Nash equilibrium, but a Nash equilibrium need not involve dominant strategies', 'A Nash equilibrium always maximises joint payoffs', 'Every game has exactly one pure-strategy Nash equilibrium'], correct: 1, why: 'Nash only requires each strategy to be a best response to the others, which holds for dominant strategies but also in games like coordination games.' },
     { worked: 'w-game-theory', topic: 'game-theory', q: 'An incumbent threatens to start a price war if a rival enters, but once entry happens a price war would lower its own profit. The threat is…', choices: ['Credible, so the rival stays out', 'Not credible, so backward induction predicts entry and accommodation', 'Credible only if the rival is larger', 'Irrelevant to the outcome in every case'], correct: 1, why: 'At the incumbent’s decision node, accommodating pays more, so the rival anticipates that and enters. A credible deterrent needs a commitment that changes the incumbent’s payoffs.' },
     { worked: 'w-price-discrimination', topic: 'price-discrimination', q: 'Under third-degree price discrimination, which group pays the higher price?', choices: ['The group with more elastic demand', 'The group with less elastic demand', 'The larger group', 'Both pay the same, because MC is the same'], correct: 1, why: 'Each market sets MR = MC, so (P − MC)/P = 1/|PED|: a lower elasticity means a higher markup.' },
