@@ -603,6 +603,131 @@
       },
     },
     {
+      worked: 'w-subsidy', topic: 'subsidy',
+      gen() {
+        const c = pick([4, 6, 8, 10]), a = c + 2 * int(6, 15), sb = 2 * int(1, 3);
+        const Q1 = (a - c + sb) / 2, Pc = a - Q1;
+        return {
+          q: `Demand is P = ${a} − Q and supply is P = ${c} + Q. Producers receive a subsidy of ${sb} per unit.`,
+          parts: [
+            { label: 'Quantity with the subsidy', answer: Q1 },
+            { label: 'Price buyers pay', answer: Pc },
+            { label: 'Price sellers receive', answer: Pc + sb },
+            { label: 'Cost to the government', answer: sb * Q1 },
+          ],
+          solution: [`${a} − Q + ${sb} = ${c} + Q → Q = ${n(Q1)}.`, `Buyers pay ${a} − ${n(Q1)} = ${n(Pc)}; sellers get ${n(Pc + sb)}.`, `Cost = ${sb} × ${n(Q1)} = ${n(sb * Q1)}.`],
+        };
+      },
+    },
+    {
+      worked: 'w-positive-ext', topic: 'positive-externality',
+      gen() {
+        const c = pick([5, 10, 15]), a = c + 2 * int(8, 20), e = 2 * int(1, 5);
+        const Qm = (a - c) / 2, Qs = (a + e - c) / 2;
+        return {
+          q: `Marginal private benefit is P = ${a} − Q and marginal cost is P = ${c} + Q. Each unit gives others a benefit of ${e}.`,
+          parts: [
+            { label: 'Market quantity', answer: Qm },
+            { label: 'Socially optimal quantity', answer: Qs },
+            { label: 'Deadweight loss in the free market', answer: 0.5 * e * (Qs - Qm) },
+          ],
+          solution: [`Market: ${a} − Q = ${c} + Q → Q = ${n(Qm)}.`, `Optimum: ${a + e} − Q = ${c} + Q → Q = ${n(Qs)}.`, `DWL = ½ × ${e} × ${n(Qs - Qm)} = ${n(0.5 * e * (Qs - Qm))}.`],
+        };
+      },
+    },
+    {
+      worked: 'w-public-goods', topic: 'public-goods',
+      gen() {
+        const a = int(10, 20), b = int(5, a - 2), c = int(a - b, a - 1);
+        const Qs = (a + b - c) / 2;
+        return {
+          q: `Two residents value a public good: MB_A = ${a} − Q and MB_B = ${b} − Q. Each unit costs ${c}.`,
+          parts: [
+            { label: 'Efficient quantity', answer: Qs },
+            { label: 'Quantity provided if each decides alone', answer: a - c },
+            { label: 'A’s Lindahl price at the efficient quantity', answer: a - Qs },
+          ],
+          solution: [`Vertical sum: ${a + b} − 2Q = ${c} → Q* = ${n(Qs)}.`, `A alone: ${a} − Q = ${c} → ${a - c}; B alone buys ${Math.max(0, b - c)}, so private provision is ${a - c}.`, `Lindahl prices: A pays ${n(a - Qs)}, B pays ${n(b - Qs)}; together ${c}.`],
+        };
+      },
+    },
+    {
+      worked: 'w-commons', topic: 'commons',
+      gen() {
+        const bb = pick([0.5, 1]), A = pick([20, 30, 40]), c = int(4, A - 6);
+        return {
+          q: `The value of the catch per boat is AP = ${A} − ${bb}N and each boat costs ${c}.`,
+          parts: [
+            { label: 'Boats with open access', answer: (A - c) / bb },
+            { label: 'Efficient number of boats', answer: (A - c) / (2 * bb) },
+            { label: 'Tax per boat that gives the efficient number', answer: (A - c) / 2 },
+          ],
+          solution: [`Open access: AP = cost → N = (${A} − ${c})/${bb} = ${n((A - c) / bb)}.`, `Total catch ${A}N − ${bb}N², so MP = ${A} − ${2 * bb}N = ${c} → N* = ${n((A - c) / (2 * bb))}.`, `AP at N* = ${n(A - bb * (A - c) / (2 * bb))}, so tax = ${n((A - c) / 2)}.`],
+        };
+      },
+    },
+    {
+      worked: 'w-import-quota', topic: 'import-quota',
+      gen() {
+        const k = pick([2, 4]), pw = int(3, 6), Pq = pw + int(1, 3), Qs = int(2, k * Pq - 2), B = k * Pq - Qs, q = 2 * int(5, 15), A = q + Qs + k * Pq;
+        return {
+          q: `Domestic demand is Q_d = ${A} − ${k}P and supply is Q_s = ${k}P − ${B}. The world price is ${pw} and imports are limited to a quota of ${q}.`,
+          parts: [
+            { label: 'Domestic price with the quota', answer: Pq },
+            { label: 'Domestic production', answer: Qs },
+            { label: 'Quota rent', answer: (Pq - pw) * q },
+          ],
+          solution: [`Q_d − Q_s = ${A + B} − ${2 * k}P = ${q} → P = ${Pq}.`, `Q_s = ${k} × ${Pq} − ${B} = ${Qs}.`, `Rent = (${Pq} − ${pw}) × ${q} = ${(Pq - pw) * q}.`],
+        };
+      },
+    },
+    {
+      worked: 'w-laffer', topic: 'laffer',
+      gen() {
+        const eps = pick([0.5, 1, 1.5, 2, 3]), ts = 1 / (1 + eps), t = pick([0.2, 0.3, 0.6, 0.8]);
+        return {
+          q: `Taxable income is B = 100(1 − t)^${eps}, so revenue is R = 100t(1 − t)^${eps}.`,
+          parts: [
+            { label: 'Revenue-maximising tax rate (%)', answer: 100 * ts },
+            { label: 'Maximum revenue', answer: 100 * ts * (1 - ts) ** eps },
+            { label: `Revenue at a rate of ${t * 100}%`, answer: 100 * t * (1 - t) ** eps },
+          ],
+          solution: [`dR/dt = 100(1 − t)^${eps - 1}(1 − t − ${eps}t) = 0 → t* = 1/(1 + ${eps}) = ${n(100 * ts)}%.`, `R(t*) = ${n(100 * ts * (1 - ts) ** eps)}.`, `R(${t}) = ${n(100 * t * (1 - t) ** eps)}.`],
+        };
+      },
+    },
+    {
+      worked: 'w-interest-parity', topic: 'interest-parity',
+      gen() {
+        const i = int(1, 8), istar = int(0, 8), Ee = pick([1.1, 1.2, 1.25, 1.3, 1.4, 1.5]);
+        const E = Ee / (1 + (i - istar) / 100), E2 = Ee / (1 + (i + 1 - istar) / 100);
+        return {
+          q: `E is home currency per unit of foreign currency. The home interest rate is ${i}%, the foreign rate ${istar}%, and the exchange rate expected in a year is ${Ee}.`,
+          parts: [
+            { label: 'Exchange rate today (uncovered interest parity)', answer: E },
+            { label: 'Exchange rate today if the home rate rises by 1 point', answer: E2 },
+          ],
+          solution: [`E = Eᵉ/(1 + i − i*) = ${Ee}/${n(1 + (i - istar) / 100, 2)} = ${n(E, 4)}.`, `With i = ${i + 1}%: E = ${Ee}/${n(1 + (i + 1 - istar) / 100, 2)} = ${n(E2, 4)}, an appreciation of the home currency.`],
+        };
+      },
+    },
+    {
+      worked: 'w-intertemporal', topic: 'intertemporal',
+      gen() {
+        const y1 = 10 * int(4, 10), y2 = 10 * int(2, 10), r = pick([0, 2, 5, 10]), beta = pick([0.8, 0.9, 1]);
+        const W = y1 + y2 / (1 + r / 100), c1 = W / (1 + beta);
+        return {
+          q: `A consumer earns ${y1} now and ${y2} next year, can save or borrow at ${r}%, and has U = ln c₁ + ${beta} ln c₂.`,
+          parts: [
+            { label: 'Present value of lifetime income', answer: W },
+            { label: 'Consumption now', answer: c1 },
+            { label: 'Saving now (negative if borrowing)', answer: y1 - c1 },
+          ],
+          solution: [`W = ${y1} + ${y2}/${n(1 + r / 100, 2)} = ${n(W)}.`, `c₁ = W/(1 + ${beta}) = ${n(c1)}.`, `Saving = ${y1} − ${n(c1)} = ${n(y1 - c1)}.`],
+        };
+      },
+    },
+    {
       worked: 'w-game-theory', topic: 'game-theory',
       gen() {
         const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
@@ -908,6 +1033,26 @@
   ];
 
   const concepts = [
+    { worked: 'w-pes', topic: 'pes', q: 'A straight-line supply curve passes through the origin. Its price elasticity of supply is…', choices: ['0 everywhere', '1 at every point', 'Greater than 1 at high prices', 'Infinite'], correct: 1, why: 'Q = kP gives (dQ/dP)(P/Q) = k × P/(kP) = 1 at every point, whatever the slope.' },
+    { worked: 'w-pes', topic: 'pes', q: 'Which makes supply more price elastic?', choices: ['No spare capacity', 'A longer time for firms to adjust', 'A perishable product that cannot be stored', 'Specialised inputs that are hard to obtain'], correct: 1, why: 'Over time firms can expand capacity and new firms can enter.' },
+    { worked: 'w-cross-price', topic: 'cross-price', q: 'The price of petrol rises and sales of large cars fall. The cross-price elasticity of large cars with respect to petrol is…', choices: ['Positive: substitutes', 'Negative: complements', 'Zero: unrelated', 'Equal to the own-price elasticity'], correct: 1, why: 'Higher price of one, lower demand for the other: complements, XED < 0.' },
+    { worked: 'w-subsidy', topic: 'subsidy', q: 'A per-unit subsidy is paid to producers. Demand is very inelastic and supply elastic. Who gains most?', choices: ['Producers, through a much higher price', 'Buyers, through a much lower price', 'They gain equally', 'Neither: the subsidy is wasted'], correct: 1, why: 'The less elastic side gets the larger share, just as it bears more of a tax.' },
+    { worked: 'w-special-prefs', topic: 'special-preferences', q: 'A consumer sees two brands of bottled water as perfect substitutes, one-for-one. Brand A costs 80p and brand B 90p. They buy…', choices: ['Equal amounts of each', 'Only brand A', 'Only brand B', 'More B than A'], correct: 1, why: 'With straight-line indifference curves the consumer buys only the good that gives more satisfaction per pound: a corner solution.' },
+    { worked: 'w-special-prefs', topic: 'special-preferences', q: 'For perfect complements, a rise in the price of one good has…', choices: ['Only a substitution effect', 'Only an income effect', 'No effect', 'A substitution effect larger than the income effect'], correct: 1, why: 'The goods are always bought in a fixed ratio, so there is no substitution; the higher price just means fewer “pairs” can be afforded.' },
+    { worked: 'w-intertemporal', topic: 'intertemporal', q: 'For a borrower, a rise in the interest rate…', choices: ['Raises current consumption through both effects', 'Lowers current consumption through both the substitution and income effects', 'Has no effect', 'Raises borrowing'], correct: 1, why: 'Current consumption becomes dearer (substitution) and the borrower is poorer (income): both cut c₁.' },
+    { worked: 'w-labour-leisure', topic: 'labour-leisure', q: 'Labour supply bends backward at high wages because…', choices: ['The substitution effect becomes negative', 'The income effect of the higher wage (more leisure) outweighs the substitution effect', 'Leisure is an inferior good', 'Firms demand fewer hours'], correct: 1, why: 'With leisure a normal good, richer workers buy more of it; at high wages that can dominate.' },
+    { worked: 'w-positive-ext', topic: 'positive-externality', q: 'Vaccination gives external benefits. In a free market, vaccination is…', choices: ['Over-consumed, so it should be taxed', 'Under-consumed, because individuals ignore the benefit to others', 'At the socially optimal level', 'Under-consumed because supply is inelastic'], correct: 1, why: 'Private decisions use MPB, which is below MSB, so quantity is below the optimum.' },
+    { worked: 'w-public-goods', topic: 'public-goods', q: 'Why is market demand for a public good the vertical sum of individual demands?', choices: ['Because each person consumes a different quantity', 'Because everyone consumes the same quantity, so the benefit of each unit is the sum of everyone’s marginal benefits', 'Because public goods are excludable', 'Because the government sets the price'], correct: 1, why: 'Non-rivalry: one unit serves everyone, so add willingness to pay for that unit.' },
+    { worked: 'w-public-goods', topic: 'public-goods', q: 'Which of these is closest to a pure public good?', choices: ['A pizza', 'A lighthouse’s light', 'A train seat at rush hour', 'A cinema ticket'], correct: 1, why: 'Ships cannot be stopped from using the light, and one ship’s use does not reduce another’s.' },
+    { worked: 'w-commons', topic: 'commons', q: 'In the tragedy of the commons, the resource is overused because…', choices: ['It is non-rival', 'Each user ignores the cost their use imposes on other users of a rival, non-excludable resource', 'The government owns it', 'Users are irrational'], correct: 1, why: 'Entry continues until average return equals cost, so the external cost on others is never counted.' },
+    { worked: 'w-lemons', topic: 'lemons', q: 'Adverse selection in the used-car market means that…', choices: ['Sellers take more risks after selling', 'Owners of good cars withdraw because buyers will only pay for average quality', 'Buyers overpay for good cars', 'Cars are always sold at full value'], correct: 1, why: 'Hidden quality makes the price reflect the average, so the best cars leave the market and quality falls.' },
+    { worked: 'w-lemons', topic: 'lemons', q: 'Which is an example of moral hazard rather than adverse selection?', choices: ['Only unhealthy people buy health insurance', 'An insured driver drives less carefully', 'Sellers of bad cars are keenest to sell', 'Risky borrowers are keenest to borrow'], correct: 1, why: 'Moral hazard is hidden action after the contract; the others are hidden information before it.' },
+    { worked: 'w-import-quota', topic: 'import-quota', q: 'A quota and a tariff restrict imports by the same amount. The difference is that…', choices: ['The quota raises the price more', 'The rectangle that would be tariff revenue becomes quota rent for licence holders', 'The quota has no deadweight loss', 'The tariff helps consumers'], correct: 1, why: 'Price and quantity effects are the same; who gets the rectangle differs.' },
+    { worked: 'w-inflation-types', topic: 'inflation-types', q: 'An oil-price shock causes…', choices: ['Demand-pull inflation with rising output', 'Cost-push inflation with falling output (stagflation)', 'Deflation', 'No change in the price level'], correct: 1, why: 'Higher costs shift SRAS up: prices rise and output falls.' },
+    { worked: 'w-laffer', topic: 'laffer', q: 'Cutting a tax rate raises tax revenue only if…', choices: ['The rate is below the revenue-maximising rate', 'The rate is above the revenue-maximising rate', 'The tax base does not respond', 'Always'], correct: 1, why: 'Only in the prohibitive range does the base grow enough to more than offset the lower rate.' },
+    { worked: 'w-investment-trap', topic: 'investment-trap', q: 'In a liquidity trap, an increase in the money supply…', choices: ['Lowers interest rates sharply and raises investment', 'Leaves interest rates at zero, so investment does not respond', 'Raises interest rates', 'Causes immediate hyperinflation'], correct: 1, why: 'At the zero lower bound people simply hold the extra money; monetary policy is “pushing on a string”.' },
+    { worked: 'w-interest-parity', topic: 'interest-parity', q: 'Under uncovered interest parity, a rise in the home interest rate (other things equal)…', choices: ['Depreciates the home currency today', 'Appreciates the home currency today', 'Has no effect on the exchange rate', 'Raises the expected future exchange rate one for one'], correct: 1, why: 'Higher returns attract capital; the currency appreciates until expected depreciation offsets the advantage.' },
+    { worked: 'w-j-curve', topic: 'j-curve', q: 'Why does the trade balance often worsen immediately after a depreciation?', choices: ['Exports become dearer abroad', 'Import prices rise at once but volumes adjust slowly, because short-run elasticities are low', 'The Marshall–Lerner condition always fails', 'Foreign demand collapses'], correct: 1, why: 'Contracts and habits delay the volume response; the price effect comes first.' },
     { worked: 'w-elasticity', topic: 'income-elasticity', q: 'Income rises by 10% and the quantity of good X bought falls by 4%. Good X is…', choices: ['A luxury (IED = 2.5)', 'A necessity (IED = 0.4)', 'An inferior good (IED = −0.4)', 'Price inelastic'], correct: 2, why: 'IED = −4%/10% = −0.4 < 0, so demand falls as income rises: an inferior good.' },
     { worked: 'w-elasticity', topic: 'income-elasticity', q: 'Spending on foreign holidays rises from 4% to 6% of household income as incomes grow. Foreign holidays are…', choices: ['A luxury: IED > 1', 'A necessity: 0 < IED < 1', 'An inferior good', 'Perfectly income inelastic'], correct: 0, why: 'A rising share of income means quantity rises faster than income, so IED > 1.' },
     { worked: 'w-elasticity', topic: 'engel-derivation', q: 'As income rises with prices fixed, the consumer’s optimum moves up and to the left along the income–consumption curve. Good X (on the horizontal axis) is…', choices: ['Normal', 'Inferior', 'A luxury', 'A Giffen good necessarily'], correct: 1, why: 'Less X is chosen at higher income, so the Engel curve for X slopes down: X is inferior. It is Giffen only if this income effect outweighs the substitution effect of a price change.' },

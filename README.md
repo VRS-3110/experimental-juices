@@ -4,13 +4,13 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 
 ## What's inside
 
-61 topics. The first 56 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
+77 topics. The first 72 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
 
 | Part | Topics |
 | --- | --- |
-| Microeconomics (Blocks 1–10) | PPF (linear and concave), supply and demand, price ceilings and floors, elasticities, elastic and inelastic demand compared (including the perfectly elastic and inelastic extremes), income elasticity (Engel curves and demand shifts for normal and inferior goods), tax incidence, consumer choice, income and substitution effects (normal, inferior and Giffen goods, with the demand curve each implies), deriving the Engel curve from the income–consumption curve (normal and inferior goods), market demand by horizontal summation, isoquants and isocosts, total cost curves above per-unit cost curves, short-run costs and perfect competition (all five short-run cases), LAC envelope (U-shaped, L-shaped, flat, falling, rising), perfect competition in the long run (constant, increasing and decreasing cost industries), monopoly, price discrimination (perfect and third degree), natural monopoly and regulation (none, P = MC, P = AC), barriers to entry and limit pricing (deterred, entry, blockaded), contestable markets (sunk costs and hit-and-run entry), monopolistic competition, Cournot duopoly, Bertrand price competition (identical and differentiated goods), Stackelberg leader and follower, kinked demand curve, game theory (payoff matrices, Nash equilibrium, entry game), prisoner’s dilemma and repeated games, collusion and cartels (quotas, the incentive to cheat, cartel stability), dominant-firm price leadership, oligopoly models compared (monopoly, Cournot with n firms, Stackelberg, Bertrand), deriving labour demand from MVP (total product above MVP, with MRP below MVP under monopoly), labour demand (MRP), monopsony (MFC above supply, minimum wage effects), bilateral monopoly (union bargaining with a monopsony employer), wage differentials (compensating and disequilibrium, two-sector diagram), human capital (age–earnings profiles, NPV and rate of return), trade unions (union wage, restricted supply, raised demand), efficiency wages (Solow condition and involuntary unemployment), labour market discrimination (Becker employer discrimination), labour market policy (minimum wage, wage subsidy, tax on labour, benefits), Edgeworth box, externalities |
-| Macroeconomics (Blocks 11–20) | Circular flow and national income, Solow growth, Keynesian cross and multipliers, injections and leakages, money and banking (Block 14), IS–MP, AD–AS with shock adjustment, unemployment (measurement, types, flows and the steady state), the natural rate (WS–PS model), Phillips curve, foreign exchange (floating and fixed) |
-| Further topics | Price indices and growth rates, loanable funds, Lorenz curve, tariffs |
+| Microeconomics (Blocks 1–10) | PPF (linear and concave), supply and demand, price ceilings and floors, elasticities, elastic and inelastic demand compared (including the perfectly elastic and inelastic extremes), income elasticity (Engel curves and demand shifts for normal and inferior goods), tax incidence, consumer choice, income and substitution effects (normal, inferior and Giffen goods, with the demand curve each implies), deriving the Engel curve from the income–consumption curve (normal and inferior goods), market demand by horizontal summation, isoquants and isocosts, total cost curves above per-unit cost curves, short-run costs and perfect competition (all five short-run cases), LAC envelope (U-shaped, L-shaped, flat, falling, rising), perfect competition in the long run (constant, increasing and decreasing cost industries), monopoly, price discrimination (perfect and third degree), natural monopoly and regulation (none, P = MC, P = AC), barriers to entry and limit pricing (deterred, entry, blockaded), contestable markets (sunk costs and hit-and-run entry), monopolistic competition, Cournot duopoly, Bertrand price competition (identical and differentiated goods), Stackelberg leader and follower, kinked demand curve, game theory (payoff matrices, Nash equilibrium, entry game), prisoner’s dilemma and repeated games, collusion and cartels (quotas, the incentive to cheat, cartel stability), dominant-firm price leadership, oligopoly models compared (monopoly, Cournot with n firms, Stackelberg, Bertrand), deriving labour demand from MVP (total product above MVP, with MRP below MVP under monopoly), labour demand (MRP), monopsony (MFC above supply, minimum wage effects), bilateral monopoly (union bargaining with a monopsony employer), wage differentials (compensating and disequilibrium, two-sector diagram), human capital (age–earnings profiles, NPV and rate of return), trade unions (union wage, restricted supply, raised demand), efficiency wages (Solow condition and involuntary unemployment), labour market discrimination (Becker employer discrimination), labour market policy (minimum wage, wage subsidy, tax on labour, benefits), Edgeworth box, externalities, price elasticity of supply (elastic, unit and inelastic supply), cross-price elasticity (substitutes and complements), subsidies (incidence, cost and deadweight loss), perfect substitutes and perfect complements, intertemporal choice (saving and borrowing), labour–leisure choice and backward-bending labour supply, positive externalities and corrective subsidies, public goods and free riding, the tragedy of the commons, the market for lemons (adverse selection) |
+| Macroeconomics (Blocks 11–20) | Circular flow and national income, Solow growth, Keynesian cross and multipliers, injections and leakages, money and banking (Block 14), IS–MP, AD–AS with shock adjustment, unemployment (measurement, types, flows and the steady state), the natural rate (WS–PS model), Phillips curve, foreign exchange (floating and fixed), demand-pull and cost-push inflation, the Laffer curve, investment demand and the liquidity trap, interest rate parity, the J-curve and the Marshall–Lerner condition |
+| Further topics | Price indices and growth rates, loanable funds, Lorenz curve, tariffs, import quotas (quota rent and voluntary export restraints) |
 
 Notation follows the guide: M for income in micro, Z for imports and NT for net taxes in macro, (n + d + g) in Solow, γ in SRAS and the Phillips curve.
 
@@ -35,6 +35,9 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 - Income elasticity: Engel curves for a normal and an inferior good above the demand shifts they imply (shared quantity axis)
 - Elastic beside inelastic demand through the same point, with revenue gained and lost from a price change (shared price axis)
 - Total cost curves above per-unit cost curves (shared output axis)
+- Labour–leisure choice beside the backward-bending labour supply curve it implies
+- Cross-price elasticity: a price change in one market beside the demand shift in the related market
+- Money market beside investment demand, showing the liquidity trap (shared interest-rate axis)
 - Deriving labour demand: total product above MVP (or MRP under monopoly), with the wage picking the number of workers (shared labour axis)
 - Collusion: the cartel in the industry beside one member’s residual demand and its incentive to cheat (shared price axis)
 - Efficiency wages: the firm’s effort curve beside the labour market and the unemployment the efficiency wage causes
@@ -45,8 +48,8 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 
 The **Revision** tab has one sheet per study block of the EC1002 guide breakdown (Blocks 1–5, 6–8, 9–16, 17–18 and 19–20). The breakdown did not list Block 14, so its money-and-banking sheet uses standard material and says so. Each sheet has:
 
-- a "you should be able to" checklist to tick off (92 statements in all)
-- the key equations for that block (69 in all)
+- a "you should be able to" checklist to tick off (108 statements in all)
+- the key equations for that block (81 in all)
 - the graphs to practise, each linked to its interactive topic
 - exam focus points, the block's worked answers and key terms
 - a **Test this block** button that starts a 6-question quiz on the block's topics
@@ -61,9 +64,9 @@ Topic pages link to the sheet that covers them. Progress, results and the exam d
 
 ## Reference and practice
 
-- **Glossary**: 295 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
-- **Worked answers**: 48 exam-style run-throughs (44 calculations, 4 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
-- **Quiz**: 116 question types built on the worked answers. 43 calculation types generate new numbers every time, so you practise the method rather than the example; 73 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
+- **Glossary**: 324 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
+- **Worked answers**: 64 exam-style run-throughs (59 calculations, 5 diagram answers), revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
+- **Quiz**: 144 question types built on the worked answers. 51 calculation types generate new numbers every time, so you practise the method rather than the example; 73 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
 - **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck.
 
 ## Modes
@@ -89,6 +92,8 @@ js/games.js       game theory, the prisoner's dilemma (interactive payoff matric
 js/oligopoly.js   price leadership and the oligopoly comparison
 js/labour.js      labour demand from MVP, monopsony, bilateral monopoly, wage differentials, human capital, trade unions, efficiency wages, discrimination, labour market policy
 js/unemployment.js unemployment flows and types, the natural rate (WS–PS)
+js/more-micro.js  elasticity of supply, cross-price elasticity, subsidies, perfect substitutes and complements, intertemporal choice, labour–leisure choice, positive externalities, public goods, the commons, the market for lemons, import quotas
+js/more-macro.js  demand-pull and cost-push inflation, the Laffer curve, investment demand and the liquidity trap, interest rate parity, the J-curve
 js/glossary.js    reference glossary of key terms
 js/worked.js      step-by-step worked answers
 js/quiz.js        quiz question generators and concept questions
