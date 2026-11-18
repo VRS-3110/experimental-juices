@@ -33,13 +33,14 @@ window.GLOSSARY = [
 
   /* ── Elasticity ── */
   { term: 'Price elasticity of demand (PED)', def: 'The percentage change in quantity demanded divided by the percentage change in price. |PED| > 1 is elastic, < 1 inelastic, = 1 unit elastic.', topics: ['elasticity'] },
-  { term: 'Elastic / inelastic', def: 'Demand (or supply) is elastic when quantity responds more than proportionally to price, inelastic when it responds less than proportionally.', topics: ['elasticity'] },
+  { term: 'Elastic / inelastic', def: 'Demand (or supply) is elastic when quantity responds more than proportionally to price, inelastic when it responds less than proportionally.', topics: ['elastic-inelastic', 'elasticity'] },
+  { term: 'Perfectly elastic / perfectly inelastic demand', def: 'Perfectly elastic: a horizontal demand curve, |E| = ∞; buyers take any amount at one price and nothing above it. Perfectly inelastic: a vertical curve, |E| = 0; quantity does not respond to price at all.', topics: ['elastic-inelastic', 'elasticity'] },
   { term: 'Midpoint (arc) elasticity', def: 'Elasticity measured between two points using average quantity and average price as the bases, so the answer is the same in either direction.', topics: ['elasticity'] },
   { term: 'Point elasticity', def: 'Elasticity at a single point: (dQ/dP)·(P/Q). Along a straight-line demand curve it changes at every point even though the slope is constant.', topics: ['elasticity'] },
   { term: 'Income elasticity of demand (IED)', def: 'The percentage change in quantity demanded divided by the percentage change in income. Positive for normal goods, negative for inferior goods, above 1 for luxuries.', topics: ['elasticity'] },
   { term: 'Cross-price elasticity (XED)', def: 'The percentage change in quantity of good A divided by the percentage change in the price of good B. Positive for substitutes, negative for complements.', topics: ['elasticity'] },
   { term: 'Price elasticity of supply (PES)', def: 'The percentage change in quantity supplied divided by the percentage change in price. Usually larger in the long run.', topics: ['elasticity'] },
-  { term: 'Total revenue (TR)', def: 'Price times quantity sold. A price cut raises TR when demand is elastic and lowers it when demand is inelastic.', topics: ['elasticity', 'monopoly'] },
+  { term: 'Total revenue (TR)', def: 'Price times quantity sold. A price cut raises TR when demand is elastic and lowers it when demand is inelastic.', topics: ['elastic-inelastic', 'elasticity', 'monopoly'] },
   { term: 'Normal good', def: 'A good whose demand rises when income rises (IED > 0).', topics: ['elasticity', 'income-substitution'] },
   { term: 'Inferior good', def: 'A good whose demand falls when income rises (IED < 0).', topics: ['elasticity', 'income-substitution'] },
   { term: 'Luxury good', def: 'A normal good with income elasticity above 1: spending on it rises as a share of income as income grows.', topics: ['elasticity'] },

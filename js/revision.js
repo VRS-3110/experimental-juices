@@ -65,9 +65,10 @@
       ],
       graphs: [
         { label: 'Elasticity along linear demand and total revenue', topic: 'elasticity' },
+        { label: 'Elastic and inelastic demand side by side, with revenue gained and lost', topic: 'elastic-inelastic' },
         { label: 'Tax incidence: burden shared by elasticity, revenue and DWL', topic: 'tax-incidence' },
       ],
-      topics: ['elasticity', 'tax-incidence'],
+      topics: ['elasticity', 'elastic-inelastic', 'tax-incidence'],
     },
     {
       id: 'b-4', block: 'Block 4', part: 'Microeconomics', title: 'Consumer choice',

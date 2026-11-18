@@ -2,7 +2,7 @@
    Bertrand and Stackelberg oligopoly models (Blocks 6–8). Loads after linked.js and inserts
    each topic into the course order. */
 (function () {
-  const { R, f, money, C, V, Hl, P, G, A, S, T, range } = window.TOPIC_KIT;
+  const { R, f, money, pct, C, V, Hl, P, G, A, S, T, range } = window.TOPIC_KIT;
   const MICRO = 'Microeconomics';
 
   /* ── Total and per-unit cost curves ── */
@@ -592,12 +592,109 @@
     tip: 'Contrast contestable markets with monopoly theory: market structure (number of firms) matters less than the threat of entry. Name the condition that fails in practice, usually sunk costs.',
   };
 
+  /* ── Elastic and inelastic demand compared ── */
+  // Both curves pass through P = 10, Q = 20. Linear demand through that point with point elasticity |E|:
+  // Q = 20 − 2|E|(P − 10). Perfect mode: horizontal at P = 10 (perfectly elastic), vertical at Q = 20.
+  const P0 = 10, Q0 = 20;
+  const dq = (E) => (P) => Q0 - 2 * E * (P - P0);
+  const pdq = (E) => (Q) => P0 - (Q - Q0) / (2 * E);
+  const side = (s, which) => {
+    const P1 = P0 + s.dP;
+    if (s.mode === 1) {
+      const Q1 = which === 'e' ? (s.dP > 0 ? 0 : Q0) : Q0;
+      return { P1, Q1, E: which === 'e' ? Infinity : 0 };
+    }
+    const E = which === 'e' ? s.Ee : s.Ei;
+    return { P1, Q1: dq(E)(P1), E };
+  };
+  const arc = (q0, q1, p0, p1) => (Math.abs(p1 - p0) < 1e-9 ? NaN : ((q1 - q0) / ((q0 + q1) / 2)) / ((p1 - p0) / ((p0 + p1) / 2)));
+  const elasticPanel = (which) => ({
+    title: which === 'e' ? 'Elastic demand: quantity responds a lot' : 'Inelastic demand: quantity responds a little',
+    x: { range: [0, 40], label: 'Quantity (Q)', ticks: range(0, 40, 5) },
+    y: { range: [0, 20], label: 'Price ($)', ticks: range(0, 20, 4) },
+    draw(s) {
+      const z = side(s, which), out = [], k = which === 'e' ? 'd' : 's';
+      const up = s.dP > 0, lo = Math.min(P0, z.P1), hi = Math.max(P0, z.P1), qa = Math.min(Q0, z.Q1), qb = Math.max(Q0, z.Q1);
+      if (Math.abs(s.dP) > 0.01) {
+        // Revenue gained on the units still sold at the higher price, and lost on the units no longer sold (price rise),
+        // or the reverse for a price cut.
+        out.push(A([[0, lo], [qa, lo], [qa, hi], [0, hi]], up ? 'g' : 'r', qa > 6 && hi - lo > 1.2 ? (up ? '+ gain' : '− loss') : ''));
+        if (qb - qa > 0.05) out.push(A([[qa, 0], [qb, 0], [qb, lo], [qa, lo]], up ? 'r' : 'g', qb - qa > 4 ? (up ? '− loss' : '+ gain') : ''));
+      }
+      if (s.mode === 1) {
+        out.push(which === 'e' ? Hl(P0, k, 'D: perfectly elastic', { bold: true }) : V(Q0, k, 'D: perfectly inelastic', { bold: true }));
+      } else {
+        const E = which === 'e' ? s.Ee : s.Ei;
+        out.push(C(pdq(E), k, `D (|E| = ${f(E, 2)} at A)`, { from: Math.max(0, Q0 - 20 * E), to: Math.min(40, Q0 + 20 * E), labelAt: which === 'e' ? 1.5 : Math.min(39, Q0 + 12 * E) }));
+      }
+      out.push(G(Q0, P0, 'Q₀', 'P₀', 'n'), P(Q0, P0, 'A', 'n', { small: true, dx: -12, dy: -8 }));
+      if (Math.abs(s.dP) > 0.01 && !(s.mode === 1 && which === 'e' && up)) out.push(G(z.Q1, z.P1, Math.abs(z.Q1 - Q0) > 2.5 ? 'Q₁' : '', 'P₁'), P(z.Q1, z.P1, 'B'));
+      if (s.mode === 1 && which === 'e' && up) out.push(T(1, P0 + s.dP + 0.6, 'At any higher price, sales fall to zero', 'r'));
+      return out;
+    },
+  });
+  const elasticInelastic = {
+    id: 'elastic-inelastic',
+    title: 'Elastic and inelastic demand compared',
+    summary: 'Elastic demand is flat-looking: a small change in price brings a large change in quantity, so a price rise loses revenue. Inelastic demand is steep-looking: quantity barely responds, so a price rise brings in more revenue. Both curves here pass through the same point A, so the only difference is how strongly buyers respond.',
+    model: 'Both demand curves pass through A (P = 10, Q = 20). Each is a straight line with the chosen point elasticity at A: Q = 20 − 2|E|(P − 10). Move the price from 10 to P₁ and compare the change in quantity and in total revenue. The green rectangle is revenue gained, the red one revenue lost. The “perfect” switch shows the two extremes: horizontal (|E| = ∞) and vertical (|E| = 0).',
+    graph: {
+      layout: 'row',
+      params: [
+        { id: 'mode', label: 'Curves', options: [{ v: 0, label: 'Relatively elastic vs inelastic' }, { v: 1, label: 'Perfectly elastic vs perfectly inelastic' }], value: 0 },
+        { id: 'dP', label: 'Change in price (ΔP)', min: -4, max: 4, step: 0.1, value: 2 },
+        { id: 'Ee', label: 'Elastic curve: |E| at A', min: 1.5, max: 5, step: 0.1, value: 3 },
+        { id: 'Ei', label: 'Inelastic curve: |E| at A', min: 0.1, max: 0.8, step: 0.05, value: 0.3 },
+      ],
+      valid(s) {
+        if (s.mode === 1 && s.dP < -0.001) return 'With perfectly elastic demand a price cut would sell an unlimited quantity; try a price rise instead.';
+        if (s.mode === 0 && side(s, 'e').Q1 < 0.5) return 'The elastic curve would reach zero quantity: buyers would stop buying entirely.';
+        if (s.mode === 0 && side(s, 'e').Q1 > 39.5) return 'The quantity would run off the chart.';
+        return true;
+      },
+      panels: [elasticPanel('e'), elasticPanel('i')],
+      readout(s) {
+        const e = side(s, 'e'), i = side(s, 'i'), tr0 = P0 * Q0;
+        const pq = (z) => (Math.abs(s.dP) < 0.01 ? '—' : `${f(z.Q1)} (${pct((100 * (z.Q1 - Q0)) / Q0)})`);
+        const el = (z) => (s.mode === 1 ? (z.E === 0 ? '0' : '∞') : Math.abs(s.dP) < 0.01 ? f(z.E, 2) : f(Math.abs(arc(Q0, z.Q1, P0, z.P1)), 2));
+        const rows = [
+          ['New price P₁ (% change)', `${money(P0 + s.dP)} (${pct((100 * s.dP) / P0)})`],
+          ['Elastic: new quantity (% change)', pq(e)],
+          ['Inelastic: new quantity (% change)', pq(i)],
+          ['|E| (arc, between A and B): elastic / inelastic', `${el(e)} / ${el(i)}`],
+          ['Total revenue (was $200): elastic / inelastic', `${money(e.P1 * e.Q1)} / ${money(i.P1 * i.Q1)}`],
+        ];
+        let status;
+        if (Math.abs(s.dP) < 0.01) status = 'Move the price slider: the same price change gives a big quantity response on the elastic curve and a small one on the inelastic curve.';
+        else if (s.dP > 0) status = `A ${pct((100 * s.dP) / P0, 0)} price rise: on the elastic curve quantity falls by more than ${pct((100 * s.dP) / P0, 0)}, so revenue falls (red loss beats green gain); on the inelastic curve quantity falls by less, so revenue rises.`;
+        else status = `A ${pct((100 * -s.dP) / P0, 0)} price cut: on the elastic curve the extra units sold outweigh the lower price, so revenue rises; on the inelastic curve buyers hardly respond, so revenue falls.`;
+        return { rows, status, tone: 'info' };
+      },
+    },
+    equations: [
+      { name: 'Price elasticity of demand', tex: R`|E| = \left|\frac{\%\Delta Q}{\%\Delta P}\right|`, note: 'Elastic: |E| > 1. Inelastic: |E| < 1. Unit elastic: |E| = 1.' },
+      { name: 'Arc (midpoint) elasticity', tex: R`|E| = \left|\frac{(Q_1 - Q_0)/\bar{Q}}{(P_1 - P_0)/\bar{P}}\right|` },
+      { name: 'Total revenue and elasticity', tex: R`\Delta TR \approx Q\,\Delta P\,(1 - |E|)`, note: 'A price rise raises revenue when |E| < 1 and lowers it when |E| > 1.' },
+      { name: 'The extremes', tex: R`\text{horizontal } D: |E| = \infty \qquad \text{vertical } D: |E| = 0` },
+    ],
+    points: [
+      'Through the same point, the flatter curve is the more elastic one. But slope is not elasticity: along a single straight line, elasticity changes from point to point (see the price elasticity topic).',
+      'Elastic demand: close substitutes, luxuries, a large share of the budget, a long time to adjust, a narrowly defined good (one brand of coffee).',
+      'Inelastic demand: few substitutes, necessities, habit-forming goods, a small share of the budget, the short run, a broadly defined good (food).',
+      'Firms facing inelastic demand can raise revenue by raising price; with elastic demand, cutting price raises revenue.',
+      'Governments tax goods with inelastic demand (fuel, tobacco, alcohol) because sales fall little and revenue is reliable, and buyers bear most of the tax.',
+      'Perfectly elastic demand is what a firm in perfect competition faces: it can sell any amount at the market price and nothing above it.',
+    ],
+    tip: 'Draw both curves through the same starting point, one flat and one steep. Mark the same price rise on both, show the much smaller quantity change on the steep curve, and shade the revenue gained and lost: on the elastic curve the loss rectangle is bigger, on the inelastic curve the gain rectangle is bigger.',
+  };
+
   /* ── Install in course order ── */
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
     window.TOPICS.splice(i + 1, 0, Object.assign(topic, { unit, block }));
   };
   insertAfter('isoquant', costCurves, MICRO, 'Block 5');
+  insertAfter('elasticity', elasticInelastic, MICRO, (window.TOPICS.find((t) => t.id === 'elasticity') || {}).block || 'Block 3');
   insertAfter('cournot', bertrandTopic, MICRO, 'Blocks 6–8');
   insertAfter('bertrand', stackelbergTopic, MICRO, 'Blocks 6–8');
   insertAfter('stackelberg', kinkedDemand, MICRO, 'Blocks 6–8');
