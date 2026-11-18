@@ -184,6 +184,7 @@
       summary: 'Labour demand is derived demand. Firms hire until the revenue from the last worker equals the wage; market supply and demand set the wage that firms take.',
       outcomes: [
         'Calculate MRP_L = MP_L × MR (MVP_L = MP_L × P under perfect competition).',
+        'Derive a firm’s labour demand curve from MVP_L = P × MP_L, explain why it slopes down and what shifts it, and why MRP_L lies below MVP_L under monopoly.',
         'Find the number of workers hired using MRP_L = w.',
         'Show the effect of a minimum wage in a competitive market and explain how monopsony differs.',
         'Derive MFC from a linear supply curve, find monopsony employment and wage, and show how a minimum wage can raise employment.',
@@ -199,6 +200,7 @@
       equations: [
         { name: 'Marginal revenue product', tex: R`MRP_L = MP_L \times MR \quad (MVP_L = MP_L \times P)` },
         { name: 'Hiring rule', tex: R`MRP_L = w` },
+        { name: 'Labour demand (competitive firm)', tex: R`P \times MP_L(L) = w \iff MP_L = \frac{w}{P}` },
         { name: 'Monopsony', tex: R`w = c + bL \;\Rightarrow\; MFC = c + 2bL;\qquad MFC = MRP_L` },
         { name: 'Bilateral monopoly wage range', tex: R`w_m \le w \le w_U` },
         { name: 'Compensating differential (free movement)', tex: R`w_B - w_A = \theta` },
@@ -209,6 +211,7 @@
         { name: 'Incidence of a tax on labour', tex: R`\frac{\text{worker share}}{\text{employer share}} = \frac{\varepsilon_D}{\varepsilon_S}` },
       ],
       graphs: [
+        { label: 'Deriving labour demand: total product above MVP', topic: 'mvp-demand' },
         { label: 'Labour market beside one firm, with a minimum wage', topic: 'labour-market' },
         { label: 'Monopsony: S, MFC and MRP, with a minimum wage', topic: 'monopsony' },
         { label: 'Bilateral monopoly: employer’s and union’s preferred wages', topic: 'bilateral-monopoly' },
@@ -219,7 +222,7 @@
         { label: 'Employer discrimination: demand for the disfavoured group', topic: 'discrimination' },
         { label: 'Labour market policies: minimum wage, subsidy, tax, benefits', topic: 'labour-policy' },
       ],
-      topics: ['labour-market', 'monopsony', 'bilateral-monopoly', 'wage-differentials', 'human-capital', 'trade-unions', 'efficiency-wages', 'discrimination', 'labour-policy'],
+      topics: ['mvp-demand', 'labour-market', 'monopsony', 'bilateral-monopoly', 'wage-differentials', 'human-capital', 'trade-unions', 'efficiency-wages', 'discrimination', 'labour-policy'],
     },
     {
       id: 'b-10', block: 'Block 10', part: 'Microeconomics', title: 'Welfare economics and externalities',
@@ -375,17 +378,23 @@
         'Explain the natural rate (NAIRU) and why the long-run Phillips curve is vertical.',
         'Show accelerating inflation when unemployment is held below the natural rate.',
         'Link the Phillips curve to AD–AS through Okun’s law.',
+        'Measure unemployment and participation, classify unemployment by type, and find steady-state unemployment from job flows.',
+        'Derive the natural rate from the WS and PS curves and explain what raises or lowers it, including hysteresis.',
       ],
       examFocus: ['Moves along SRPC come from demand; shifts of SRPC come from expectations or supply shocks.'],
       equations: [
         { name: 'Expectations-augmented Phillips curve', tex: R`\pi = \pi^e - \gamma(u - u^*) + \text{supply shock}` },
         { name: 'Natural rate / NAIRU', tex: R`u = u^* \text{ when } \pi = \pi^e` },
+        { name: 'Steady-state unemployment', tex: R`u^* = \frac{s}{s + f}` },
+        { name: 'Natural rate (WS = PS)', tex: R`z - c\,u^* = \frac{A}{1 + \mu}` },
       ],
       graphs: [
+        { label: 'Unemployment flows and the steady-state rate', topic: 'unemployment' },
+        { label: 'WS–PS: the natural rate of unemployment', topic: 'natural-rate' },
         { label: 'SRPC shifting along a vertical LRPC', topic: 'phillips' },
         { label: 'AD–AS beside the Phillips curve', topic: 'adas-phillips' },
       ],
-      topics: ['phillips', 'adas-phillips'],
+      topics: ['unemployment', 'natural-rate', 'phillips', 'adas-phillips'],
     },
     {
       id: 'b-19-20', block: 'Blocks 19–20', part: 'Macroeconomics', title: 'Exchange rates and the open economy',

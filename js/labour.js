@@ -749,11 +749,123 @@
     tip: 'Name the policy’s mechanism on the diagram: a price floor (minimum wage), a wedge between employer cost and take-home pay (tax or subsidy), or a shift of supply or demand (benefits, training). Then discuss elasticities for incidence and employment, and say who pays: firms, workers or the taxpayer.',
   };
 
+  /* ── Deriving labour demand from MVP_L ── */
+  // Short-run production Q = A(10L − L²/2), so MP_L = A(10 − L). Competitive output market at price p:
+  // MVP_L = p·MP_L, and the firm hires until MVP_L = w, so L_D(w) = 10 − w/(pA).
+  // Monopoly option: output demand P = 2p(1 − Q/100), MR = 2p(1 − Q/50); MRP_L = MR·MP_L < MVP_L = P·MP_L.
+  const tp = (A) => (L) => A * (10 * L - 0.5 * L * L);
+  const mpl = (A) => (L) => A * (10 - L);
+  const mvpCurves = (s) => {
+    const Q = tp(s.A), MP = mpl(s.A);
+    if (s.m === 0) { const v = (L) => s.p * MP(L); return { mvp: v, demand: v, price: () => s.p }; }
+    const price = (L) => 2 * s.p * (1 - Q(L) / 100), mr = (L) => 2 * s.p * (1 - Q(L) / 50);
+    return { mvp: (L) => price(L) * MP(L), demand: (L) => Math.max(0, mr(L)) * MP(L), price };
+  };
+  const solveL = (fn, w) => { // fn falls in L on [0, 10]
+    if (fn(0) <= w) return 0;
+    let lo = 0, hi = 10; for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (fn(m) > w) lo = m; else hi = m; }
+    return lo;
+  };
+  const mvpOut = (s) => {
+    const c = mvpCurves(s), L = solveL(c.demand, s.w), Le = solveL(c.mvp, s.w);
+    return { ...c, L, Le, Q: tp(s.A)(L), MP: mpl(s.A)(L), P: c.price(L), top: (s.m ? 2 : 1) * s.p * s.A * 10 };
+  };
+  const mvpDemand = {
+    id: 'mvp-demand',
+    title: 'Deriving labour demand from MVP',
+    summary: 'A firm’s demand for labour comes from what each extra worker adds to its revenue. With a competitive output market, the last worker adds the value of their marginal product, MVP_L = P × MP_L. The firm hires until MVP_L equals the wage. Each wage then picks out one point on the MVP_L curve, so the MVP_L curve is the firm’s labour demand curve. It slopes down because of diminishing marginal returns.',
+    model: 'Short-run production Q = A(10L − L²/2), so the marginal product of labour is MP_L = A(10 − L), falling as more workers share fixed capital. In a competitive output market the price P is given, so MVP_L = P × A(10 − L) and labour demand is L = 10 − w/(PA). With the monopoly option the firm faces output demand P = 2p(1 − Q/100), and the extra revenue from a worker is MRP_L = MR × MP_L, below MVP_L.',
+    graph: {
+      layout: 'column',
+      params: [
+        { id: 'm', label: 'Output market', options: [{ v: 0, label: 'Perfect competition (MVP)' }, { v: 1, label: 'Monopoly (MRP < MVP)' }], value: 0 },
+        { id: 'w', label: 'Wage (w)', min: 1, max: 100, step: 0.5, value: 20 },
+        { id: 'p', label: 'Output price (P; p for the monopoly)', min: 2, max: 8, step: 0.1, value: 5 },
+        { id: 'A', label: 'Labour productivity (A)', min: 0.6, max: 1.4, step: 0.05, value: 1 },
+      ],
+      valid(s) {
+        if (mvpOut(s).L < 0.2 - 1e-6) return 'At this wage the firm would hire no one: the wage is above the value of even the first worker’s output.';
+        return true;
+      },
+      panels: [
+        {
+          title: 'Production: total product and the marginal product',
+          x: { range: [0, 10], label: 'Workers (L)', ticks: range(0, 10, 1) },
+          y: (s) => { const top = 10 * Math.ceil(5.6 * s.A); return { range: [0, top], label: 'Output (Q)', ticks: range(0, top, top / 5) }; },
+          draw(s) {
+            const z = mvpOut(s), Q = tp(s.A), a = Math.max(0, z.L - 1.6), b = Math.min(10, z.L + 1.6);
+            return [
+              C(Q, 'n', 'TP', { to: 10, labelAt: 9 }),
+              S(a, z.Q + z.MP * (a - z.L), b, z.Q + z.MP * (b - z.L), 'o', '', { dash: true }),
+              T(z.L + 0.35, z.Q - 0.1 * 10 * Math.ceil(5.6 * s.A), `slope = MP_L = ${f(z.MP, 1)}`, 'o'),
+              G(z.L, z.Q, 'L*', 'Q*'),
+              P(z.L, z.Q, ''),
+            ];
+          },
+        },
+        {
+          title: (s) => (s.m ? 'Revenue from one more worker: MRP below MVP' : 'Value of the marginal product: MVP = P × MP'),
+          x: { range: [0, 10], label: 'Workers (L)', ticks: range(0, 10, 1) },
+          y: (s) => { const top = 10 * Math.ceil(mvpOut(s).top / 10); return { range: [0, top], label: '$ per worker', ticks: range(0, top, top / 5) }; },
+          draw(s) {
+            const z = mvpOut(s), out = [];
+            out.push(C(z.mvp, s.m ? 'ghost' : 'd', s.m ? 'MVP_L = P × MP_L' : 'MVP_L = D_L', { to: 10, labelAt: s.m ? 1.2 : 7.5 }));
+            if (s.m) { const la = Math.min(6, solveL(z.demand, Math.max(s.w + 0.25 * z.top, 0.4 * z.top))); out.push(C(z.demand, 'd', 'MRP_L = D_L', { to: 10, labelAt: la })); }
+            out.push(Hl(s.w, 'o', `wage = ${money(s.w)}`, { dash: true, labelLeft: true }));
+            // Other wages trace out the demand curve.
+            for (const fr of [0.2, 0.4, 0.6, 0.8]) {
+              const wi = fr * z.demand(0), Li = solveL(z.demand, wi);
+              if (Math.abs(wi - s.w) > 0.04 * z.top) out.push(P(Li, wi, '', 'n', { small: true }));
+            }
+            if (s.m && z.Le - z.L > 0.15) out.push(S(z.L, s.w, z.Le, s.w, 'r', '', { bold: true }), P(z.Le, s.w, 'MVP = w', 'n', { small: true, dx: 9, dy: -8 }));
+            out.push(G(z.L, s.w, 'L*', null), P(z.L, s.w, s.m ? 'MRP = w' : 'MVP = w', 'o', { dx: -9, dy: 18 }));
+            return out;
+          },
+        },
+      ],
+      readout(s) {
+        const z = mvpOut(s);
+        const rows = [
+          ['Workers hired L*', f(z.L)],
+          ['Marginal product of the last worker', f(z.MP)],
+          ['Output price', money(z.P)],
+          ['Value of that worker’s output (P × MP)', money(z.P * z.MP)],
+        ];
+        if (s.m) rows.push(['Extra revenue from that worker (MRP = w)', money(s.w)], ['Workers hired if MVP = w (efficient)', f(z.Le)]);
+        rows.push(['Real wage w/P = MP_L', f(s.w / z.P)]);
+        return {
+          rows,
+          status: s.m
+            ? `A monopolist must cut its price to sell more, so the extra revenue from a worker (MR × MP_L) is below the value of their output (P × MP_L). It hires ${f(z.L)} workers where MRP_L = w, not ${f(z.Le)}: its labour demand is MRP_L, which lies below MVP_L.`
+            : `The firm hires until the last worker’s output is worth exactly the wage: ${money(s.w)} buys ${f(z.L)} workers. Move the wage slider and the chosen point slides along MVP_L (the grey dots are other wages), so MVP_L is the labour demand curve. A higher output price or productivity shifts it right.`,
+          tone: 'info',
+        };
+      },
+    },
+    equations: [
+      { name: 'Value of the marginal product', tex: R`MVP_L = P \times MP_L` },
+      { name: 'Hiring rule (competitive firm)', tex: R`MVP_L = w \iff MP_L = \frac{w}{P}`, note: 'Equivalently, hire until the marginal product equals the real wage.' },
+      { name: 'Labour demand is the MVP_L curve', tex: R`L_D(w):\; P \times MP_L(L) = w`, note: 'Each wage gives one employment level on MVP_L. It slopes down because MP_L falls (diminishing returns).' },
+      { name: 'This model', tex: R`MP_L = A(10 - L) \;\Rightarrow\; L_D = 10 - \frac{w}{PA}` },
+      { name: 'Imperfect competition in the output market', tex: R`MRP_L = MR \times MP_L < MVP_L = P \times MP_L \quad (MR < P)` },
+    ],
+    points: [
+      'Why labour demand slopes down: with capital fixed in the short run, each extra worker adds less output (diminishing marginal returns), so the value of their output falls.',
+      'What shifts labour demand: the output price (it is derived demand), labour productivity (technology, more capital per worker, skills), and demand for the product.',
+      'Only the downward-sloping part of MVP_L below the maximum of the average value product (P × AP_L) is demand: at a higher wage the firm would rather not operate.',
+      'In real terms the rule is MP_L = w/P: hire until the marginal product equals the real wage.',
+      'Market labour demand adds firms’ demand curves horizontally; it is steeper than the simple sum because when all firms hire more, output rises and the output price falls.',
+      'With market power in the output market, MRP_L = MR × MP_L lies below MVP_L, so the firm hires fewer workers than is efficient.',
+    ],
+    tip: 'Derive labour demand in three steps: (1) MP_L falls with L; (2) multiply by the output price to get MVP_L in money; (3) set MVP_L = w and show that each wage picks a point on MVP_L, so MVP_L is the demand curve. Label it D_L = MVP_L and name the shift factors.',
+  };
+
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
     window.TOPICS.splice(i + 1, 0, Object.assign(topic, { unit, block }));
   };
   const block = (window.TOPICS.find((t) => t.id === 'labour-market') || {}).block || 'Block 9';
+  { const i = window.TOPICS.findIndex((t) => t.id === 'labour-market'); window.TOPICS.splice(i, 0, Object.assign(mvpDemand, { unit: MICRO, block })); }
   insertAfter('labour-market', monopsony, MICRO, block);
   insertAfter('monopsony', bilateralMonopoly, MICRO, block);
   insertAfter('bilateral-monopoly', wageDifferentials, MICRO, block);

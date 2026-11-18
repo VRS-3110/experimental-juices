@@ -62,8 +62,8 @@ window.GLOSSARY = [
 
   /* ── Production and costs ── */
   { term: 'Short run / long run (firm)', def: 'In the short run at least one input (usually capital) is fixed. In the long run all inputs are variable and firms can enter or exit.', topics: ['costs', 'lac-envelope'] },
-  { term: 'Marginal product (MP)', def: 'The extra output from one more unit of an input, holding other inputs constant.', topics: ['isoquant', 'labour-market'] },
-  { term: 'Diminishing marginal returns', def: 'In the short run, adding more of a variable input to a fixed input eventually makes its marginal product fall. This is why short-run MC eventually rises.', topics: ['costs'] },
+  { term: 'Marginal product (MP)', def: 'The extra output from one more unit of an input, holding other inputs constant.', topics: ['mvp-demand', 'isoquant', 'labour-market'] },
+  { term: 'Diminishing marginal returns', def: 'In the short run, adding more of a variable input to a fixed input eventually makes its marginal product fall. This is why short-run MC eventually rises.', topics: ['mvp-demand', 'costs'] },
   { term: 'Isoquant', def: 'All combinations of inputs (L, K) that produce the same output.', topics: ['isoquant'] },
   { term: 'Isocost line', def: 'All input combinations with the same total cost: C = wL + rK. Its slope is −w/r.', topics: ['isoquant'] },
   { term: 'Marginal rate of technical substitution (MRTS)', def: 'The rate at which capital can be replaced by labour holding output constant: MRTS = −MP_L/MP_K, the slope of the isoquant.', topics: ['isoquant'] },
@@ -164,8 +164,9 @@ window.GLOSSARY = [
   { term: 'Competition law', def: 'Rules that ban anti-competitive agreements such as cartels and abuse of a dominant position, enforced in the UK by the CMA and in the EU by the European Commission.', topics: ['collusion', 'monopoly'] },
 
   /* ── Factor markets and welfare ── */
-  { term: 'Derived demand', def: 'Demand for an input that comes from demand for the output it helps produce, such as demand for labour.', topics: ['trade-unions', 'labour-market'] },
-  { term: 'Marginal revenue product (MRP)', def: 'The extra revenue from employing one more unit of an input: MRP_L = MP_L × MR. Under perfect competition in the output market it equals MVP_L = MP_L × P.', topics: ['labour-market'] },
+  { term: 'Derived demand', def: 'Demand for an input that comes from demand for the output it helps produce, such as demand for labour.', topics: ['mvp-demand', 'trade-unions', 'labour-market'] },
+  { term: 'Marginal revenue product (MRP)', def: 'The extra revenue from employing one more unit of an input: MRP_L = MP_L × MR. Under perfect competition in the output market it equals MVP_L = MP_L × P.', topics: ['mvp-demand', 'labour-market'] },
+  { term: 'Value of the marginal product (MVP)', def: 'The market value of the extra output from one more worker: MVP_L = P × MP_L. For a firm in a competitive output market, the MVP_L curve is its labour demand curve.', topics: ['mvp-demand', 'labour-market'] },
   { term: 'Marginal factor cost (MFC)', def: 'The extra cost of hiring one more unit of an input. Equal to the wage in a competitive labour market; above the wage for a monopsonist.', topics: ['monopsony', 'bilateral-monopoly', 'labour-market'] },
   { term: 'Monopsony', def: 'A market with a single buyer, such as one large employer in a town. It hires fewer workers at a lower wage than a competitive market would.', topics: ['monopsony', 'labour-market'] },
   { term: 'Oligopsony', def: 'A market with a few large buyers, such as a few supermarkets buying from many farmers. Buyer power is weaker than under monopsony but works the same way.', topics: ['monopsony'] },
@@ -234,8 +235,18 @@ window.GLOSSARY = [
   { term: 'Injections', def: 'Spending on domestic output that does not come from households’ consumption: investment (I), government purchases (G) and exports (X).', topics: ['national-income', 'injections-leakages'] },
   { term: 'Net taxes (NT)', def: 'Taxes minus transfer payments (such as benefits).', topics: ['national-income', 'keynesian-cross'] },
   { term: 'Disposable income (Y_d)', def: 'Income after net taxes: Y_d = Y − NT. Households either consume or save it.', topics: ['keynesian-cross', 'national-income'] },
-  { term: 'Unemployment rate', def: 'The unemployed as a percentage of the labour force (employed plus those actively seeking work).', topics: ['growth-measure', 'phillips'] },
-  { term: 'Frictional / structural / cyclical unemployment', def: 'Frictional: between jobs. Structural: mismatch of skills or location with available jobs. Cyclical: caused by low aggregate demand in a downturn.', topics: ['phillips'] },
+  { term: 'Unemployment rate', def: 'The unemployed as a percentage of the labour force (employed plus those actively seeking work).', topics: ['unemployment', 'growth-measure', 'phillips'] },
+  { term: 'Frictional / structural / cyclical unemployment', def: 'Frictional: between jobs. Structural: mismatch of skills or location with available jobs. Cyclical: caused by low aggregate demand in a downturn.', topics: ['unemployment', 'natural-rate', 'phillips'] },
+  { term: 'Labour force', def: 'Everyone in work plus the unemployed (without work, available and actively looking). People not looking are economically inactive.', topics: ['unemployment'] },
+  { term: 'Participation rate', def: 'The labour force as a percentage of the working-age population.', topics: ['unemployment'] },
+  { term: 'ILO unemployment', def: 'The international definition used in the Labour Force Survey: without a job, available to start within two weeks, and looked for work in the last four weeks.', topics: ['unemployment'] },
+  { term: 'Claimant count', def: 'The number of people claiming unemployment-related benefits. It usually counts fewer people than the ILO measure.', topics: ['unemployment'] },
+  { term: 'Discouraged workers', def: 'People who want a job but have stopped looking because they think none is available. They count as inactive, not unemployed.', topics: ['unemployment'] },
+  { term: 'Steady-state unemployment', def: 'The rate at which flows into unemployment equal flows out: u* = s/(s + f), with s the job separation rate and f the job-finding rate.', topics: ['unemployment'] },
+  { term: 'Long-term unemployment', def: 'Unemployment lasting a year or more. Skills and motivation decay, so job-finding rates fall the longer a spell lasts.', topics: ['unemployment', 'natural-rate'] },
+  { term: 'Hysteresis', def: 'When a temporary rise in unemployment raises the natural rate itself, for example because the long-term unemployed lose skills.', topics: ['natural-rate', 'unemployment'] },
+  { term: 'Wage-setting (WS) curve', def: 'The real wage workers can secure at each level of employment; higher when unemployment is lower or when benefits and union power are greater.', topics: ['natural-rate'] },
+  { term: 'Price-setting (PS) curve', def: 'The real wage consistent with firms’ desired mark-up over labour costs: A/(1 + μ).', topics: ['natural-rate'] },
 
   /* ── Macro: demand side ── */
   { term: 'Consumption function', def: 'The relationship between consumption and disposable income: C = A + cY_d, where A is autonomous consumption and c is the MPC.', topics: ['keynesian-cross'] },
@@ -281,7 +292,7 @@ window.GLOSSARY = [
   { term: 'Stagflation', def: 'Rising inflation together with falling output and rising unemployment, typically after an adverse supply shock.', topics: ['ad-as', 'phillips'] },
   { term: 'Taylor rule', def: 'A guide to setting interest rates: r = r* + α(π − π*) + β(Y − Y*). The bank raises rates when inflation or output is above target.', topics: ['ad-as', 'money-market'] },
   { term: 'Phillips curve', def: 'The short-run trade-off between inflation and unemployment. The expectations-augmented version is π = πᵉ − γ(u − u*) + supply shock.', topics: ['phillips', 'adas-phillips'] },
-  { term: 'Natural rate of unemployment / NAIRU', def: 'The unemployment rate at which inflation equals expected inflation, so inflation is stable. The long-run Phillips curve is vertical there.', topics: ['phillips'] },
+  { term: 'Natural rate of unemployment / NAIRU', def: 'The unemployment rate at which inflation equals expected inflation, so inflation is stable. The long-run Phillips curve is vertical there.', topics: ['natural-rate', 'phillips'] },
   { term: 'Adaptive expectations', def: 'Expected inflation is based on past inflation, for example πᵉ_t = π_{t−1}.', topics: ['phillips', 'adas-phillips'] },
   { term: 'Okun’s law', def: 'A rule of thumb linking output and unemployment: each percentage point of unemployment above the natural rate costs about 2% of output.', topics: ['ad-as', 'adas-phillips'] },
   { term: 'Sacrifice ratio', def: 'The percentage of a year’s output lost for each percentage point reduction in inflation.', topics: ['phillips'] },

@@ -369,6 +369,25 @@
       },
     },
     {
+      worked: 'w-mvp-demand', topic: 'mvp-demand',
+      gen() {
+        const a = 2 * int(8, 15), P = pick([2, 4, 5, 10]), L1 = int(2, a / 2 - 2), w = P * (a - 2 * L1), P2 = P + pick([1, 2]);
+        return {
+          q: `A firm in a competitive output market has Q = ${a}L − L² and sells at a price of ${P}. The wage is ${w}.`,
+          parts: [
+            { label: 'Workers hired', answer: L1 },
+            { label: 'Marginal product of the last worker', answer: w / P },
+            { label: `Workers hired if the output price rises to ${P2}`, answer: (a - w / P2) / 2 },
+          ],
+          solution: [
+            `MP_L = ${a} − 2L, so MVP_L = ${P}(${a} − 2L) = ${P * a} − ${2 * P}L.`,
+            `Set MVP_L = w: ${P * a} − ${2 * P}L = ${w} → L = ${L1}. MP_L = w/P = ${n(w / P)}.`,
+            `At P = ${P2}: ${P2}(${a} − 2L) = ${w} → L = ${n((a - w / P2) / 2)}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-monopsony', topic: 'monopsony',
       gen() {
         const c0 = pick([5, 10, 20]), b = pick([1, 2]), d = pick([1, 2]), Lm = int(8, 25), a = c0 + (2 * b + d) * Lm;
@@ -539,6 +558,46 @@
             `Without the tax: L = ${(a - c) / 2}. With it, the employer pays take-home pay + ${t}: ${a} − L = ${c} + L + ${t} → L = ${L}.`,
             `Take-home pay = ${c} + ${L} = ${wW}; employers pay ${wW + t}.`,
             `Revenue = ${t} × ${L} = ${t * L}; DWL = ½ × ${t} × ${n((a - c) / 2 - L)} = ${n(0.5 * t * ((a - c) / 2 - L))}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-unemployment-flows', topic: 'unemployment',
+      gen() {
+        const E = pick([24, 27, 28.5, 30, 32]), U = pick([1, 1.2, 1.5, 2, 2.4]), sep = int(1, 3), fnd = pick([9, 14, 19, 24, 29]);
+        return {
+          q: `${E} million people are employed and ${U} million are unemployed (no job, available and looking). Each month ${sep}% of the employed lose their jobs and ${fnd}% of the unemployed find one.`,
+          parts: [
+            { label: 'Unemployment rate now (%)', answer: (100 * U) / (U + E) },
+            { label: 'Steady-state unemployment rate (%)', answer: (100 * sep) / (sep + fnd) },
+            { label: 'Average length of a spell of unemployment (months)', answer: 100 / fnd },
+          ],
+          solution: [
+            `u = ${U}/(${U} + ${E}) = ${n((100 * U) / (U + E))}%.`,
+            `Steady state: u* = s/(s + f) = ${sep}/(${sep} + ${fnd}) = ${n((100 * sep) / (sep + fnd))}%.`,
+            `Duration ≈ 1/f = 1/${fnd / 100} = ${n(100 / fnd)} months.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-natural-rate', topic: 'natural-rate',
+      gen() {
+        const A = pick([8, 10, 12]), mu = pick([0.2, 0.25, 0.5]), c = pick([0.5, 1]), ps = A / (1 + mu);
+        const ustar = pick([4, 5, 6, 7, 8, 9, 10]), z = Math.round((ps + c * ustar) * 10) / 10;
+        const u1 = (z - ps) / c;
+        return {
+          q: `Wage setting gives a real wage of w = ${z} − ${c}u (u in %). Firms set prices as a ${Math.round(mu * 100)}% mark-up on unit labour costs, and labour productivity is ${A}.`,
+          parts: [
+            { label: 'Real wage firms will pay (PS)', answer: ps },
+            { label: 'Natural rate of unemployment (%)', answer: u1 },
+            { label: 'Natural rate if wage-push rises by 1 (%)', answer: u1 + 1 / c },
+          ],
+          solution: [
+            `PS: w = ${A}/(1 + ${mu}) = ${n(ps, 3)}.`,
+            `WS = PS: ${z} − ${c}u = ${n(ps, 3)} → u* = ${n(u1)}%.`,
+            `With z = ${n(z + 1)}: u* rises by 1/${c} to ${n(u1 + 1 / c)}%.`,
           ],
         };
       },
@@ -851,12 +910,18 @@
   const concepts = [
     { worked: 'w-oil-shock', topic: 'ad-as', q: 'A large rise in the price of oil, starting from long-run equilibrium, in the short run causes…', choices: ['Higher prices and higher output', 'Higher prices and lower output (stagflation)', 'Lower prices and lower output', 'No change, because LRAS is vertical'], correct: 1, why: 'An adverse supply shock shifts SRAS up/left along a fixed AD: the price level rises while output falls.' },
     { worked: 'w-oil-shock', topic: 'ad-as', q: 'Why does an adverse supply shock pose a dilemma for the central bank?', choices: ['It cannot change interest rates after a supply shock', 'Stimulating output adds to inflation, while fighting inflation deepens the recession', 'Supply shocks only affect the long run', 'Fiscal policy automatically offsets it'], correct: 1, why: 'One instrument cannot move output up and inflation down at the same time when SRAS has shifted.' },
+    { worked: 'w-unemployment-flows', topic: 'unemployment', q: 'A steelworker loses their job when the industry closes and their skills are not wanted elsewhere. This is…', choices: ['Frictional unemployment', 'Structural unemployment', 'Cyclical unemployment', 'Seasonal unemployment'], correct: 1, why: 'A lasting mismatch between workers’ skills or location and the jobs available is structural.' },
+    { worked: 'w-unemployment-flows', topic: 'unemployment', q: 'If discouraged workers stop looking for work, the measured unemployment rate…', choices: ['Rises, because they are still without jobs', 'Falls, because they leave the labour force', 'Is unchanged', 'Rises, because participation falls'], correct: 1, why: 'They move from unemployed to inactive, so both U and the labour force fall and u drops.' },
+    { worked: 'w-natural-rate', topic: 'natural-rate', q: 'Which change would lower the natural rate of unemployment in the WS–PS model?', choices: ['Higher unemployment benefits', 'Stronger union bargaining power', 'More competition in product markets, cutting firms’ mark-ups', 'An increase in government spending'], correct: 2, why: 'A lower mark-up raises the PS real wage, so WS meets PS at lower unemployment. Demand policy does not move u* in the long run.' },
+    { worked: 'w-natural-rate', topic: 'natural-rate', q: 'Hysteresis in unemployment means that…', choices: ['Unemployment always returns quickly to the natural rate', 'A long period of high unemployment can raise the natural rate itself', 'Inflation and unemployment are unrelated', 'The natural rate is zero'], correct: 1, why: 'Long-term unemployed workers lose skills and attachment, so the economy can settle at a higher u* after a deep recession.' },
     { worked: 'w-shutdown', topic: 'costs', q: 'A competitive firm’s price is above minimum AVC but below minimum ATC. In the short run it should…', choices: ['Shut down immediately', 'Keep producing where P = MC', 'Raise its price to ATC', 'Produce where ATC is lowest'], correct: 1, why: 'Revenue covers variable cost and part of fixed cost, so the loss is smaller than the fixed cost it would lose by closing.' },
     { worked: 'w-shutdown', topic: 'costs', q: 'The short-run shutdown price of a perfectly competitive firm is…', choices: ['Minimum ATC', 'Minimum AVC', 'Minimum MC', 'Average fixed cost'], correct: 1, why: 'Below minimum AVC, producing loses more than fixed cost.' },
     { worked: 'w-fiscal-regimes', topic: 'money-ismp', q: 'The central bank holds the interest rate fixed (flat MP). Government spending rises. Which is true?', choices: ['Output rises by the full multiplier and there is no crowding out', 'Output is unchanged because of full crowding out', 'The interest rate rises and investment falls', 'The money supply must fall'], correct: 0, why: 'To hold r, the bank expands the money supply as money demand rises, so investment is not crowded out.' },
     { worked: 'w-fiscal-regimes', topic: 'money-ismp', q: 'With a fixed money supply (an upward-sloping LM), a fiscal expansion…', choices: ['Lowers the interest rate', 'Raises output by more than the multiplier', 'Raises the interest rate, partly crowding out investment', 'Has no effect on money demand'], correct: 2, why: 'Higher income raises money demand; with M/P fixed, r must rise, reducing investment.' },
     { worked: 'w-minimum-wage', topic: 'labour-market', q: 'In a competitive labour market a minimum wage above the market wage will…', choices: ['Raise employment', 'Reduce employment and create unemployment', 'Have no effect', 'Lower the wage'], correct: 1, why: 'Firms move up their MRP curves and hire fewer workers, while more people want to work.' },
     { worked: 'w-minimum-wage', topic: 'labour-market', q: 'Under monopsony, a minimum wage set between the monopsony wage and the competitive wage can…', choices: ['Only reduce employment', 'Raise both the wage and employment', 'Cause the firm to shut down', 'Leave the wage unchanged'], correct: 1, why: 'It flattens the firm’s marginal factor cost, so hiring more no longer raises the wage it pays to everyone.' },
+    { worked: 'w-mvp-demand', topic: 'mvp-demand', q: 'Why does a competitive firm’s demand curve for labour slope down?', choices: ['Because the output price falls as it hires more', 'Because of diminishing marginal returns: each extra worker adds less output, so MVP_L = P × MP_L falls', 'Because the wage rises as it hires more', 'Because average product is constant'], correct: 1, why: 'With fixed capital, MP_L falls as L rises; at a given price, MVP_L falls too, and the firm hires where MVP_L = w.' },
+    { worked: 'w-mvp-demand', topic: 'mvp-demand', q: 'Which of these shifts a competitive firm’s labour demand (MVP_L) curve to the right?', choices: ['A fall in the wage', 'A rise in the price of the firm’s output', 'A rise in the wage', 'A fall in labour productivity'], correct: 1, why: 'MVP_L = P × MP_L: a higher P or higher productivity raises it at every L. A wage change moves along the curve.' },
     { worked: 'w-monopsony', topic: 'monopsony', q: 'Why does a monopsonist’s marginal factor cost lie above the labour supply curve?', choices: ['Because MRP falls as more workers are hired', 'Because to hire one more worker it must raise the wage for all its workers', 'Because of the minimum wage', 'Because labour supply is perfectly elastic'], correct: 1, why: 'MFC = w + L·Δw/ΔL: the extra worker’s wage plus the rise paid to everyone already employed.' },
     { worked: 'w-monopsony', topic: 'monopsony', q: 'Where does a monopsonist set the wage?', choices: ['Where MFC = MRP', 'On the labour supply curve at the employment where MFC = MRP', 'On the MRP curve at the employment where MFC = MRP', 'Where supply = MRP'], correct: 1, why: 'Employment comes from MFC = MRP; the wage is the lowest that attracts that many workers, read off the supply curve.' },
     { worked: 'w-bilateral', topic: 'bilateral-monopoly', q: 'In a bilateral monopoly between a union and a monopsony employer, the wage is…', choices: ['Always the competitive wage', 'Always the monopsony wage', 'Somewhere between the employer’s and the union’s preferred wages, depending on bargaining power', 'Set where MFC = MRP'], correct: 2, why: 'Theory gives the range; relative bargaining strength picks the point. The outcome is indeterminate.' },
