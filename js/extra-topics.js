@@ -24,8 +24,8 @@
     graph: {
       layout: 'column',
       params: [
-        { id: 'q', label: 'Output (Q)', min: 0.5, max: 10, step: 0.1, value: 6 },
-        { id: 'F', label: 'Fixed cost (F)', min: 2, max: 20, step: 0.5, value: 8 },
+        { id: 'q', label: 'Output (Q)', min: 0.2, max: 13, step: 0.1, value: 6 },
+        { id: 'F', label: 'Fixed cost (F)', min: 0, max: 90, step: 0.5, value: 8 },
       ],
       panels: [
         {
@@ -128,9 +128,9 @@
       y: { range: [0, 16], label: 'Price of firm A (p_A)' },
       params: [
         { id: 'mode', label: 'Goods', options: [{ v: 0, label: 'Identical' }, { v: 1, label: 'Differentiated' }], value: 0 },
-        { id: 'ca', label: 'Marginal cost of A', min: 0, max: 6, step: 0.1, value: 3 },
-        { id: 'cb', label: 'Marginal cost of B', min: 0, max: 6, step: 0.1, value: 3 },
-        { id: 'd', label: 'Substitutability d (differentiated only)', min: 0, max: 0.9, step: 0.05, value: 0.5 },
+        { id: 'ca', label: 'Marginal cost of A', min: 0, max: 30, step: 0.1, value: 3 },
+        { id: 'cb', label: 'Marginal cost of B', min: 0, max: 30, step: 0.1, value: 3 },
+        { id: 'd', label: 'Substitutability d (differentiated only)', min: 0, max: 0.99, step: 0.05, value: 0.5 },
       ],
       draw(s) {
         const z = bertrand(s);
@@ -209,8 +209,8 @@
       x: { range: [0, 12], label: 'Leader output (q_L)' },
       y: { range: [0, 12], label: 'Follower output (q_F)' },
       params: [
-        { id: 'cl', label: 'Leader marginal cost (c_L)', min: 0, max: 6, step: 0.1, value: 3 },
-        { id: 'cf', label: 'Follower marginal cost (c_F)', min: 0, max: 6, step: 0.1, value: 3 },
+        { id: 'cl', label: 'Leader marginal cost (c_L)', min: 0, max: 12, step: 0.1, value: 3 },
+        { id: 'cf', label: 'Follower marginal cost (c_F)', min: 0, max: 12, step: 0.1, value: 3 },
       ],
       valid(s) {
         const z = stack(s);
@@ -327,8 +327,13 @@
       layout: 'row',
       params: [
         { id: 'mode', label: 'Type of discrimination', options: [{ v: 0, label: 'Perfect (1st degree)' }, { v: 1, label: 'Third degree' }], value: 1 },
-        { id: 'c', label: 'Marginal cost (MC)', min: 0, max: 4, step: 0.1, value: 2 },
+        { id: 'c', label: 'Marginal cost (MC)', min: 0, max: (s) => (s.mode === 1 ? 5.9 : 11.9), step: 0.1, value: 2 },
       ],
+      valid(s) {
+        if (s.mode === 1 && s.c >= 5.95) return 'Market 2 buyers pay at most $6, so at this cost market 2 would not exist and there would be nothing to discriminate between.';
+        if (s.c >= 11.95) return 'No buyer will pay more than $12, so at this cost the market would not exist.';
+        return true;
+      },
       panels: [pdPanel(0), pdPanel(1)],
       readout(s) {
         const z = pd(s);
@@ -383,7 +388,7 @@
     graph: {
       x: { range: [0, 14], label: 'Quantity (Q)' },
       y: { range: [0, 14], label: 'Price and cost ($)' },
-      params: [{ id: 'c', label: 'Marginal cost (MC)', min: 0, max: 8, step: 0.1, value: 4, hint: 'The MR gap runs from 2 to 6' }],
+      params: [{ id: 'c', label: 'Marginal cost (MC)', min: 0, max: 9.9, step: 0.1, value: 4, hint: 'The MR gap runs from 2 to 6' }],
       draw(s) {
         const z = kink(s.c);
         return [
@@ -451,8 +456,8 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'qi', label: 'Incumbent output (q_I)', min: 4, max: 20, step: 0.1, value: 12 },
-        { id: 'F', label: 'Entrant’s sunk entry cost (F)', min: 2, max: 20, step: 0.5, value: 8 },
+        { id: 'qi', label: 'Incumbent output (q_I)', min: 0, max: 24, step: 0.1, value: 12 },
+        { id: 'F', label: 'Entrant’s sunk entry cost (F)', min: 0, max: 90, step: 0.5, value: 8 },
       ],
       panels: [
         {
@@ -549,7 +554,7 @@
     graph: {
       x: { range: [0, 24], label: 'Quantity (Q)' },
       y: { range: [0, 12], label: 'Price and cost ($)', ticks: range(0, 12, 2) },
-      params: [{ id: 'S', label: 'Sunk cost an entrant would lose (S)', min: 0, max: 24, step: 0.5, value: 0, hint: '0 = perfectly contestable' }],
+      params: [{ id: 'S', label: 'Sunk cost an entrant would lose (S)', min: 0, max: 120, step: 0.5, value: 0, hint: '0 = perfectly contestable' }],
       draw(s) {
         const z = contest(s.S), ac = (q) => 2 + 32 / q;
         return [
@@ -642,14 +647,13 @@
       layout: 'row',
       params: [
         { id: 'mode', label: 'Curves', options: [{ v: 0, label: 'Relatively elastic vs inelastic' }, { v: 1, label: 'Perfectly elastic vs perfectly inelastic' }], value: 0 },
-        { id: 'dP', label: 'Change in price (ΔP)', min: -4, max: 4, step: 0.1, value: 2 },
-        { id: 'Ee', label: 'Elastic curve: |E| at A', min: 1.5, max: 5, step: 0.1, value: 3 },
-        { id: 'Ei', label: 'Inelastic curve: |E| at A', min: 0.1, max: 0.8, step: 0.05, value: 0.3 },
+        { id: 'dP', label: 'Change in price (ΔP)', min: -9.5, max: 9.5, step: 0.1, value: 2 },
+        { id: 'Ee', label: 'Elastic curve: |E| at A', min: 1.05, max: 10, step: 0.1, value: 3 },
+        { id: 'Ei', label: 'Inelastic curve: |E| at A', min: 0.05, max: 0.95, step: 0.05, value: 0.3 },
       ],
       valid(s) {
         if (s.mode === 1 && s.dP < -0.001) return 'With perfectly elastic demand a price cut would sell an unlimited quantity; try a price rise instead.';
         if (s.mode === 0 && side(s, 'e').Q1 < 0.5) return 'The elastic curve would reach zero quantity: buyers would stop buying entirely.';
-        if (s.mode === 0 && side(s, 'e').Q1 > 39.5) return 'The quantity would run off the chart.';
         return true;
       },
       panels: [elasticPanel('e'), elasticPanel('i')],
@@ -694,7 +698,7 @@
   const M0 = 50, EQ = 20;
   const engelQ = (eta) => (M) => EQ * (M / M0) ** eta;
   const engelM = (eta) => (q) => M0 * (q / EQ) ** (1 / eta);       // income as a function of quantity
-  const incomeRange = (eta) => { const a = engelQ(eta)(10), b = engelQ(eta)(110); return [Math.min(a, b), Math.max(a, b)]; };
+  const incomeRange = (eta, top = 110) => { const a = engelQ(eta)(Math.min(10, top * 0.04)), b = engelQ(eta)(top); return [Math.min(a, b), Math.max(a, b)]; };
   const ied = (s) => {
     const n0 = engelQ(s.en)(M0), n1 = engelQ(s.en)(s.M1), i0 = engelQ(s.ei)(M0), i1 = engelQ(s.ei)(s.M1);
     const arcI = (q0, q1) => (Math.abs(s.M1 - M0) < 1e-9 ? NaN : ((q1 - q0) / ((q0 + q1) / 2)) / ((s.M1 - M0) / ((s.M1 + M0) / 2)));
@@ -709,13 +713,12 @@
     graph: {
       layout: 'column',
       params: [
-        { id: 'M1', label: 'New income (M₁)', min: 20, max: 100, step: 1, value: 75 },
-        { id: 'en', label: 'Normal good: income elasticity η', min: 0.1, max: 2, step: 0.05, value: 0.5, hint: 'above 1 = luxury' },
-        { id: 'ei', label: 'Inferior good: income elasticity η', min: -1.5, max: -0.1, step: 0.05, value: -0.8 },
+        { id: 'M1', label: 'New income (M₁)', min: 5, max: 200, step: 1, value: 75 },
+        { id: 'en', label: 'Normal good: income elasticity η', min: 0.05, max: 3, step: 0.05, value: 0.5, hint: 'above 1 = luxury' },
+        { id: 'ei', label: 'Inferior good: income elasticity η', min: -3, max: -0.05, step: 0.05, value: -0.8 },
       ],
       valid(s) {
         const z = ied(s);
-        if (Math.max(z.n1, z.i1) > 58) return 'The quantity would run off the chart.';
         return true;
       },
       panels: [
@@ -724,10 +727,11 @@
           x: { range: [0, 60], label: 'Quantity (Q)', ticks: range(0, 60, 10) },
           y: { range: [0, 110], label: 'Income (M)', ticks: range(0, 110, 20) },
           draw(s) {
-            const z = ied(s), [na, nb] = incomeRange(s.en), [ia, ib] = incomeRange(s.ei), out = [];
+            const xm = s._x ? s._x[1] : 60, ym = s._y ? s._y[1] : 110;
+            const z = ied(s), [na, nb] = incomeRange(s.en, ym), [ia, ib] = incomeRange(s.ei, ym), out = [];
             out.push(
-              C(engelM(s.en), 'd', `Normal (${kind(s.en)}, η = ${f(s.en, 2)})`, { from: na, to: Math.min(60, nb), labelAt: Math.min(55, Math.max(na + 2, engelQ(s.en)(100))) * 0.92 }),
-              C(engelM(s.ei), 's', `Inferior (η = ${f(s.ei, 2)})`, { from: ia, to: Math.min(60, ib), labelAt: Math.min(56, engelQ(s.ei)(22)) }),
+              C(engelM(s.en), 'd', `Normal (${kind(s.en)}, η = ${f(s.en, 2)})`, { from: na, to: Math.min(xm, nb), labelAt: Math.min(xm * 0.92, Math.max(na + 2, engelQ(s.en)(ym * 0.62))) * 0.92 }),
+              C(engelM(s.ei), 's', `Inferior (η = ${f(s.ei, 2)})`, { from: ia, to: Math.min(xm, ib), labelAt: Math.min(xm * 0.93, engelQ(s.ei)(22)) }),
               Hl(M0, 'ghost', 'M₀ = 50'),
             );
             if (Math.abs(s.M1 - M0) > 0.5) {
@@ -744,12 +748,12 @@
           x: { range: [0, 60], label: 'Quantity (Q)', ticks: range(0, 60, 10) },
           y: { range: [0, 10], label: 'Price (P)', ticks: range(0, 10, 2) },
           draw(s) {
-            const z = ied(s), d = (q) => (Q) => 10 - (5 * Q) / q, out = [];
+            const z = ied(s), d = (q) => (Q) => 10 - (5 * Q) / q, out = [], lx = (s._x ? s._x[1] : 60) * 0.983;
             const moved = Math.abs(s.M1 - M0) > 0.5;
-            out.push(C(d(EQ), 'ghost', '', { to: 2 * EQ }), T(59, 7.4, 'grey dashed: D at M₀ (both goods)', 'n', { anchor: 'end' }));
+            out.push(C(d(EQ), 'ghost', '', { to: 2 * EQ }), T(lx, 7.4, 'grey dashed: D at M₀ (both goods)', 'n', { anchor: 'end' }));
             if (moved) {
-              out.push(C(d(z.n1), 'd', '', { to: 2 * z.n1 }), T(59, 9.2, 'blue: D for the normal good at M₁', 'd', { anchor: 'end' }));
-              out.push(C(d(z.i1), 's', '', { to: 2 * z.i1 }), T(59, 8.3, 'red: D for the inferior good at M₁', 's', { anchor: 'end' }));
+              out.push(C(d(z.n1), 'd', '', { to: 2 * z.n1 }), T(lx, 9.2, 'blue: D for the normal good at M₁', 'd', { anchor: 'end' }));
+              out.push(C(d(z.i1), 's', '', { to: 2 * z.i1 }), T(lx, 8.3, 'red: D for the inferior good at M₁', 's', { anchor: 'end' }));
               out.push(P(z.n1, 5, '', 'd'), P(z.i1, 5, '', 's'), G(z.n1, 5, 'Q_N', null, 'd'), G(z.i1, 5, 'Q_I', null, 's'));
             }
             out.push(Hl(5, 'ghost', 'P = 5', { labelLeft: true }), P(EQ, 5, '', 'n', { small: true }));
@@ -816,7 +820,7 @@
       layout: 'column',
       params: [
         { id: 'type', label: 'Good X is', options: [{ v: 0, label: 'Normal' }, { v: 1, label: 'Inferior' }], value: 0 },
-        { id: 'M', label: 'Income (M)', min: 9, max: 14, step: 0.1, value: 10 },
+        { id: 'M', label: 'Income (M)', min: (s) => (s.type === 1 ? 9 : 2.5), max: 34, step: 0.1, value: 10 },
       ],
       panels: [
         {

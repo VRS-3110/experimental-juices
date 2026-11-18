@@ -59,7 +59,7 @@ window.TOPICS = (function () {
       model: 'Demand P = 10 − Q, so point elasticity |E| = P / Q.',
       graph: {
         x: XQ, y: YP,
-        params: [{ id: 'q', label: 'Quantity at point A', min: 0.5, max: 9.5, step: 0.1, value: 3 }],
+        params: [{ id: 'q', label: 'Quantity at point A', min: 0.1, max: 9.9, step: 0.1, value: 3 }],
         draw(s) {
           const q = s.q, p = 10 - q;
           return [
@@ -143,9 +143,9 @@ window.TOPICS = (function () {
         x: { range: [0, 12], label: 'Good X' },
         y: { range: [0, 12], label: 'Good Y' },
         params: [
-          { id: 'I', label: 'Income (M)', min: 20, max: 60, step: 1, value: 40 },
-          { id: 'px', label: 'Price of X (Px)', min: 2, max: 8, step: 0.1, value: 4 },
-          { id: 'py', label: 'Price of Y (Py)', min: 2, max: 8, step: 0.1, value: 4 },
+          { id: 'I', label: 'Income (M)', min: 1, max: 200, step: 1, value: 40 },
+          { id: 'px', label: 'Price of X (Px)', min: 0.5, max: 30, step: 0.1, value: 4 },
+          { id: 'py', label: 'Price of Y (Py)', min: 0.5, max: 30, step: 0.1, value: 4 },
         ],
         draw(s) {
           const x = s.I / (2 * s.px), y = s.I / (2 * s.py), u2 = x * y;
@@ -199,8 +199,8 @@ window.TOPICS = (function () {
           x: { range: [0, 10], label: 'Quantity (Q)' },
           y: { range: [0, 12], label: 'Cost and price ($)' },
           params: [
-            { id: 'P', label: 'Market price (P = MR)', min: 1, max: 10, step: 0.01, value: 5 },
-            { id: 'F', label: 'Fixed cost (F)', min: 2, max: 20, step: 0.5, value: 8 },
+            { id: 'P', label: 'Market price (P = MR)', min: 0.05, max: 45, step: 0.01, value: 5 },
+            { id: 'F', label: 'Fixed cost (F)', min: 0, max: 90, step: 0.5, value: 8 },
           ],
           actions: [
             { label: 'Supernormal profit', run: (s) => { s.P = Math.min(10, breakEven(s.F).p + 1.5); } },
@@ -268,7 +268,7 @@ window.TOPICS = (function () {
       model: 'Demand P = 10 − Q, MR = 10 − 2Q, constant MC = c.',
       graph: {
         x: XQ, y: YP,
-        params: [{ id: 'c', label: 'Marginal cost (MC)', min: 1, max: 7, step: 0.1, value: 2 }],
+        params: [{ id: 'c', label: 'Marginal cost (MC)', min: 0, max: 9.9, step: 0.1, value: 2 }],
         draw(s) {
           const qm = (10 - s.c) / 2, pm = 10 - qm, qc = 10 - s.c;
           return [
@@ -334,7 +334,7 @@ window.TOPICS = (function () {
       graph: {
         x: { range: [0, 100], label: 'Cumulative % of households', ticks: range(0, 100, 20), fmt: (v) => v + '%' },
         y: { range: [0, 100], label: 'Cumulative % of income', ticks: range(0, 100, 20), fmt: (v) => v + '%' },
-        params: [{ id: 'k', label: 'Inequality (k)', min: 1, max: 5, step: 0.05, value: 2.2 }],
+        params: [{ id: 'k', label: 'Inequality (k)', min: 1, max: 20, step: 0.05, value: 2.2 }],
         draw(s) {
           const L = (x) => 100 * Math.pow(x / 100, s.k);
           const pts = [[0, 0], [100, 100]];
@@ -375,7 +375,7 @@ window.TOPICS = (function () {
       graph: {
         x: { range: [0, 40], label: 'Years', ticks: range(0, 40, 10) },
         y: { range: [0, 10], label: 'Real GDP (start = 1)', ticks: range(0, 10, 2) },
-        params: [{ id: 'g', label: 'Annual growth rate g (%)', min: 0.5, max: 8, step: 0.1, value: 3 }],
+        params: [{ id: 'g', label: 'Annual growth rate g (%)', min: 1, max: 37, step: 0.1, value: 3 }],
         draw(s) {
           const g = s.g / 100, t2 = Math.log(2) / Math.log(1 + g);
           return [
@@ -420,8 +420,8 @@ window.TOPICS = (function () {
         x: { range: [0, 10], label: 'Quantity of money (M/P)' },
         y: { range: [0, 10], label: 'Nominal interest rate (i, %)' },
         params: [
-          { id: 'm', label: 'Money supply (M/P)', min: 2, max: 9, step: 0.1, value: 5 },
-          { id: 'a', label: 'Money demand (income)', min: 6, max: 12, step: 0.1, value: 9.5 },
+          { id: 'm', label: 'Money supply (M/P)', min: 0.2, max: 10.4, step: 0.1, value: 5 },
+          { id: 'a', label: 'Money demand (income)', min: 4.6, max: 36, step: 0.1, value: 9.5 },
         ],
         draw(s) {
           const i = s.a - 0.9 * s.m;
@@ -468,8 +468,8 @@ window.TOPICS = (function () {
         x: { range: [0, 10], label: 'Quantity of loanable funds' },
         y: { range: [0, 10], label: 'Real interest rate (r, %)' },
         params: [
-          { id: 'B', label: 'Government borrowing (deficit)', min: 0, max: 3, step: 0.1, value: 0 },
-          { id: 's', label: 'Private saving shift', min: -2, max: 2, step: 0.1, value: 0 },
+          { id: 'B', label: 'Government borrowing (deficit)', min: 0, max: 14, step: 0.1, value: 0 },
+          { id: 's', label: 'Private saving shift', min: -9.9, max: 12.4, step: 0.1, value: 0 },
         ],
         draw(s) {
           const L = 5 + 0.5 * (s.B + s.s), r = 1 + 0.8 * (L - s.s);

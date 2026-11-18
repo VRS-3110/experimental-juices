@@ -114,11 +114,11 @@
       x: { range: [0, 1], label: 'Discount factor δ', ticks: [0, 0.2, 0.4, 0.6, 0.8, 1], fmt: (v) => String(v) },
       y: { range: [0, 60], label: 'Present value of payoffs', ticks: range(0, 60, 10) },
       params: [
-        { id: 'T', label: 'Temptation T (you cheat, rival colludes)', min: 2, max: 20, step: 0.5, value: 15 },
-        { id: 'R', label: 'Reward R (both collude)', min: 1, max: 19, step: 0.5, value: 10 },
-        { id: 'P', label: 'Punishment P (both cheat)', min: 0.5, max: 18, step: 0.5, value: 5 },
-        { id: 'S', label: 'Sucker’s payoff S (you collude, rival cheats)', min: 0, max: 17, step: 0.5, value: 2 },
-        { id: 'd', label: 'Discount factor δ', min: 0, max: 0.95, step: 0.01, value: 0.6 },
+        { id: 'T', label: 'Temptation T (you cheat, rival colludes)', min: 0, max: 100, step: 0.5, value: 15 },
+        { id: 'R', label: 'Reward R (both collude)', min: 0, max: 100, step: 0.5, value: 10 },
+        { id: 'P', label: 'Punishment P (both cheat)', min: 0, max: 100, step: 0.5, value: 5 },
+        { id: 'S', label: 'Sucker’s payoff S (you collude, rival cheats)', min: 0, max: 100, step: 0.5, value: 2 },
+        { id: 'd', label: 'Discount factor δ', min: 0, max: 0.99, step: 0.01, value: 0.6 },
       ],
       valid(s) {
         if (!(s.T > s.R)) return 'For a prisoner’s dilemma the temptation T must exceed the reward R; otherwise cheating would not pay.';
@@ -190,9 +190,9 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'n', label: 'Number of firms in the cartel (n)', min: 2, max: 6, step: 1, value: 2 },
-        { id: 'c', label: 'Marginal cost (c)', min: 0, max: 16, step: 0.5, value: 4 },
-        { id: 'd', label: 'Discount factor δ', min: 0, max: 0.95, step: 0.01, value: 0.6 },
+        { id: 'n', label: 'Number of firms in the cartel (n)', min: 2, max: 20, step: 1, value: 2 },
+        { id: 'c', label: 'Marginal cost (c)', min: 0, max: 23.5, step: 0.5, value: 4 },
+        { id: 'd', label: 'Discount factor δ', min: 0, max: 0.99, step: 0.01, value: 0.6 },
         { id: 'pun', label: 'Punishment after cheating', options: [{ v: 0, label: 'Cournot for ever' }, { v: 1, label: 'Price war (P = MC)' }], value: 0 },
       ],
       panels: [

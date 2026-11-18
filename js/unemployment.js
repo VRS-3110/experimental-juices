@@ -40,12 +40,11 @@
       x: { range: [0, 48], label: 'Months', ticks: range(0, 48, 6), fmt: (v) => String(v) },
       y: { range: [0, 20], label: 'Unemployment rate (%)', ticks: range(0, 20, 4), fmt: (v) => v + '%' },
       params: [
-        { id: 's', label: 'Job separation rate (s, % of employed a month)', min: 0.5, max: 4, step: 0.1, value: 1.5 },
-        { id: 'f', label: 'Job-finding rate (f, % of unemployed a month)', min: 5, max: 50, step: 1, value: 25 },
-        { id: 'u0', label: 'Starting unemployment rate (%)', min: 2, max: 15, step: 0.5, value: 10 },
+        { id: 's', label: 'Job separation rate (s, % of employed a month)', min: 0.1, max: 6, step: 0.1, value: 1.5 },
+        { id: 'f', label: 'Job-finding rate (f, % of unemployed a month)', min: 1, max: 100, step: 1, value: 25 },
+        { id: 'u0', label: 'Starting unemployment rate (%)', min: 0, max: 60, step: 0.5, value: 10 },
       ],
       valid(s) {
-        if (flowStats(s).ustar > 0.19) return 'The steady-state rate would go off the chart (above 19%): job finding is too slow relative to job loss.';
         return true;
       },
       draw(s) {
@@ -114,15 +113,15 @@
       x: { range: [70, 100], label: 'Employment N (% of labour force)', ticks: range(70, 100, 5), fmt: (v) => String(v) },
       y: { range: [0, 16], label: 'Real wage (w/P)', ticks: range(0, 16, 2) },
       params: [
-        { id: 'z', label: 'Wage-push factors (z)', min: 9, max: 16, step: 0.1, value: 12 },
-        { id: 'mu', label: 'Price mark-up (μ)', min: 0, max: 0.6, step: 0.01, value: 0.25 },
-        { id: 'A', label: 'Labour productivity (A)', min: 8, max: 12, step: 0.1, value: 10 },
-        { id: 'u', label: 'Actual unemployment (%)', min: 1, max: 25, step: 0.1, value: 8 },
+        { id: 'z', label: 'Wage-push factors (z)', min: 8, max: 40, step: 0.1, value: 12 },
+        { id: 'mu', label: 'Price mark-up (μ)', min: 0, max: 3, step: 0.01, value: 0.25 },
+        { id: 'A', label: 'Labour productivity (A)', min: 1, max: 15, step: 0.1, value: 10 },
+        { id: 'u', label: 'Actual unemployment (%)', min: 0.5, max: 60, step: 0.1, value: 8 },
       ],
       valid(s) {
         const z = ws(s);
         if (z.ustar < 0.5) return 'The natural rate would fall below zero: firms would pay more than workers demand even at full employment.';
-        if (z.ustar > 28) return 'The natural rate would go off the chart.';
+        if (z.ustar > 95) return 'Almost no one would be employed at the natural rate: wage claims could never be met.';
         return true;
       },
       draw(s) {

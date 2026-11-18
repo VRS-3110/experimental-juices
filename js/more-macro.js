@@ -31,7 +31,7 @@
       y: { range: [0, 12], label: 'Price level (P)', ticks: range(0, 12, 2) },
       params: [
         { id: 'type', label: 'Source', options: [{ v: 0, label: 'Demand-pull (AD rises)' }, { v: 1, label: 'Cost-push (SRAS shifts up)' }], value: 0 },
-        { id: 'size', label: 'Size of the shock', min: 0, max: 3, step: 0.1, value: 1.5 },
+        { id: 'size', label: 'Size of the shock', min: 0, max: 15, step: 0.1, value: 1.5 },
         { id: 'stage', label: 'Show', options: [{ v: 0, label: 'Short run' }, { v: 1, label: 'Next stage' }], value: 0 },
       ],
       draw(s) {
@@ -96,7 +96,7 @@
       y: (s) => { const top = 5 * Math.ceil((laffer(s).Rmax * 1.15) / 5); return { range: [0, top], label: 'Tax revenue', ticks: range(0, top, top / 5) }; },
       params: [
         { id: 't', label: 'Tax rate (%)', min: 0, max: 100, step: 1, value: 40 },
-        { id: 'eps', label: 'Responsiveness of the tax base (ε)', min: 0.2, max: 3, step: 0.05, value: 1 },
+        { id: 'eps', label: 'Responsiveness of the tax base (ε)', min: 0.05, max: 14, step: 0.05, value: 1 },
       ],
       draw(s) {
         const z = laffer(s);
@@ -155,9 +155,9 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'M', label: 'Money supply (M)', min: 2, max: 16, step: 0.1, value: 6 },
-        { id: 'I0', label: 'Business confidence: investment at i = 0 (I₀)', min: 6, max: 18, step: 0.1, value: 14 },
-        { id: 'd', label: 'Interest sensitivity of investment (d)', min: 0.2, max: 2.5, step: 0.05, value: 1.2 },
+        { id: 'M', label: 'Money supply (M)', min: 0.5, max: 60, step: 0.1, value: 6 },
+        { id: 'I0', label: 'Business confidence: investment at i = 0 (I₀)', min: 1, max: 60, step: 0.1, value: 14 },
+        { id: 'd', label: 'Interest sensitivity of investment (d)', min: 0.05, max: 11, step: 0.05, value: 1.2 },
       ],
       panels: [
         {
@@ -234,9 +234,9 @@
       x: { range: [0, 15], label: 'Expected rate of return (%)', ticks: range(0, 15, 3), fmt: (v) => v + '%' },
       y: (s) => { const lo = Math.floor((s.Ee / 1.17) * 20) / 20, hi = Math.ceil((s.Ee / 0.93) * 20) / 20; return { range: [lo, hi], label: 'Exchange rate E (home per foreign)', ticks: range(lo, hi, 0.05), fmt: (v) => v.toFixed(2) }; },
       params: [
-        { id: 'i', label: 'Home interest rate (i, %)', min: 0, max: 12, step: 0.1, value: 5 },
-        { id: 'istar', label: 'Foreign interest rate (i*, %)', min: 0, max: 12, step: 0.1, value: 3 },
-        { id: 'Ee', label: 'Expected future exchange rate (Eᵉ)', min: 0.9, max: 1.6, step: 0.01, value: 1.25 },
+        { id: 'i', label: 'Home interest rate (i, %)', min: 0, max: 50, step: 0.1, value: 5 },
+        { id: 'istar', label: 'Foreign interest rate (i*, %)', min: 0, max: 49, step: 0.1, value: 3 },
+        { id: 'Ee', label: 'Expected future exchange rate (Eᵉ)', min: 0.05, max: 4.4, step: 0.01, value: 1.25 },
       ],
       draw(s) {
         const z = uip(s);
@@ -296,9 +296,9 @@
       x: { range: [0, 16], label: 'Quarters after the depreciation', ticks: range(0, 16, 2), fmt: (v) => String(v) },
       y: (s) => { const lo = -Math.ceil(s.d + 2), hi = Math.max(4, Math.ceil(s.d * Math.max(0, s.eta - 1) + 3)); return { range: [lo, hi], label: 'Change in trade balance (% of imports)', ticks: range(lo, hi, Math.max(2, Math.ceil((hi - lo) / 8))) }; },
       params: [
-        { id: 'd', label: 'Depreciation (d, %)', min: 2, max: 30, step: 1, value: 10 },
-        { id: 'eta', label: 'Long-run sum of elasticities (η)', min: 0.3, max: 2.5, step: 0.05, value: 1.6 },
-        { id: 'h', label: 'Adjustment speed: half-life (quarters)', min: 0.5, max: 6, step: 0.5, value: 2 },
+        { id: 'd', label: 'Depreciation (d, %)', min: 1, max: 100, step: 1, value: 10 },
+        { id: 'eta', label: 'Long-run sum of elasticities (η)', min: 0, max: 11, step: 0.05, value: 1.6 },
+        { id: 'h', label: 'Adjustment speed: half-life (quarters)', min: 0.25, max: 20, step: 0.5, value: 2 },
       ],
       draw(s) {
         const z = jc(s), span = Math.ceil(s.d + 2) + Math.max(4, Math.ceil(s.d * Math.max(0, s.eta - 1) + 3)), out = [Hl(0, 'n', 'No change'), C(z.tb, s.eta > 1 ? 'd' : 'r', '', { from: 0, to: 16 }), T(9, z.tb(9) - 0.08 * span, s.eta > 1 ? 'Trade balance: the J-curve' : 'Trade balance: no recovery', s.eta > 1 ? 'd' : 'r')];

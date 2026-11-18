@@ -20,6 +20,16 @@ Six graphs are built from demand and supply functions you type in: supply and de
 
 Sliders scale to your market and stop at the last valid value. For example, a specific tax stops before it closes the market or pushes sellers' price below zero, and a tariff stops at the prohibitive level. The status line says which limit was reached.
 
+## Limits of feasibility
+
+Every slider on every graph runs over the full economic domain of its variable (prices and costs from zero, elasticities positive, discount factors below one, shares between 0 and 1) and stops only where the model stops making sense. Each topic has its own economic limits (a tax that closes the market, a peg that cannot hold, a cartel that would produce nothing), and on top of those every graph is checked for:
+
+- a negative price, quantity, wage or output on an axis that starts at zero: the market would not exist;
+- an undefined value (no solution to the model);
+- an outcome far beyond any sensible scale for the diagram (more than three chart-widths off the original axes).
+
+The slider stops at the last feasible value and the status line says why. Axes grow automatically when an outcome moves beyond them, and linked panels keep their shared axis in step.
+
 ## Linked graphs
 
 Some topics draw two diagrams driven by the same sliders, side by side on a shared vertical axis or stacked on a shared horizontal axis:

@@ -38,8 +38,8 @@
       x: { range: [0, 40], label: 'Workers (L)', ticks: range(0, 40, 5) },
       y: { range: [0, 24], label: 'Wage and MRP ($)', ticks: range(0, 24, 4) },
       params: [
-        { id: 'b', label: 'Slope of labour supply (b)', min: 0.1, max: 1.5, step: 0.05, value: 0.5, hint: 'smaller = more elastic supply' },
-        { id: 'mw', label: 'Minimum wage (0 = none)', min: 0, max: 19.5, step: 0.5, value: 0 },
+        { id: 'b', label: 'Slope of labour supply (b)', min: 0.02, max: 7, step: 0.05, value: 0.5, hint: 'smaller = more elastic supply' },
+        { id: 'mw', label: 'Minimum wage (0 = none)', min: 0, max: 20, step: 0.5, value: 0 },
       ],
       draw(s) {
         const z = base(s.b), o = atWage(s.b, s.mw), binding = o.regime !== 'none', out = [];
@@ -129,7 +129,7 @@
       y: { range: [0, 24], label: 'Wage and MRP ($)', ticks: range(0, 24, 4) },
       params: [
         { id: 'beta', label: 'Union bargaining power (β)', min: 0, max: 1, step: 0.01, value: 0.5, hint: '0 = employer sets the wage, 1 = union sets it' },
-        { id: 'b', label: 'Slope of labour supply (b)', min: 0.1, max: 1.5, step: 0.05, value: 0.5 },
+        { id: 'b', label: 'Slope of labour supply (b)', min: 0.02, max: 7, step: 0.05, value: 0.5 },
       ],
       draw(s) {
         const z = bilateral(s), o = z.o;
@@ -224,8 +224,8 @@
       x: { range: [0, NW], label: 'Workers in A (from the left) · workers in B (from the right)', ticks: range(0, NW, 5) },
       y: { range: [0, 30], label: 'Wage ($)', ticks: range(0, 30, 5) },
       params: [
-        { id: 'theta', label: 'Compensating differential for B (θ)', min: 0, max: 8, step: 0.5, value: 3 },
-        { id: 'dB', label: 'Demand for labour in B (intercept d_B)', min: 14, max: 28, step: 0.5, value: 20 },
+        { id: 'theta', label: 'Compensating differential for B (θ)', min: 0, max: 19, step: 0.5, value: 3 },
+        { id: 'dB', label: 'Demand for labour in B (intercept d_B)', min: 4, max: 42, step: 0.5, value: 20 },
         { id: 'mob', label: 'Mobility between sectors', options: [{ v: 0, label: 'Free movement' }, { v: 1, label: 'Barriers (no movement)' }], value: 0 },
       ],
       valid(s) {
@@ -323,10 +323,10 @@
       x: { range: [AGE0, AGE1], label: 'Age', ticks: [18, 25, 30, 35, 40, 45, 50, 55, 60, 65], fmt: (v) => String(v) },
       y: { range: [-20, 70], label: 'Earnings ($ thousand a year)', ticks: range(-20, 70, 10) },
       params: [
-        { id: 'p', label: 'Graduate earnings premium (p, %)', min: 0, max: 100, step: 1, value: 40 },
-        { id: 'F', label: 'Fees per year of study (F, $k)', min: 0, max: 15, step: 0.5, value: 9 },
-        { id: 'S', label: 'Years of study (S)', min: 1, max: 6, step: 1, value: 3 },
-        { id: 'r', label: 'Interest rate (r, %)', min: 0, max: 12, step: 0.25, value: 3.5 },
+        { id: 'p', label: 'Graduate earnings premium (p, %)', min: 0, max: 500, step: 1, value: 40 },
+        { id: 'F', label: 'Fees per year of study (F, $k)', min: 0, max: 75, step: 0.5, value: 9 },
+        { id: 'S', label: 'Years of study (S)', min: 1, max: 20, step: 1, value: 3 },
+        { id: 'r', label: 'Interest rate (r, %)', min: 0, max: 30, step: 0.25, value: 3.5 },
       ],
       draw(s) {
         const g = AGE0 + s.S, E1 = (a) => e0(a) * (1 + s.p / 100);
@@ -408,13 +408,12 @@
       y: { range: [0, 28], label: 'Wage ($)', ticks: range(0, 28, 4) },
       params: [
         { id: 'm', label: 'How the union acts', options: [{ v: 0, label: 'Sets a wage' }, { v: 1, label: 'Restricts supply' }, { v: 2, label: 'Raises demand' }], value: 0 },
-        { id: 'k', label: 'Union strength (k)', min: 0, max: 1, step: 0.01, value: 0.5 },
-        { id: 'bd', label: 'Slope of labour demand (b)', min: 0.2, max: 2, step: 0.05, value: 0.5, hint: 'steeper = less elastic' },
+        { id: 'k', label: 'Union strength (k)', min: 0, max: 3, step: 0.01, value: 0.5 },
+        { id: 'bd', label: 'Slope of labour demand (b)', min: 0.05, max: 9, step: 0.05, value: 0.5, hint: 'steeper = less elastic' },
       ],
       valid(s) {
         const z = unionOut(s);
         if (z.L < 1) return 'At this wage employers would hire almost no one: demand for labour is too elastic for such a large rise.';
-        if (z.w > 27.5) return 'The wage would go off the top of the chart.';
         return true;
       },
       draw(s) {
@@ -490,8 +489,8 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'u', label: 'Worker’s outside option (u)', min: 2, max: 12, step: 0.5, value: 6, hint: 'benefits, or pay elsewhere' },
-        { id: 'beta', label: 'How strongly effort responds to pay (β)', min: 0.2, max: 0.7, step: 0.05, value: 0.5 },
+        { id: 'u', label: 'Worker’s outside option (u)', min: 0.5, max: 12, step: 0.5, value: 6, hint: 'benefits, or pay elsewhere' },
+        { id: 'beta', label: 'How strongly effort responds to pay (β)', min: 0.05, max: 0.9, step: 0.05, value: 0.5 },
       ],
       valid(s) {
         if (eff(s).ws > 19) return 'The efficiency wage would be so high that firms would hire almost no one.';
@@ -593,7 +592,7 @@
       x: { range: [0, 40], label: 'Group B workers (L_B)', ticks: range(0, 40, 5) },
       y: { range: [0, 24], label: 'Wage ($)', ticks: range(0, 24, 4) },
       params: [
-        { id: 'd', label: 'Discrimination coefficient (d)', min: 0, max: 1, step: 0.01, value: 0.3 },
+        { id: 'd', label: 'Discrimination coefficient (d)', min: 0, max: 5, step: 0.01, value: 0.3 },
         { id: 'share', label: 'Share of employers who discriminate (s)', min: 0, max: 1, step: 0.01, value: 1 },
       ],
       draw(s) {
@@ -678,8 +677,8 @@
       y: { range: [0, 30], label: 'Wage ($)', ticks: range(0, 30, 5) },
       params: [
         { id: 'pol', label: 'Policy', options: POL.map((label, v) => ({ v, label })), value: 2 },
-        { id: 'x', label: 'Size of the policy (x)', min: 0, max: 1, step: 0.01, value: 0.5 },
-        { id: 'b', label: 'Slope of labour supply (b)', min: 0.2, max: 2, step: 0.05, value: 0.5, hint: 'steeper = less elastic' },
+        { id: 'x', label: 'Size of the policy (x)', min: 0, max: 3, step: 0.01, value: 0.5 },
+        { id: 'b', label: 'Slope of labour supply (b)', min: 0.02, max: 9, step: 0.05, value: 0.5, hint: 'steeper = less elastic' },
       ],
       valid(s) {
         const z = policy(s);
@@ -779,9 +778,9 @@
       layout: 'column',
       params: [
         { id: 'm', label: 'Output market', options: [{ v: 0, label: 'Perfect competition (MVP)' }, { v: 1, label: 'Monopoly (MRP < MVP)' }], value: 0 },
-        { id: 'w', label: 'Wage (w)', min: 1, max: 100, step: 0.5, value: 20 },
-        { id: 'p', label: 'Output price (P; p for the monopoly)', min: 2, max: 8, step: 0.1, value: 5 },
-        { id: 'A', label: 'Labour productivity (A)', min: 0.6, max: 1.4, step: 0.05, value: 1 },
+        { id: 'w', label: 'Wage (w)', min: 0.5, max: 100, step: 0.5, value: 20 },
+        { id: 'p', label: 'Output price (P; p for the monopoly)', min: 0.5, max: 32, step: 0.1, value: 5 },
+        { id: 'A', label: 'Labour productivity (A)', min: 0.2, max: 4.6, step: 0.05, value: 1 },
       ],
       valid(s) {
         if (mvpOut(s).L < 0.2 - 1e-6) return 'At this wage the firm would hire no one: the wage is above the value of even the first worker’s output.';

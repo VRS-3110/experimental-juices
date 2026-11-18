@@ -42,7 +42,8 @@
     L.axes.push(`<text class="axis-title" x="16" y="${M.t + PH / 2}" text-anchor="middle" transform="rotate(-90 16 ${M.t + PH / 2})">${lbl(spec.y.label)}</text>`);
     const fx = spec.x.fmt || ((v) => v), fy = spec.y.fmt || ((v) => v);
     // Numeric tick labels give way to guide labels (P*, Q* …) that land near them.
-    const items = spec.draw(state).filter(Boolean);
+    // Drawings can read the fitted axes as s._x and s._y (they may have grown past the topic's own ranges).
+    const items = spec.draw({ ...state, _x: [x0, x1], _y: [y0, y1] }).filter(Boolean);
     const guides = items.filter((it) => it.t === 'guide' && inBox(it.x, it.y));
     const nearX = (px) => guides.some((g) => g.xl && Math.abs(sx(g.x) - px) < 22);
     const nearY = (py) => guides.some((g) => g.yl && Math.abs(sy(g.y) - py) < 13);
@@ -80,7 +81,7 @@
           }
           L.curve.push(`<path class="curve k-${k}${dash}${it.bold ? ' bold' : ''}" d="${d}" clip-path="url(#${clipId})"/>`);
           if (it.label) {
-            if (it.labelAt != null) curveLabel(it.labelAt, it.fn(it.labelAt), it.label, k);
+            if (it.labelAt != null) { const ly = it.fn(it.labelAt); if (Number.isFinite(ly)) curveLabel(it.labelAt, ly, it.label, k); else if (lastIn) curveLabel(lastIn[0], lastIn[1], it.label, k); }
             else if (lastIn) curveLabel(lastIn[0], lastIn[1], it.label, k);
           }
           break;
@@ -135,7 +136,13 @@
         }
         case 'text': {
           if (!inBox(it.x, it.y)) break;
-          L.label.push(`<text class="note t-${k}" x="${n(sx(it.x))}" y="${n(sy(it.y))}" text-anchor="${it.anchor || 'start'}">${lbl(it.text)}</text>`);
+          // Keep notes inside the plot: shift a note that would run past either edge.
+          const w = String(it.text).length * 6.6, a = it.anchor || 'start';
+          let px = sx(it.x);
+          const left = a === 'end' ? px - w : a === 'middle' ? px - w / 2 : px;
+          if (left < M.l + 4) px += M.l + 4 - left;
+          else if (left + w > M.l + PW - 4) px -= left + w - (M.l + PW - 4);
+          L.label.push(`<text class="note t-${k}" x="${n(px)}" y="${n(sy(it.y))}" text-anchor="${a}">${lbl(it.text)}</text>`);
           break;
         }
       }
@@ -148,5 +155,73 @@
     </svg>`;
   }
 
+  /* ── Axis fitting and feasibility ──
+     Every key outcome (a point or a guide) should be visible. If one would land beyond an axis, the axis
+     grows to include it, up to three extra chart-widths. An axis that starts at zero or above never grows
+     into negative values: a negative price, quantity or output means the market would not exist, which is
+     reported as a problem so the app can stop the slider there. */
+  const niceStep = (span, k = 5) => {
+    const raw = span / k, mag = 10 ** Math.floor(Math.log10(raw)), r = raw / mag;
+    return (r <= 1 ? 1 : r <= 2 ? 2 : r <= 2.5 ? 2.5 : r <= 5 ? 5 : 10) * mag;
+  };
+  const ticksFor = (a, b) => { const st = niceStep(b - a), out = []; for (let v = Math.ceil(a / st - 1e-9) * st; v <= b + st * 1e-6; v += st) out.push(+v.toFixed(10)); return out; };
+  function fitAxis(ax, vals) {
+    const [a0, a1] = ax.range, span = a1 - a0, tol = span * 1e-3, cap = 3 * span;
+    let n0 = a0, n1 = a1, problem = null;
+    if (vals.some((v) => !Number.isFinite(v))) problem = 'nan';
+    const fin = vals.filter(Number.isFinite);
+    if (fin.length) {
+      const hi = Math.max(...fin), lo = Math.min(...fin);
+      if (hi > a1 + tol) {
+        if (hi > a1 + cap) problem = problem || 'far';
+        else { const st = niceStep(hi - a0); n1 = Math.ceil((hi + 0.05 * (hi - a0)) / st) * st; }
+      }
+      if (lo < a0 - tol) {
+        if (a0 >= 0 && lo < -tol) problem = problem || 'negative';
+        else if (lo < a0 - cap) problem = problem || 'far';
+        else { const st = niceStep(n1 - lo); n0 = Math.floor((lo - 0.05 * (n1 - lo)) / st) * st; if (a0 >= 0) n0 = Math.max(0, n0); }
+      }
+    }
+    if (n0 === a0 && n1 === a1) return { ax, problem };
+    return { ax: { ...ax, range: [n0, n1], ticks: ax.ticks ? ticksFor(n0, n1) : ax.ticks }, problem };
+  }
+  // specs: one graph spec, or the panels of a linked graph. Returns fitted specs (axes resolved and grown
+  // where needed, shared axes kept equal) and the first feasibility problem found, if any.
+  function fitGraphs(specs, state, layout) {
+    const resolve = (a) => (typeof a === 'function' ? a(state) : a);
+    const raw = specs.map((sp) => {
+      const items = sp.draw(state).filter(Boolean).filter((it) => it.t === 'point' || it.t === 'guide');
+      return { sp, x: resolve(sp.x), y: resolve(sp.y), xs: items.map((it) => it.x), ys: items.map((it) => it.y) };
+    });
+    let problem = null;
+    const fitted = raw.map((r) => {
+      const fx = fitAxis(r.x, r.xs), fy = fitAxis(r.y, r.ys);
+      problem = problem || fx.problem || fy.problem;
+      return { ...r.sp, x: fx.ax, y: fy.ax };
+    });
+    if (specs.length > 1) {
+      // Row layouts share the vertical axis, column layouts the horizontal one: keep panels that started
+      // with the same range on the same range.
+      const key = layout === 'column' ? 'x' : 'y', groups = {};
+      raw.forEach((r, i) => { const g = JSON.stringify(r[key].range); (groups[g] = groups[g] || []).push(i); });
+      for (const idx of Object.values(groups)) {
+        if (idx.length < 2) continue;
+        const lo = Math.min(...idx.map((i) => fitted[i][key].range[0])), hi = Math.max(...idx.map((i) => fitted[i][key].range[1]));
+        for (const i of idx) {
+          const ax = fitted[i][key];
+          if (ax.range[0] !== lo || ax.range[1] !== hi) fitted[i] = { ...fitted[i], [key]: { ...ax, range: [lo, hi], ticks: ax.ticks ? ticksFor(lo, hi) : ax.ticks } };
+        }
+      }
+    }
+    return { specs: fitted, problem };
+  }
+  const PROBLEM_TEXT = {
+    negative: 'The market would not exist here: the outcome would need a negative price, quantity or output.',
+    nan: 'The model has no meaningful solution here.',
+    far: 'The outcome would be far beyond any sensible scale for this diagram.',
+  };
+
   window.renderGraph = renderGraph;
+  window.fitGraphs = fitGraphs;
+  window.GRAPH_PROBLEM_TEXT = PROBLEM_TEXT;
 })();

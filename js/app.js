@@ -149,10 +149,23 @@
     if (t.game && t.game.editable) bindGame(t);
     if (!g) return;
 
+    // Feasibility: the topic's own limits first, then the generic checks (no negative prices or
+    // quantities, no undefined values, nothing far off any sensible scale).
+    const check = (st) => {
+      const v = g.valid ? g.valid(st) : true;
+      if (v !== true) return v;
+      try {
+        const f = window.fitGraphs(g.panels || [g], st, g.layout);
+        if (f.problem) return window.GRAPH_PROBLEM_TEXT[f.problem];
+        if (g.readout(st).rows.some((row) => /NaN|Infinity/.test(String(row[1])))) return window.GRAPH_PROBLEM_TEXT.nan;
+      } catch (e) { return window.GRAPH_PROBLEM_TEXT.nan; }
+      return true;
+    };
     const draw = (limit) => {
+      const fitted = window.fitGraphs(g.panels || [g], s, g.layout).specs;
       $('#graph').innerHTML = g.panels
-        ? `<div class="panes ${g.layout || 'row'}">${g.panels.map((pn) => `<figure class="pane"><figcaption>${esc(rv(pn.title, s))}</figcaption>${window.renderGraph({ ...pn, aria: pn.title }, s)}</figure>`).join('')}</div>`
-        : window.renderGraph({ ...g, aria: t.title + ' graph' }, s);
+        ? `<div class="panes ${g.layout || 'row'}">${fitted.map((pn) => `<figure class="pane"><figcaption>${esc(rv(pn.title, s))}</figcaption>${window.renderGraph({ ...pn, aria: rv(pn.title, s) }, s)}</figure>`).join('')}</div>`
+        : window.renderGraph({ ...fitted[0], aria: t.title + ' graph' }, s);
       if (t.game && t.game.fromState) $('#game-box').innerHTML = gameHtml(t.game.fromState(s), false);
       const r = g.readout(s);
       $('#readout').innerHTML = r.rows.map(([k, v]) => `<div><dt>${sub(k)}</dt><dd>${sub(v)}</dd></div>`).join('');
@@ -190,17 +203,19 @@
         const p = g.params.find((x) => x.id === inp.dataset.param);
         const old = s[p.id], target = parseFloat(inp.value);
         s[p.id] = target;
-        const verdict = g.valid ? g.valid(s) : true;
+        const verdict = check(s);
         if (verdict !== true) {
-          // Walk from the last good value toward the target and stop at the last valid step.
+          // Find the last feasible value between the old (feasible) value and the target, to the slider's
+          // step: a binary search, so even a long drag needs only a dozen or so checks.
           const step = rv(p.step, s), dir = Math.sign(target - old), n = Math.floor(Math.abs(target - old) / step + 1e-9);
-          let good = old, reason = verdict;
-          for (let i = 1; i <= n; i++) {
-            s[p.id] = +(old + dir * i * step).toFixed(10);
-            const v = g.valid(s);
-            if (v !== true) { reason = v; break; }
-            good = s[p.id];
+          let lo = 0, hi = n + 1, reason = verdict;               // step lo is feasible, step hi is not
+          while (hi - lo > 1) {
+            const mid = (lo + hi) >> 1;
+            s[p.id] = +(old + dir * mid * step).toFixed(10);
+            const v = check(s);
+            if (v === true) lo = mid; else { hi = mid; reason = v; }
           }
+          const good = +(old + dir * lo * step).toFixed(10);
           s[p.id] = good;
           refreshRanges();
           draw(reason);
@@ -215,15 +230,22 @@
         s[b.dataset.param] = parseFloat(b.dataset.v);
         // A switch can make the current slider values invalid (e.g. Giffen at a high price):
         // walk each slider back toward its default, one step at a time, until valid again.
-        const verdict = g.valid ? g.valid(s) : true;
+        const verdict = check(s);
         if (verdict !== true) {
           for (const p of g.params) {
             if (p.options) continue;
-            const home = rv(p.value, s), step = rv(p.step, s);
-            for (let i = 0; i < 2000 && g.valid(s) !== true && Math.abs(s[p.id] - home) > 1e-9; i++) {
-              s[p.id] = +(s[p.id] + Math.sign(home - s[p.id]) * Math.min(step, Math.abs(home - s[p.id]))).toFixed(10);
+            const home = rv(p.value, s), step = rv(p.step, s), from = s[p.id];
+            const n = Math.ceil(Math.abs(home - from) / step - 1e-9), dir = Math.sign(home - from);
+            const at = (k) => (k >= n ? home : +(from + dir * k * step).toFixed(10));
+            s[p.id] = home;
+            if (check(s) === true) {
+              // Move from the current value toward the default only as far as needed: binary search
+              // for the first feasible step (step hi is feasible, step lo is not).
+              let lo = 0, hi = n;
+              while (hi - lo > 1) { const mid = (lo + hi) >> 1; s[p.id] = at(mid); if (check(s) === true) hi = mid; else lo = mid; }
+              s[p.id] = at(hi);
+              break;
             }
-            if (g.valid(s) === true) break;
           }
         }
         sync();

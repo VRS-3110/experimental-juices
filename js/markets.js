@@ -98,8 +98,8 @@
         x: (s) => axesFor(s.m, 1.5, 1.35).x,
         y: (s) => axesFor(s.m, 1.5, 1.35).y,
         params: [
-          { id: 'sd', label: 'Demand shift (extra Q at every price)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(0.6 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
-          { id: 'ss', label: 'Supply shift (extra Q at every price)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(0.6 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
+          { id: 'sd', label: 'Demand shift (extra Q at every price)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(3 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
+          { id: 'ss', label: 'Supply shift (extra Q at every price)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(3 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
         ],
         valid(s) {
           const m = shifted(s.m, s.sd, s.ss), e = eqm(m);
@@ -312,9 +312,9 @@
         y: (s) => axesFor(s.m, 1.5, 1.35, ['Quantity of domestic currency', 'Exchange rate e (foreign per domestic)']).y,
         params: [
           { id: 'reg', label: 'Regime', options: [{ v: 0, label: 'Floating' }, { v: 1, label: 'Fixed' }], value: 0 },
-          { id: 'sd', label: 'Demand shift (exports, capital inflows)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(0.6 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
-          { id: 'ss', label: 'Supply shift (imports, capital outflows)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(0.6 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
-          { id: 'fix', label: 'Pegged rate (fixed regime)', min: (s) => snap(eqm(s.m).p * 0.4, stepFor(s.m.pd)), max: (s) => snap(Math.min(s.m.pd, eqm(s.m).p * 1.6), stepFor(s.m.pd)), step: (s) => stepFor(s.m.pd), value: (s) => snap(eqm(s.m).p, stepFor(s.m.pd)) },
+          { id: 'sd', label: 'Demand shift (exports, capital inflows)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(3 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
+          { id: 'ss', label: 'Supply shift (imports, capital outflows)', min: (s) => -snap(s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), max: (s) => snap(3 * s.m.pd / s.m.md, stepFor(s.m.pd / s.m.md)), step: (s) => stepFor(1.6 * s.m.pd / s.m.md), value: 0 },
+          { id: 'fix', label: 'Pegged rate (fixed regime)', min: (s) => Math.max(stepFor(s.m.pd), snap(eqm(s.m).p * 0.05, stepFor(s.m.pd))), max: (s) => snap(s.m.pd, stepFor(s.m.pd)), step: (s) => stepFor(s.m.pd), value: (s) => snap(eqm(s.m).p, stepFor(s.m.pd)) },
         ],
         valid(s) {
           const m = shifted(s.m, s.sd, s.ss), e = eqm(m);

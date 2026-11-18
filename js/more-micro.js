@@ -28,12 +28,12 @@
       y: { range: [0, 20], label: 'Price ($)', ticks: range(0, 20, 4) },
       params: [
         { id: 'mode', label: 'Curves', options: [{ v: 0, label: 'Elastic, unit and inelastic' }, { v: 1, label: 'Perfectly elastic and inelastic' }], value: 0 },
-        { id: 'dP', label: 'Change in price (ΔP)', min: -4, max: 4, step: 0.1, value: 2 },
-        { id: 'Ee', label: 'Elastic supply: PES at A', min: 1.5, max: 4, step: 0.1, value: 2.5 },
-        { id: 'Ei', label: 'Inelastic supply: PES at A', min: 0.1, max: 0.8, step: 0.05, value: 0.4 },
+        { id: 'dP', label: 'Change in price (ΔP)', min: -9.5, max: 9.5, step: 0.1, value: 2 },
+        { id: 'Ee', label: 'Elastic supply: PES at A', min: 1.05, max: 10, step: 0.1, value: 2.5 },
+        { id: 'Ei', label: 'Inelastic supply: PES at A', min: 0.05, max: 0.95, step: 0.05, value: 0.4 },
       ],
       valid(s) {
-        if (s.mode === 0 && (pesQ(s.Ee)(10 + s.dP) > 39.5 || pesQ(s.Ee)(10 + s.dP) < 0.5)) return 'The elastic supply curve would run off the chart.';
+        if (s.mode === 0 && pesQ(s.Ee)(10 + s.dP) < 0.05) return 'At this price firms on the elastic supply curve would supply nothing.';
         return true;
       },
       draw(s) {
@@ -91,12 +91,12 @@
       layout: 'row',
       params: [
         { id: 'rel', label: 'The goods are', options: [{ v: 0, label: 'Substitutes (coffee B, tea A)' }, { v: 1, label: 'Complements (printers B, ink A)' }], value: 0 },
-        { id: 'dpb', label: 'Change in the price of B (%)', min: -40, max: 40, step: 1, value: 20 },
-        { id: 'x', label: 'Size of the cross-price elasticity |XED|', min: 0.2, max: 2, step: 0.05, value: 0.8 },
+        { id: 'dpb', label: 'Change in the price of B (%)', min: -90, max: 200, step: 1, value: 20 },
+        { id: 'x', label: 'Size of the cross-price elasticity |XED|', min: 0.05, max: 5, step: 0.05, value: 0.8 },
       ],
       valid(s) {
         const xed = s.rel === 0 ? s.x : -s.x, qa = 20 * (1 + (xed * s.dpb) / 100);
-        if (qa < 1 || qa > 39) return 'Demand for A would move off the chart.';
+        if (qa < 0.25) return 'Demand for A would disappear entirely: no one would buy it.';
         return true;
       },
       panels: [
@@ -166,9 +166,9 @@
       x: { range: [0, 40], label: 'Quantity (Q)', ticks: range(0, 40, 5) },
       y: { range: [0, 20], label: 'Price ($)', ticks: range(0, 20, 4) },
       params: [
-        { id: 's', label: 'Subsidy per unit (s)', min: 0, max: 6, step: 0.1, value: 3 },
-        { id: 'bd', label: 'Slope of demand (steeper = less elastic)', min: 0.2, max: 2, step: 0.05, value: 0.5 },
-        { id: 'bs', label: 'Slope of supply (steeper = less elastic)', min: 0.2, max: 2, step: 0.05, value: 0.5 },
+        { id: 's', label: 'Subsidy per unit (s)', min: 0, max: 20, step: 0.1, value: 3 },
+        { id: 'bd', label: 'Slope of demand (steeper = less elastic)', min: 0.05, max: 5, step: 0.05, value: 0.5 },
+        { id: 'bs', label: 'Slope of supply (steeper = less elastic)', min: 0.05, max: 5, step: 0.05, value: 0.5 },
       ],
       draw(s) {
         const z = sub(s), D = (Q) => 10 - s.bd * (Q - 20), Sp = (Q) => 10 + s.bs * (Q - 20), out = [];
@@ -235,9 +235,9 @@
       y: { range: [0, 24], label: 'Good Y', ticks: range(0, 24, 4) },
       params: [
         { id: 'type', label: 'Preferences', options: [{ v: 0, label: 'Perfect substitutes' }, { v: 1, label: 'Perfect complements' }, { v: 2, label: 'Cobb–Douglas (smooth)' }], value: 0 },
-        { id: 'px', label: 'Price of X (P_X)', min: 1, max: 6, step: 0.1, value: 2 },
-        { id: 'py', label: 'Price of Y (P_Y)', min: 1, max: 6, step: 0.1, value: 3 },
-        { id: 'a', label: 'Substitutes: MRS a · Complements: units of Y per X', min: 0.5, max: 2, step: 0.05, value: 1 },
+        { id: 'px', label: 'Price of X (P_X)', min: 0.3, max: 25, step: 0.1, value: 2 },
+        { id: 'py', label: 'Price of Y (P_Y)', min: 0.3, max: 25, step: 0.1, value: 3 },
+        { id: 'a', label: 'Substitutes: MRS a · Complements: units of Y per X', min: 0.1, max: 8, step: 0.05, value: 1 },
       ],
       draw(s) {
         const z = spOpt(s), out = [];
@@ -299,10 +299,10 @@
       x: (s) => { const z = inter(s), top = 20 * Math.ceil((z.W * 1.08) / 20); return { range: [0, top], label: 'Consumption now (c₁)', ticks: range(0, top, top / 5) }; },
       y: (s) => { const z = inter(s), top = 20 * Math.ceil(((1 + z.r) * z.W * 1.08) / 20); return { range: [0, top], label: 'Consumption later (c₂)', ticks: range(0, top, top / 5) }; },
       params: [
-        { id: 'y1', label: 'Income now (y₁)', min: 10, max: 100, step: 1, value: 80 },
-        { id: 'y2', label: 'Income later (y₂)', min: 10, max: 100, step: 1, value: 40 },
-        { id: 'r', label: 'Interest rate (r, %)', min: 0, max: 20, step: 0.5, value: 5 },
-        { id: 'beta', label: 'Patience (β)', min: 0.5, max: 1.2, step: 0.01, value: 0.9 },
+        { id: 'y1', label: 'Income now (y₁)', min: 0, max: 400, step: 1, value: 80 },
+        { id: 'y2', label: 'Income later (y₂)', min: 0, max: 400, step: 1, value: 40 },
+        { id: 'r', label: 'Interest rate (r, %)', min: 0, max: 100, step: 0.5, value: 5 },
+        { id: 'beta', label: 'Patience (β)', min: 0.05, max: 4, step: 0.01, value: 0.9 },
       ],
       draw(s) {
         const z = inter(s), out = [];
@@ -365,8 +365,8 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'w', label: 'Hourly wage (w)', min: 1, max: 30, step: 0.5, value: 16 },
-        { id: 'V', label: 'Non-labour income (V)', min: 20, max: 80, step: 1, value: 60 },
+        { id: 'w', label: 'Hourly wage (w)', min: 0.5, max: 120, step: 0.5, value: 16 },
+        { id: 'V', label: 'Non-labour income (V)', min: 0, max: 320, step: 1, value: 60 },
       ],
       panels: [
         {
@@ -452,7 +452,7 @@
       x: { range: [0, 40], label: 'Quantity (Q)', ticks: range(0, 40, 5) },
       y: { range: [0, 28], label: 'Price, benefit and cost ($)', ticks: range(0, 28, 4) },
       params: [
-        { id: 'e', label: 'Marginal external benefit (e)', min: 0, max: 8, step: 0.1, value: 4 },
+        { id: 'e', label: 'Marginal external benefit (e)', min: 0, max: 39, step: 0.1, value: 4 },
         { id: 'fix', label: 'Policy', options: [{ v: 0, label: 'Free market' }, { v: 1, label: 'Subsidy = MEB' }], value: 0 },
       ],
       draw(s) {
@@ -507,7 +507,7 @@
     graph: {
       x: { range: [0, 14], label: 'Quantity of the public good (Q)', ticks: range(0, 14, 2) },
       y: { range: [0, 18], label: 'Marginal benefit and cost ($)', ticks: range(0, 18, 2) },
-      params: [{ id: 'c', label: 'Marginal cost per unit (c)', min: 1, max: 14, step: 0.1, value: 7 }],
+      params: [{ id: 'c', label: 'Marginal cost per unit (c)', min: 0.1, max: 15.9, step: 0.1, value: 7 }],
       draw(s) {
         const z = pub(s), out = [];
         if (z.Qs - z.Qp > 0.1) {
@@ -565,7 +565,7 @@
       x: { range: [0, 40], label: 'Number of boats (N)', ticks: range(0, 40, 5) },
       y: { range: [0, 22], label: 'Value of catch per boat ($)', ticks: range(0, 22, 4) },
       params: [
-        { id: 'c', label: 'Cost per boat (c)', min: 2, max: 18, step: 0.1, value: 8 },
+        { id: 'c', label: 'Cost per boat (c)', min: 0.5, max: 19.9, step: 0.1, value: 8 },
         { id: 'pol', label: 'Access', options: [{ v: 0, label: 'Open access' }, { v: 1, label: 'Licences or a tax per boat' }], value: 0 },
       ],
       draw(s) {
@@ -620,7 +620,7 @@
       x: { range: [0, 16], label: 'Price offered (p, $ thousand)', ticks: range(0, 16, 2) },
       y: { range: [0, 16], label: 'Value to buyers ($ thousand)', ticks: range(0, 16, 2) },
       params: [
-        { id: 'k', label: 'Buyers’ valuation multiple (k)', min: 1, max: 3, step: 0.05, value: 1.5 },
+        { id: 'k', label: 'Buyers’ valuation multiple (k)', min: 1, max: 10, step: 0.05, value: 1.5 },
         { id: 'info', label: 'Information', options: [{ v: 0, label: 'Quality hidden' }, { v: 1, label: 'Quality revealed (inspection, warranty)' }], value: 0 },
       ],
       draw(s) {
@@ -680,8 +680,8 @@
       x: { range: [0, 80], label: 'Quantity (Q)', ticks: range(0, 80, 10) },
       y: { range: [0, 20], label: 'Price ($)', ticks: range(0, 20, 4) },
       params: [
-        { id: 'pw', label: 'World price (p_w)', min: 2.5, max: 10, step: 0.1, value: 5 },
-        { id: 'q', label: 'Import quota (Q̄)', min: 0, max: 60, step: 1, value: 24 },
+        { id: 'pw', label: 'World price (p_w)', min: 0.1, max: 19.9, step: 0.1, value: 5 },
+        { id: 'q', label: 'Import quota (Q̄)', min: 0, max: 300, step: 1, value: 24 },
         { id: 'who', label: 'Quota rent goes to', options: [{ v: 0, label: 'Government (licences auctioned)' }, { v: 1, label: 'Domestic importers' }, { v: 2, label: 'Foreign exporters (VER)' }], value: 0 },
       ],
       draw(s) {

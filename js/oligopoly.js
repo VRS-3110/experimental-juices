@@ -28,8 +28,8 @@
       x: { range: [0, 100], label: 'Quantity (Q)', ticks: range(0, 100, 20) },
       y: { range: [0, 20], label: 'Price and cost ($)', ticks: range(0, 20, 4) },
       params: [
-        { id: 'k', label: 'Size of the fringe (k)', min: 0, max: 20, step: 1, value: 5, hint: '0 = no fringe: the leader is a monopolist' },
-        { id: 'c', label: 'Leader’s marginal cost (c)', min: 2, max: 10, step: 0.5, value: 4 },
+        { id: 'k', label: 'Size of the fringe (k)', min: 0, max: 40, step: 1, value: 5, hint: '0 = no fringe: the leader is a monopolist' },
+        { id: 'c', label: 'Leader’s marginal cost (c)', min: 0, max: 12, step: 0.5, value: 4 },
       ],
       valid(s) {
         const z = lead(s);
@@ -124,8 +124,8 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'c', label: 'Marginal cost (c)', min: 0, max: 16, step: 0.5, value: 4 },
-        { id: 'n', label: 'Number of Cournot firms (n)', min: 2, max: 20, step: 1, value: 2 },
+        { id: 'c', label: 'Marginal cost (c)', min: 0, max: 23.5, step: 0.5, value: 4 },
+        { id: 'n', label: 'Number of Cournot firms (n)', min: 1, max: 60, step: 1, value: 2 },
         { id: 'focus', label: 'Shade the welfare for', options: MODELS.map((label, v) => ({ v, label })), value: 1 },
       ],
       panels: [

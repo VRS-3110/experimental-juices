@@ -16,8 +16,8 @@
         y: { range: [0, 12], label: 'Good T' },
         params: [
           { id: 'shape', label: 'Frontier shape', options: [{ v: 0, label: 'Linear' }, { v: 1, label: 'Concave' }], value: 1 },
-          { id: 'r', label: 'Resources and technology (r)', min: 6, max: 11, step: 0.1, value: 10, hint: 'Raise to show economic growth' },
-          { id: 'c', label: 'Output of C chosen', min: 0.2, max: 5.4, step: 0.05, value: 3 },
+          { id: 'r', label: 'Resources and technology (r)', min: 1, max: 30, step: 0.1, value: 10, hint: 'Raise to show economic growth' },
+          { id: 'c', label: 'Output of C chosen', min: 0, max: 15, step: 0.05, value: 3 },
         ],
         draw(s) {
           const lin = s.shape === 0;
@@ -111,7 +111,7 @@
           layout: 'column',
           params: [
             { id: 'type', label: 'Type of good', options: [{ v: 0, label: 'Normal' }, { v: 1, label: 'Inferior' }, { v: 2, label: 'Giffen' }], value: 0 },
-            { id: 'px', label: 'New price of X (P_X₁)', min: 2, max: 8, step: 0.1, value: 6, hint: 'Starting price is 4' },
+            { id: 'px', label: 'New price of X (P_X₁)', min: 0.5, max: 30, step: 0.1, value: 6, hint: 'Starting price is 4' },
           ],
           valid(s) {
             if (!feasible(s.type, s.px)) return 'A Giffen good means buying more X when its price rises, which needs more spending on X. Past this price that spending would use up all income, so the case cannot continue.';
@@ -203,7 +203,7 @@
       graph: {
         x: { range: [0, 24], label: 'Quantity (Q)' },
         y: { range: [0, 12], label: 'Price (P)', ticks: range(0, 12, 2) },
-        params: [{ id: 'p', label: 'Price', min: 0.5, max: 11.5, step: 0.1, value: 4 }],
+        params: [{ id: 'p', label: 'Price', min: 0.05, max: 45, step: 0.1, value: 4 }],
         draw(s) {
           const qa = Math.max(0, 12 - s.p), qb = Math.max(0, 12 - 2 * s.p);
           return [
@@ -248,9 +248,9 @@
         x: { range: [0, 12], label: 'Labour (L)' },
         y: { range: [0, 12], label: 'Capital (K)' },
         params: [
-          { id: 'q', label: 'Target output (Q)', min: 2, max: 8, step: 0.1, value: 5 },
-          { id: 'w', label: 'Wage (w)', min: 1, max: 8, step: 0.1, value: 4 },
-          { id: 'r', label: 'Rental rate of capital (r)', min: 1, max: 8, step: 0.1, value: 4 },
+          { id: 'q', label: 'Target output (Q)', min: 0.2, max: 30, step: 0.1, value: 5 },
+          { id: 'w', label: 'Wage (w)', min: 0.2, max: 35, step: 0.1, value: 4 },
+          { id: 'r', label: 'Rental rate of capital (r)', min: 0.2, max: 35, step: 0.1, value: 4 },
         ],
         draw(s) {
           const L = s.q * Math.sqrt(s.r / s.w), K = s.q * Math.sqrt(s.w / s.r), c = s.w * L + s.r * K;
@@ -309,7 +309,7 @@
           y: { range: [0, 10], label: 'Average and marginal cost ($)' },
           params: [
             { id: 'shape', label: 'Shape of LAC', options: SHAPES.map((z, v) => ({ v, label: z.name })), value: 0 },
-            { id: 'k', label: 'Plant size (tangency output)', min: 1.5, max: 11, step: 0.1, value: 3 },
+            { id: 'k', label: 'Plant size (tangency output)', min: 0.1, max: (s) => (s.shape === 0 ? 27 : 45), step: 0.1, value: 3 },
           ],
           draw(s) {
             const z = sh(s), lac = z.lac, k = s.k;
@@ -405,7 +405,7 @@
           y: { range: [0, 12], label: 'Price and cost ($)' },
           params: [
             { id: 'reg', label: 'Regulation', options: [{ v: 0, label: 'None' }, { v: 1, label: 'P = MC' }, { v: 2, label: 'P = AC' }, { v: 3, label: 'Compare all' }], value: 3 },
-            { id: 'F', label: 'Fixed cost (F)', min: 4, max: 60, step: 0.5, value: 32 },
+            { id: 'F', label: 'Fixed cost (F)', min: 0, max: 60, step: 0.5, value: 32 },
           ],
           valid(s) {
             if (s.F >= 50) return 'At F = 50 or more, average cost lies above demand at every output. No price covers cost, so no firm would supply this market without a subsidy.';
@@ -494,8 +494,8 @@
         x: { range: [0, 12], label: 'Output of firm A (Q_A)' },
         y: { range: [0, 12], label: 'Output of firm B (Q_B)' },
         params: [
-          { id: 'ca', label: 'Marginal cost of A', min: 0, max: 6, step: 0.1, value: 3 },
-          { id: 'cb', label: 'Marginal cost of B', min: 0, max: 6, step: 0.1, value: 3 },
+          { id: 'ca', label: 'Marginal cost of A', min: 0, max: 30, step: 0.1, value: 3 },
+          { id: 'cb', label: 'Marginal cost of B', min: 0, max: 30, step: 0.1, value: 3 },
         ],
         draw(s) {
           const qa = Math.max(0, (12 - 2 * s.ca + s.cb) / 3), qb = Math.max(0, (12 - 2 * s.cb + s.ca) / 3);
@@ -555,8 +555,8 @@
         x: { range: [0, 10], label: 'Good X: A from the left, B from the right' },
         y: { range: [0, 10], label: 'Good Y: A from the bottom, B from the top' },
         params: [
-          { id: 'ex', label: 'A’s endowment of X', min: 1, max: 9, step: 0.1, value: 8 },
-          { id: 'ey', label: 'A’s endowment of Y', min: 1, max: 9, step: 0.1, value: 2 },
+          { id: 'ex', label: 'A’s endowment of X', min: 0.1, max: 9.9, step: 0.1, value: 8 },
+          { id: 'ey', label: 'A’s endowment of Y', min: 0.1, max: 9.9, step: 0.1, value: 2 },
         ],
         draw(s) {
           const ua = s.ex * s.ey, ub = (10 - s.ex) * (10 - s.ey);
@@ -633,11 +633,11 @@
         x: { range: [0, 10], label: 'Capital per effective worker (k)' },
         y: { range: [0, 3], label: 'Output and investment per worker', ticks: range(0, 3, 1) },
         params: [
-          { id: 's', label: 'Saving rate (s)', min: 0.1, max: 0.6, step: 0.01, value: 0.3 },
-          { id: 'n', label: 'Population growth (n)', min: 0, max: 0.06, step: 0.005, value: 0.02 },
-          { id: 'd', label: 'Depreciation (d)', min: 0.02, max: 0.1, step: 0.005, value: 0.05 },
-          { id: 'g', label: 'Technological progress (g)', min: 0, max: 0.05, step: 0.005, value: 0.03 },
-          { id: 'al', label: 'Capital share (α)', min: 0.25, max: 0.5, step: 0.01, value: 0.33 },
+          { id: 's', label: 'Saving rate (s)', min: 0.01, max: 0.99, step: 0.01, value: 0.3 },
+          { id: 'n', label: 'Population growth (n)', min: 0, max: 0.29, step: 0.005, value: 0.02 },
+          { id: 'd', label: 'Depreciation (d)', min: 0.005, max: 0.4, step: 0.005, value: 0.05 },
+          { id: 'g', label: 'Technological progress (g)', min: 0, max: 0.24, step: 0.005, value: 0.03 },
+          { id: 'al', label: 'Capital share (α)', min: 0.05, max: 0.69, step: 0.01, value: 0.33 },
         ],
         draw(s) {
           const b = s.n + s.d + s.g, ks = Math.pow(s.s / b, 1 / (1 - s.al)), kg = Math.pow(s.al / b, 1 / (1 - s.al));
@@ -685,10 +685,10 @@
         x: { range: [0, 12], label: 'National income (Y)' },
         y: { range: [0, 12], label: 'Aggregate demand (AD)' },
         params: [
-          { id: 'A', label: 'Autonomous spending (Ā)', min: 1, max: 5, step: 0.1, value: 2.5 },
-          { id: 'c', label: 'MPC (c)', min: 0.5, max: 0.95, step: 0.01, value: 0.8 },
-          { id: 't', label: 'Tax rate (t)', min: 0, max: 0.4, step: 0.01, value: 0.2 },
-          { id: 'z', label: 'Marginal propensity to import (z)', min: 0, max: 0.3, step: 0.01, value: 0.14 },
+          { id: 'A', label: 'Autonomous spending (Ā)', min: 0.1, max: 20, step: 0.1, value: 2.5 },
+          { id: 'c', label: 'MPC (c)', min: 0.05, max: 0.99, step: 0.01, value: 0.8 },
+          { id: 't', label: 'Tax rate (t)', min: 0, max: 0.95, step: 0.01, value: 0.2 },
+          { id: 'z', label: 'Marginal propensity to import (z)', min: 0, max: 0.95, step: 0.01, value: 0.14 },
         ],
         draw(s) {
           const slope = s.c * (1 - s.t) - s.z, y = s.A / (1 - slope), ad = (Y) => s.A + slope * Y, yf = 6;
@@ -756,9 +756,9 @@
         x: { range: [0, 10], label: 'Output (Y)' },
         y: { range: [0, 10], label: 'Real interest rate (r)' },
         params: [
-          { id: 'a', label: 'Autonomous spending and fiscal policy', min: 6, max: 12, step: 0.1, value: 9, hint: 'Higher G or confidence shifts IS right' },
-          { id: 'r0', label: 'Central bank rate at Y = 5 (r₀)', min: 1, max: 8, step: 0.1, value: 5, hint: 'Monetary tightening shifts MP up' },
-          { id: 'b', label: 'MP slope (β)', min: 0, max: 1.5, step: 0.05, value: 0 },
+          { id: 'a', label: 'Autonomous spending and fiscal policy', min: 5.1, max: 36, step: 0.1, value: 9, hint: 'Higher G or confidence shifts IS right' },
+          { id: 'r0', label: 'Central bank rate at Y = 5 (r₀)', min: 0, max: 8.9, step: 0.1, value: 5, hint: 'Monetary tightening shifts MP up' },
+          { id: 'b', label: 'MP slope (β)', min: 0, max: 7.5, step: 0.05, value: 0 },
         ],
         draw(s) {
           const y = (s.a - s.r0 + 5 * s.b) / (0.8 + s.b), r = s.a - 0.8 * y;
@@ -800,10 +800,10 @@
         x: { range: [0, 10], label: 'Real output (Y)' },
         y: { range: [0, 10], label: 'Price level (P)' },
         params: [
-          { id: 'a', label: 'Aggregate demand (a)', min: 7, max: 13, step: 0.1, value: 10, hint: 'Fiscal stimulus shifts AD right' },
-          { id: 'v', label: 'Supply shock (v)', min: -2, max: 3, step: 0.1, value: 0, hint: 'An oil price spike is v > 0' },
-          { id: 'pe', label: 'Expected price level (Pᵉ)', min: 0, max: 10, step: 0.1, value: 5 },
-          { id: 'gm', label: 'SRAS slope (γ)', min: 0.3, max: 1.5, step: 0.05, value: 0.8 },
+          { id: 'a', label: 'Aggregate demand (a)', min: 1.1, max: 36, step: 0.1, value: 10, hint: 'Fiscal stimulus shifts AD right' },
+          { id: 'v', label: 'Supply shock (v)', min: -8.9, max: 8.9, step: 0.1, value: 0, hint: 'An oil price spike is v > 0' },
+          { id: 'pe', label: 'Expected price level (Pᵉ)', min: 0, max: 13.9, step: 0.1, value: 5 },
+          { id: 'gm', label: 'SRAS slope (γ)', min: 0.05, max: 6, step: 0.05, value: 0.8 },
         ],
         actions: [{ label: 'Let expectations adjust (long run)', run: (s) => { s.pe = s.a - 5 - s.v; } }],
         draw(s) {
@@ -853,10 +853,10 @@
         x: { range: [0, 10], label: 'Unemployment rate (%)', ticks: range(0, 10, 2), fmt: (v) => v + '%' },
         y: { range: [-2, 10], label: 'Inflation rate (%)', ticks: range(-2, 10, 2), fmt: (v) => v + '%' },
         params: [
-          { id: 'u', label: 'Actual unemployment (u)', min: 2, max: 9, step: 0.1, value: 4 },
-          { id: 'pe', label: 'Expected inflation (πᵉ)', min: 0, max: 8, step: 0.1, value: 2 },
-          { id: 'gm', label: 'Slope (γ)', min: 0.4, max: 2, step: 0.05, value: 1 },
-          { id: 'v', label: 'Supply shock (v)', min: -2, max: 3, step: 0.1, value: 0 },
+          { id: 'u', label: 'Actual unemployment (u)', min: 0.1, max: 36, step: 0.1, value: 4 },
+          { id: 'pe', label: 'Expected inflation (πᵉ)', min: -10, max: 40, step: 0.1, value: 2 },
+          { id: 'gm', label: 'Slope (γ)', min: 0.1, max: 8, step: 0.05, value: 1 },
+          { id: 'v', label: 'Supply shock (v)', min: -20, max: 20, step: 0.1, value: 0 },
         ],
         actions: [{ label: 'Expectations catch up', run: (s) => { s.pe = s.pe - s.gm * (s.u - 5) + s.v; } }],
         draw(s) {

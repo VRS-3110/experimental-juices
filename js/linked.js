@@ -103,10 +103,15 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'p', label: 'Output price (P)', min: 1, max: 3, step: 0.05, value: 2 },
-        { id: 's0', label: 'Labour supply shifter (s₀)', min: 0, max: 10, step: 0.1, value: 2, hint: 'Raise to shift labour supply left' },
-        { id: 'mw', label: 'Minimum wage (0 = none)', min: 0, max: 25, step: 0.5, value: 0 },
+        { id: 'p', label: 'Output price (P)', min: 0.2, max: 11, step: 0.05, value: 2 },
+        { id: 's0', label: 'Labour supply shifter (s₀)', min: -10, max: 19, step: 0.1, value: 2, hint: 'Raise to shift labour supply left' },
+        { id: 'mw', label: 'Minimum wage (0 = none)', min: 0, max: 60, step: 0.5, value: 0 },
       ],
+      valid(s) {
+        if (10 * s.p <= s.s0 + 0.05) return 'No one would work at a wage firms are willing to pay: the labour market would not exist.';
+        if (s.mw >= 10 * s.p - 0.05) return `A minimum wage at or above the highest MRP ($${(10 * s.p).toFixed(2)}) would leave no one employed: the labour market would not exist.`;
+        return true;
+      },
       panels: [
         {
           title: 'Labour market',
@@ -203,10 +208,10 @@
     graph: {
       layout: 'column',
       params: [
-        { id: 'J', label: 'Injections I + G + X', min: 1, max: 4, step: 0.1, value: 2 },
-        { id: 'c', label: 'MPC (c)', min: 0.5, max: 0.95, step: 0.01, value: 0.8 },
-        { id: 't', label: 'Tax rate (t)', min: 0, max: 0.4, step: 0.01, value: 0.2 },
-        { id: 'z', label: 'Marginal propensity to import (z)', min: 0, max: 0.3, step: 0.01, value: 0.14 },
+        { id: 'J', label: 'Injections I + G + X', min: 0, max: 16, step: 0.1, value: 2 },
+        { id: 'c', label: 'MPC (c)', min: 0.05, max: 0.99, step: 0.01, value: 0.8 },
+        { id: 't', label: 'Tax rate (t)', min: 0, max: 0.95, step: 0.01, value: 0.2 },
+        { id: 'z', label: 'Marginal propensity to import (z)', min: 0, max: 0.95, step: 0.01, value: 0.14 },
       ],
       panels: [
         {
@@ -260,9 +265,9 @@
     graph: {
       layout: 'row',
       params: [
-        { id: 'd', label: 'Demand shock (d)', min: -4, max: 4, step: 0.1, value: 2 },
-        { id: 'pe', label: 'Expected inflation (πᵉ)', min: 0, max: 8, step: 0.1, value: 2 },
-        { id: 'v', label: 'Supply shock (v)', min: -2, max: 3, step: 0.1, value: 0, hint: 'An oil price spike is v > 0' },
+        { id: 'd', label: 'Demand shock (d)', min: -30, max: 10, step: 0.1, value: 2 },
+        { id: 'pe', label: 'Expected inflation (πᵉ)', min: -6, max: 30, step: 0.1, value: 2 },
+        { id: 'v', label: 'Supply shock (v)', min: -8, max: 20, step: 0.1, value: 0, hint: 'An oil price spike is v > 0' },
       ],
       actions: [{ label: 'Expectations catch up', run: (s) => { s.pe = Math.min(8, Math.max(0, ap(s).pi)); } }],
       panels: [
@@ -337,7 +342,7 @@
     model: 'U = √(XY), income M = 40, PY = 4. The panels share the X axis, so each optimum drops straight down to a point on the demand curve.',
     graph: {
       layout: 'column',
-      params: [{ id: 'px', label: 'Price of X (PX)', min: 2, max: 8, step: 0.1, value: 4 }],
+      params: [{ id: 'px', label: 'Price of X (PX)', min: 0.5, max: 30, step: 0.1, value: 4 }],
       panels: [
         {
           title: 'Indifference curves and the price–consumption curve',
@@ -421,10 +426,10 @@
       layout: 'row',
       params: [
         { id: 'reg', label: 'Monetary policy', options: [{ v: 0, label: 'Interest-rate rule (MP)' }, { v: 1, label: 'Fixed money supply (LM)' }], value: 0 },
-        { id: 'a', label: 'IS position: autonomous spending and G', min: 6, max: 12, step: 0.1, value: 9, hint: 'Raise for a fiscal expansion' },
+        { id: 'a', label: 'IS position: autonomous spending and G', min: 1.2, max: 36, step: 0.1, value: 9, hint: 'Raise for a fiscal expansion' },
         { id: 'r0', label: 'Target rate at Y = 5 (r₀, rule only)', min: 0, max: 8, step: 0.1, value: 5 },
-        { id: 'b', label: 'MP slope β (rule only)', min: 0, max: 1.5, step: 0.05, value: 0 },
-        { id: 'M', label: 'Money supply M/P (fixed money only)', min: 2, max: 30, step: 0.1, value: 6 },
+        { id: 'b', label: 'MP slope β (rule only)', min: 0, max: 7.5, step: 0.05, value: 0 },
+        { id: 'M', label: 'Money supply M/P (fixed money only)', min: 0.2, max: 140, step: 0.1, value: 6 },
       ],
       valid(s) {
         const z = mm(s);
