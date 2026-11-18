@@ -66,9 +66,10 @@
       graphs: [
         { label: 'Elasticity along linear demand and total revenue', topic: 'elasticity' },
         { label: 'Elastic and inelastic demand side by side, with revenue gained and lost', topic: 'elastic-inelastic' },
+        { label: 'Income elasticity: Engel curves and demand shifts for normal and inferior goods', topic: 'income-elasticity' },
         { label: 'Tax incidence: burden shared by elasticity, revenue and DWL', topic: 'tax-incidence' },
       ],
-      topics: ['elasticity', 'elastic-inelastic', 'tax-incidence'],
+      topics: ['elasticity', 'elastic-inelastic', 'income-elasticity', 'tax-incidence'],
     },
     {
       id: 'b-4', block: 'Block 4', part: 'Microeconomics', title: 'Consumer choice',
@@ -87,12 +88,13 @@
         { name: 'Utility maximisation', tex: R`MRS = -\frac{P_X}{P_Y} \;\Rightarrow\; \frac{MU_X}{P_X} = \frac{MU_Y}{P_Y}` },
       ],
       graphs: [
+        { label: 'Deriving the Engel curve from the income–consumption curve', topic: 'engel-derivation' },
         { label: 'Indifference curve tangent to the budget constraint', topic: 'consumer-choice' },
         { label: 'Substitution and income effects of a price change', topic: 'income-substitution' },
         { label: 'Price–consumption curve and the demand curve', topic: 'demand-derivation' },
         { label: 'Market demand by horizontal summation', topic: 'market-demand' },
       ],
-      topics: ['consumer-choice', 'income-substitution', 'demand-derivation', 'market-demand'],
+      topics: ['consumer-choice', 'income-substitution', 'demand-derivation', 'engel-derivation', 'market-demand'],
     },
     {
       id: 'b-5', block: 'Block 5', part: 'Microeconomics', title: 'Production and costs',

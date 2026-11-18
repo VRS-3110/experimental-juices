@@ -37,13 +37,14 @@ window.GLOSSARY = [
   { term: 'Perfectly elastic / perfectly inelastic demand', def: 'Perfectly elastic: a horizontal demand curve, |E| = ∞; buyers take any amount at one price and nothing above it. Perfectly inelastic: a vertical curve, |E| = 0; quantity does not respond to price at all.', topics: ['elastic-inelastic', 'elasticity'] },
   { term: 'Midpoint (arc) elasticity', def: 'Elasticity measured between two points using average quantity and average price as the bases, so the answer is the same in either direction.', topics: ['elasticity'] },
   { term: 'Point elasticity', def: 'Elasticity at a single point: (dQ/dP)·(P/Q). Along a straight-line demand curve it changes at every point even though the slope is constant.', topics: ['elasticity'] },
-  { term: 'Income elasticity of demand (IED)', def: 'The percentage change in quantity demanded divided by the percentage change in income. Positive for normal goods, negative for inferior goods, above 1 for luxuries.', topics: ['elasticity'] },
+  { term: 'Income elasticity of demand (IED)', def: 'The percentage change in quantity demanded divided by the percentage change in income. Positive for normal goods, negative for inferior goods, above 1 for luxuries.', topics: ['income-elasticity', 'elasticity'] },
   { term: 'Cross-price elasticity (XED)', def: 'The percentage change in quantity of good A divided by the percentage change in the price of good B. Positive for substitutes, negative for complements.', topics: ['elasticity'] },
   { term: 'Price elasticity of supply (PES)', def: 'The percentage change in quantity supplied divided by the percentage change in price. Usually larger in the long run.', topics: ['elasticity'] },
   { term: 'Total revenue (TR)', def: 'Price times quantity sold. A price cut raises TR when demand is elastic and lowers it when demand is inelastic.', topics: ['elastic-inelastic', 'elasticity', 'monopoly'] },
-  { term: 'Normal good', def: 'A good whose demand rises when income rises (IED > 0).', topics: ['elasticity', 'income-substitution'] },
-  { term: 'Inferior good', def: 'A good whose demand falls when income rises (IED < 0).', topics: ['elasticity', 'income-substitution'] },
-  { term: 'Luxury good', def: 'A normal good with income elasticity above 1: spending on it rises as a share of income as income grows.', topics: ['elasticity'] },
+  { term: 'Normal good', def: 'A good whose demand rises when income rises (IED > 0).', topics: ['income-elasticity', 'engel-derivation', 'elasticity', 'income-substitution'] },
+  { term: 'Inferior good', def: 'A good whose demand falls when income rises (IED < 0).', topics: ['income-elasticity', 'engel-derivation', 'elasticity', 'income-substitution'] },
+  { term: 'Luxury good', def: 'A normal good with income elasticity above 1: spending on it rises as a share of income as income grows.', topics: ['income-elasticity', 'elasticity'] },
+  { term: 'Necessity', def: 'A normal good with income elasticity between 0 and 1: demand rises with income but less than proportionally, so its share of spending falls (Engel’s law for food).', topics: ['income-elasticity', 'engel-derivation'] },
   { term: 'Substitutes / complements', def: 'Substitutes are used instead of each other (XED > 0); complements are used together (XED < 0).', topics: ['elasticity'] },
 
   /* ── Consumer theory ── */
@@ -58,7 +59,7 @@ window.GLOSSARY = [
   { term: 'Compensated budget line', def: 'A budget line at the new prices with just enough income to reach the original indifference curve. It separates the substitution effect from the income effect.', topics: ['income-substitution'] },
   { term: 'Giffen good', def: 'An inferior good whose income effect is larger than its substitution effect, so quantity demanded rises when its price rises.', topics: ['income-substitution'] },
   { term: 'Price–consumption curve (PCC)', def: 'The path traced by the optimal bundle as the price of one good changes, with income and the other price fixed. It is used to derive the demand curve.', topics: ['demand-derivation'] },
-  { term: 'Income–consumption curve / Engel curve', def: 'The path of optimal bundles as income changes. Plotting quantity of one good against income gives its Engel curve.', topics: ['demand-derivation'] },
+  { term: 'Income–consumption curve / Engel curve', def: 'The path of optimal bundles as income changes. Plotting quantity of one good against income gives its Engel curve.', topics: ['engel-derivation', 'income-elasticity', 'demand-derivation'] },
   { term: 'Horizontal summation', def: 'Building market demand (or supply) by adding the quantities of every individual at each price.', topics: ['market-demand', 'lr-industry'] },
 
   /* ── Production and costs ── */

@@ -688,6 +688,204 @@
     tip: 'Draw both curves through the same starting point, one flat and one steep. Mark the same price rise on both, show the much smaller quantity change on the steep curve, and shade the revenue gained and lost: on the elastic curve the loss rectangle is bigger, on the inelastic curve the gain rectangle is bigger.',
   };
 
+  /* ── Income elasticity: normal and inferior goods ── */
+  // Constant-elasticity Engel curves through M = 50, Q = 20: Q(M) = 20(M/50)^η.
+  // Demand at income M: Q = Q(M)(10 − P)/5, so at P = 5 the quantity equals the Engel-curve quantity.
+  const M0 = 50, EQ = 20;
+  const engelQ = (eta) => (M) => EQ * (M / M0) ** eta;
+  const engelM = (eta) => (q) => M0 * (q / EQ) ** (1 / eta);       // income as a function of quantity
+  const incomeRange = (eta) => { const a = engelQ(eta)(10), b = engelQ(eta)(110); return [Math.min(a, b), Math.max(a, b)]; };
+  const ied = (s) => {
+    const n0 = engelQ(s.en)(M0), n1 = engelQ(s.en)(s.M1), i0 = engelQ(s.ei)(M0), i1 = engelQ(s.ei)(s.M1);
+    const arcI = (q0, q1) => (Math.abs(s.M1 - M0) < 1e-9 ? NaN : ((q1 - q0) / ((q0 + q1) / 2)) / ((s.M1 - M0) / ((s.M1 + M0) / 2)));
+    return { n0, n1, i0, i1, arcN: arcI(n0, n1), arcI: arcI(i0, i1) };
+  };
+  const kind = (e) => (e > 1 ? 'luxury' : e > 0 ? 'necessity' : 'inferior');
+  const incomeElasticity = {
+    id: 'income-elasticity',
+    title: 'Income elasticity: normal and inferior goods',
+    summary: 'Income elasticity of demand (IED) measures how demand responds to income. For a normal good it is positive: people buy more as they get richer (a necessity if IED is between 0 and 1, a luxury if it is above 1). For an inferior good it is negative: people buy less as income rises, switching to better alternatives. The Engel curve plots quantity against income; a change in income shifts the demand curve right for a normal good and left for an inferior good.',
+    model: 'Both goods start at 20 units when income is M₀ = 50. Engel curves have constant income elasticity: Q = 20(M/50)^η, with η > 0 for the normal good and η < 0 for the inferior good. Demand at any income is Q = Q(M)(10 − P)/5, so at the price of 5 the quantity bought is the Engel-curve quantity. The two panels share the quantity axis.',
+    graph: {
+      layout: 'column',
+      params: [
+        { id: 'M1', label: 'New income (M₁)', min: 20, max: 100, step: 1, value: 75 },
+        { id: 'en', label: 'Normal good: income elasticity η', min: 0.1, max: 2, step: 0.05, value: 0.5, hint: 'above 1 = luxury' },
+        { id: 'ei', label: 'Inferior good: income elasticity η', min: -1.5, max: -0.1, step: 0.05, value: -0.8 },
+      ],
+      valid(s) {
+        const z = ied(s);
+        if (Math.max(z.n1, z.i1) > 58) return 'The quantity would run off the chart.';
+        return true;
+      },
+      panels: [
+        {
+          title: 'Engel curves: quantity bought at each income',
+          x: { range: [0, 60], label: 'Quantity (Q)', ticks: range(0, 60, 10) },
+          y: { range: [0, 110], label: 'Income (M)', ticks: range(0, 110, 20) },
+          draw(s) {
+            const z = ied(s), [na, nb] = incomeRange(s.en), [ia, ib] = incomeRange(s.ei), out = [];
+            out.push(
+              C(engelM(s.en), 'd', `Normal (${kind(s.en)}, η = ${f(s.en, 2)})`, { from: na, to: Math.min(60, nb), labelAt: Math.min(55, Math.max(na + 2, engelQ(s.en)(100))) * 0.92 }),
+              C(engelM(s.ei), 's', `Inferior (η = ${f(s.ei, 2)})`, { from: ia, to: Math.min(60, ib), labelAt: Math.min(56, engelQ(s.ei)(22)) }),
+              Hl(M0, 'ghost', 'M₀ = 50'),
+            );
+            if (Math.abs(s.M1 - M0) > 0.5) {
+              out.push(Hl(s.M1, 'o', `M₁ = ${f(s.M1, 0)}`, { dash: true }));
+              out.push(S(z.n0, M0, z.n1, s.M1, 'd', '', { dash: true }), S(z.i0, M0, z.i1, s.M1, 's', '', { dash: true }));
+              out.push(P(z.n1, s.M1, '', 'd'), P(z.i1, s.M1, '', 's'));
+            }
+            out.push(P(EQ, M0, '', 'n', { small: true }));
+            return out;
+          },
+        },
+        {
+          title: 'Demand curves: income shifts them',
+          x: { range: [0, 60], label: 'Quantity (Q)', ticks: range(0, 60, 10) },
+          y: { range: [0, 10], label: 'Price (P)', ticks: range(0, 10, 2) },
+          draw(s) {
+            const z = ied(s), d = (q) => (Q) => 10 - (5 * Q) / q, out = [];
+            const moved = Math.abs(s.M1 - M0) > 0.5;
+            out.push(C(d(EQ), 'ghost', '', { to: 2 * EQ }), T(59, 7.4, 'grey dashed: D at M₀ (both goods)', 'n', { anchor: 'end' }));
+            if (moved) {
+              out.push(C(d(z.n1), 'd', '', { to: 2 * z.n1 }), T(59, 9.2, 'blue: D for the normal good at M₁', 'd', { anchor: 'end' }));
+              out.push(C(d(z.i1), 's', '', { to: 2 * z.i1 }), T(59, 8.3, 'red: D for the inferior good at M₁', 's', { anchor: 'end' }));
+              out.push(P(z.n1, 5, '', 'd'), P(z.i1, 5, '', 's'), G(z.n1, 5, 'Q_N', null, 'd'), G(z.i1, 5, 'Q_I', null, 's'));
+            }
+            out.push(Hl(5, 'ghost', 'P = 5', { labelLeft: true }), P(EQ, 5, '', 'n', { small: true }));
+            return out;
+          },
+        },
+      ],
+      readout(s) {
+        const z = ied(s), dm = (100 * (s.M1 - M0)) / M0, pc = (a, b) => pct((100 * (b - a)) / a);
+        return {
+          rows: [
+            ['Income change', `50 → ${f(s.M1, 0)} (${pct(dm)})`],
+            ['Normal good: quantity (% change)', `${f(z.n0)} → ${f(z.n1)} (${pc(z.n0, z.n1)})`],
+            ['Inferior good: quantity (% change)', `${f(z.i0)} → ${f(z.i1)} (${pc(z.i0, z.i1)})`],
+            ['Arc IED: normal / inferior', Number.isFinite(z.arcN) ? `${f(z.arcN, 2)} / ${f(z.arcI, 2)}` : `${f(s.en, 2)} / ${f(s.ei, 2)} (point)`],
+            ['Normal good is a', kind(s.en) === 'luxury' ? 'luxury (IED > 1)' : 'necessity (0 < IED < 1)'],
+          ],
+          status: Math.abs(s.M1 - M0) < 0.5
+            ? 'Move the income slider: a normal good moves the same way as income, an inferior good the opposite way.'
+            : s.M1 > M0
+              ? `Income rises ${pct(dm, 0)}: demand for the normal good shifts right (+${pc(z.n0, z.n1).replace('-', '')}), demand for the inferior good shifts left (${pc(z.i0, z.i1)}). ${s.en > 1 ? 'The normal good is a luxury: its quantity rises faster than income, so its share of spending grows.' : 'The normal good is a necessity: its quantity rises more slowly than income, so its share of spending falls.'}`
+              : `Income falls ${pct(-dm, 0)}: demand for the normal good shifts left, and demand for the inferior good shifts right as people trade down.`,
+          tone: 'info',
+        };
+      },
+    },
+    equations: [
+      { name: 'Income elasticity of demand', tex: R`IED = \frac{\%\Delta Q}{\%\Delta M} = \frac{\Delta Q}{\Delta M}\cdot\frac{M}{Q}` },
+      { name: 'Arc (midpoint) version', tex: R`IED = \frac{(Q_1 - Q_0)/\bar{Q}}{(M_1 - M_0)/\bar{M}}` },
+      { name: 'Classification', tex: R`\begin{aligned} IED &> 1 && \text{luxury (normal)} \\ 0 < IED &< 1 && \text{necessity (normal)} \\ IED &< 0 && \text{inferior} \end{aligned}` },
+      { name: 'Constant-elasticity Engel curve', tex: R`Q = k\,M^{\eta}`, note: 'η is the income elasticity at every income.' },
+    ],
+    points: [
+      'A change in income shifts the demand curve; a change in the good’s own price moves along it.',
+      'Examples. Inferior: bus travel, value-range food, second-hand clothes. Necessities: food, energy, basic clothing. Luxuries: foreign holidays, eating out, sports cars.',
+      'Engel’s law: as income rises, the share of income spent on food falls, because food is a necessity.',
+      'A good can be normal at low incomes and inferior at high incomes: its Engel curve bends backward.',
+      'Firms selling luxuries face demand that swings strongly over the business cycle; sellers of inferior goods may do well in recessions.',
+      'In the indifference-curve model an inferior good has a negative income effect; if that effect outweighs the substitution effect the good is a Giffen good (see income and substitution effects).',
+    ],
+    tip: 'Draw the Engel curve with income on the vertical axis: upward sloping for a normal good, downward for an inferior good. Show the matching shift of the demand curve, and classify by the sign and size of IED: below 0 inferior, between 0 and 1 necessity, above 1 luxury.',
+  };
+
+  /* ── Deriving the Engel curve from the income–consumption curve ── */
+  // Prices PX = PY = 1, so the budget line is X + Y = M.
+  // Normal (a necessity): Stone–Geary U = ln(X − 2) + ln Y, so X* = 1 + M/2, Y* = M/2 − 1; ICC Y = X − 2; Engel M = 2X − 2.
+  // Inferior: U = 16 ln X + Y²/2, so the tangency XY = 16 gives X* = (M − √(M² − 64))/2; ICC Y = 16/X; Engel M = X + 16/X.
+  const ENG_GHOSTS = [9.5, 12.5];
+  // Below M ≈ 8.87 the inferior-good consumer would rather spend everything on X, so income starts at 9.
+  const engOpt = (type, M) => {
+    if (type === 0) return { x: 1 + M / 2, y: M / 2 - 1, ied: (M / 2) / (1 + M / 2) };
+    const r = Math.sqrt(M * M - 64), x = (M - r) / 2;
+    return { x, y: M - x, ied: ((1 - M / r) / 2) * (M / x) };
+  };
+  const engIC = (type, o) => (type === 0
+    ? (X) => (X > 2 ? ((o.x - 2) * o.y) / (X - 2) : NaN)
+    : (X) => { const g = 2 * (16 * Math.log(o.x) + (o.y * o.y) / 2 - 16 * Math.log(X)); return g > 0 ? Math.sqrt(g) : NaN; });
+  const engelDerivation = {
+    id: 'engel-derivation',
+    title: 'Deriving the Engel curve: normal and inferior goods',
+    summary: 'Hold prices fixed and change income. Each budget line shifts out parallel, and the best bundle moves along the income–consumption curve (ICC). Plotting each income against the quantity of X chosen gives the Engel curve. If the ICC moves right as income rises, X is a normal good and the Engel curve slopes up; if it bends back to the left, X is an inferior good and the Engel curve slopes down.',
+    model: 'Prices PX = PY = 1, so the budget line is X + Y = M. Normal good: U = ln(X − 2) + ln Y (X is a necessity: X* = 1 + M/2). Inferior good: U = 16 ln X + Y²/2, where the tangency condition XY = 16 makes X* fall as income rises. The panels share the X axis, so each optimum drops straight down to a point on the Engel curve.',
+    graph: {
+      layout: 'column',
+      params: [
+        { id: 'type', label: 'Good X is', options: [{ v: 0, label: 'Normal' }, { v: 1, label: 'Inferior' }], value: 0 },
+        { id: 'M', label: 'Income (M)', min: 9, max: 14, step: 0.1, value: 10 },
+      ],
+      panels: [
+        {
+          title: 'Budget lines, indifference curves and the income–consumption curve',
+          x: { range: [0, 14], label: 'Good X', ticks: range(0, 14, 2) },
+          y: { range: [0, 14], label: 'Good Y', ticks: range(0, 14, 2) },
+          draw(s) {
+            const o = engOpt(s.type, s.M), out = [];
+            for (const g of ENG_GHOSTS) { const og = engOpt(s.type, g); out.push(C((X) => g - X, 'ghost', '', { to: g }), P(og.x, og.y, '', 'n', { small: true })); }
+            out.push(s.type === 0
+              ? C((X) => X - 2, 'g', 'ICC', { from: engOpt(0, 9).x, to: engOpt(0, 14).x, labelAt: engOpt(0, 14).x - 0.4 })
+              : C((X) => 16 / X, 'g', 'ICC (bends back)', { from: engOpt(1, 14).x, to: engOpt(1, 9).x, labelAt: engOpt(1, 14).x + 0.05 }));
+            out.push(
+              C((X) => s.M - X, 'd', `M = ${f(s.M, 1)}`, { to: s.M, labelAt: 0.4 }),
+              C(engIC(s.type, o), 's', 'U', { from: s.type === 0 ? 2.15 : 0.6, to: 14, labelAt: 13 }),
+              G(o.x, o.y, 'X*', null),
+              P(o.x, o.y, 'E'),
+            );
+            return out;
+          },
+        },
+        {
+          title: 'Engel curve: quantity of X at each income',
+          x: { range: [0, 14], label: 'Good X', ticks: range(0, 14, 2) },
+          y: { range: [0, 16], label: 'Income (M)', ticks: range(0, 16, 4) },
+          draw(s) {
+            const o = engOpt(s.type, s.M), out = [];
+            out.push(s.type === 0
+              ? C((X) => 2 * X - 2, 'd', 'Engel curve (normal)', { from: engOpt(0, 9).x, to: engOpt(0, 14).x, labelAt: engOpt(0, 13).x })
+              : C((X) => X + 16 / X, 'd', 'Engel curve (inferior)', { from: engOpt(1, 14).x, to: engOpt(1, 9).x, labelAt: engOpt(1, 13).x }));
+            for (const g of ENG_GHOSTS) out.push(P(engOpt(s.type, g).x, g, '', 'n', { small: true }));
+            out.push(G(o.x, s.M, 'X*', 'M'), P(o.x, s.M, 'E'));
+            return out;
+          },
+        },
+      ],
+      readout(s) {
+        const o = engOpt(s.type, s.M);
+        return {
+          rows: [
+            ['Income M', f(s.M, 1)],
+            ['Optimal X* / Y*', `${f(o.x)} / ${f(o.y)}`],
+            ['Income elasticity of X (at this point)', f(o.ied, 2)],
+            ['X is', s.type === 0 ? 'normal: a necessity (0 < IED < 1)' : 'inferior (IED < 0)'],
+            ['Share of income spent on X', pct((100 * o.x) / s.M)],
+          ],
+          status: s.type === 0
+            ? 'As income rises the budget line shifts out and the optimum moves up and to the right along the ICC: more X is bought, so the Engel curve slopes up. X rises less than proportionally (IED < 1), so its share of income falls: a necessity.'
+            : 'As income rises the optimum moves up and to the left: the consumer buys more Y but less X. The ICC bends back and the Engel curve slopes down, so X is inferior (IED < 0).',
+          tone: 'info',
+        };
+      },
+    },
+    equations: [
+      { name: 'Optimum at each income', tex: R`MRS_{XY} = \frac{P_X}{P_Y},\qquad P_X X + P_Y Y = M` },
+      { name: 'Engel curve', tex: R`X^* = X^*(M) \quad (\text{prices held fixed})` },
+      { name: 'Normal (Stone–Geary) example', tex: R`U = \ln(X - 2) + \ln Y \;\Rightarrow\; X^* = 1 + \frac{M}{2},\qquad IED = \frac{M/2}{1 + M/2} < 1` },
+      { name: 'Inferior example', tex: R`U = 16\ln X + \tfrac{1}{2}Y^2 \;\Rightarrow\; XY = 16,\qquad X^* = \frac{M - \sqrt{M^2 - 64}}{2}` },
+    ],
+    points: [
+      'Price-consumption curve (change P_X) gives the demand curve; income-consumption curve (change M) gives the Engel curve.',
+      'Normal good: the ICC moves right as income rises and the Engel curve slopes up. Inferior good: the ICC bends back to the left and the Engel curve slopes down.',
+      'With Cobb–Douglas preferences the ICC is a straight line from the origin and IED = 1 for both goods.',
+      'The income effect of a price change has the same sign as this income response: negative for an inferior good, which is why an inferior good can (rarely) be a Giffen good.',
+      'Both goods cannot be inferior: if income rises, spending on at least one good must rise.',
+    ],
+    tip: 'Draw two or three parallel budget lines, the tangency on each, and join the optima for the ICC. Drop each optimum down to the Engel curve panel against its income. State the classification from the slope: up for normal, down for inferior.',
+  };
+
   /* ── Install in course order ── */
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
@@ -695,6 +893,8 @@
   };
   insertAfter('isoquant', costCurves, MICRO, 'Block 5');
   insertAfter('elasticity', elasticInelastic, MICRO, (window.TOPICS.find((t) => t.id === 'elasticity') || {}).block || 'Block 3');
+  insertAfter('elastic-inelastic', incomeElasticity, MICRO, (window.TOPICS.find((t) => t.id === 'elasticity') || {}).block || 'Block 3');
+  insertAfter('demand-derivation', engelDerivation, MICRO, (window.TOPICS.find((t) => t.id === 'demand-derivation') || {}).block || 'Block 4');
   insertAfter('cournot', bertrandTopic, MICRO, 'Blocks 6–8');
   insertAfter('bertrand', stackelbergTopic, MICRO, 'Blocks 6–8');
   insertAfter('stackelberg', kinkedDemand, MICRO, 'Blocks 6–8');
