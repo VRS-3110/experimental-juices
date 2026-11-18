@@ -626,5 +626,35 @@
       answer: 'w* = 8 (Solow condition), where effort is 2 and the wage per unit of effort is 4, lower than at 6 or 12 (both ≈ 4.24). The market would clear at 7 with 14 employed; at the efficiency wage 12 are employed and 4 are involuntarily unemployed.',
       mistakes: ['Minimising the wage per worker instead of the wage per unit of effort.', 'Expecting the unemployed to bid wages down: firms will not cut pay below w* because effort would fall more.', 'Forgetting that the efficiency wage matters only if it is above the market-clearing wage.'],
     },
+    {
+      id: 'w-discrimination', topic: 'discrimination', kind: 'calc',
+      title: 'Employer discrimination: wage gap and employment',
+      question: 'Groups A and B are equally productive. For each group, labour demand (MRP) is w = 50 − L and labour supply is w = 10 + L. (a) Find the wage and employment without discrimination. (b) All employers discriminate against B with a discrimination coefficient d = 0.25. Find B’s wage and employment and the wage gap. (c) Why might competition reduce this gap? (d) A study finds a 20% raw pay gap, of which 12 percentage points are explained by experience and hours. What can you conclude?',
+      steps: [
+        { t: '(a) Without discrimination, for either group:', m: R`50 - L = 10 + L \;\Rightarrow\; L = 20,\qquad w = 30` },
+        { t: '(b) Discriminating employers hire B workers as if each cost 1.25w, so they hire until MRP = 1.25w. Demand for B becomes:', m: R`1.25w = 50 - L \;\Rightarrow\; w = 40 - 0.8L` },
+        { t: 'Set equal to B’s supply:', m: R`40 - 0.8L = 10 + L \;\Rightarrow\; L_B = 16.67,\qquad w_B = 26.67` },
+        { t: 'A still earns 30 with 20 employed, so the gap is 3.33, or 11% of A’s wage, with no difference in productivity. 3.33 fewer B workers are employed.' },
+        { t: '(c) A non-discriminating employer could hire B workers at 26.67 although each adds as much as an A worker paid 30. It earns more profit, grows, and bids up B’s wage. Discrimination survives only where competition is weak.' },
+        { t: '(d) 12 points are explained by productivity-related differences; the remaining 8 points are unexplained. That is an upper bound on discrimination, since it may also reflect unmeasured differences, and the explained part may itself reflect earlier discrimination.' },
+      ],
+      answer: 'No discrimination: w = 30, L = 20 for both groups. With d = 0.25: w_B = 26.67 and L_B = 16.67, an 11% gap with equal productivity. Competition from non-discriminating employers should erode it. In the study, 8 of the 20 points are unexplained: at most that much is discrimination.',
+      mistakes: ['Lowering B’s MRP: in Becker’s model productivity is equal; the employer’s perceived cost rises.', 'Treating the whole raw pay gap as discrimination.', 'Forgetting that discriminating employers lose profit too.'],
+    },
+    {
+      id: 'w-labour-policy', topic: 'labour-policy', kind: 'calc',
+      title: 'Comparing labour market policies',
+      question: 'Labour demand is w = 60 − L and labour supply is w = 10 + L. (a) Find the market outcome. (b) The government taxes employers 6 per worker. Find employment, take-home pay, the employer’s cost, revenue, deadweight loss and who bears the tax. (c) Instead it pays employers a subsidy of 6 per worker. (d) Instead it sets a minimum wage of 41. (e) Instead it raises benefits so that every worker needs 6 more before they will work.',
+      steps: [
+        { t: '(a) Demand = supply:', m: R`60 - L = 10 + L \;\Rightarrow\; L_0 = 25,\qquad w_0 = 35` },
+        { t: '(b) Tax wedge of 6: the employer’s cost is 6 above take-home pay:', m: R`60 - L = (10 + L) + 6 \;\Rightarrow\; L = 22,\quad w_{worker} = 32,\quad w_{employer} = 38` },
+        { t: 'Revenue = 6 × 22 = 132; DWL = ½ × 6 × 3 = 9. Workers lose 3 and employers pay 3 more: an even split, because the two curves have equal slopes.' },
+        { t: '(c) Subsidy of 6:', m: R`60 - L + 6 = 10 + L \;\Rightarrow\; L = 28,\quad w_{worker} = 38,\quad w_{employer} = 32,\quad \text{cost} = 168,\quad DWL = 9` },
+        { t: '(d) Minimum wage 41:', m: R`L_D = 60 - 41 = 19,\qquad L_S = 41 - 10 = 31,\qquad \text{excess supply} = 12` },
+        { t: '(e) Supply shifts up by 6 to w = 16 + L:', m: R`60 - L = 16 + L \;\Rightarrow\; L = 22,\qquad w = 38` },
+      ],
+      answer: 'Market: L = 25, w = 35. Tax 6: L = 22, workers get 32, employers pay 38, revenue 132, DWL 9, burden split 3/3. Subsidy 6: L = 28, workers get 38, employers pay 32, cost 168, DWL 9. Minimum wage 41: L = 19 with 31 wanting work. Higher benefits: L = 22 at w = 38.',
+      mistakes: ['Assuming the side that legally pays the tax bears it.', 'Forgetting the cost to the government of a subsidy, or that it also creates a deadweight loss.', 'Reading employment off supply under a minimum wage.'],
+    },
   ];
 })();

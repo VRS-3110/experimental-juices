@@ -570,6 +570,185 @@
     tip: 'Draw effort against the wage with a ray from the origin tangent to it: the tangency is the efficiency wage. Then show it as a horizontal line above equilibrium in the labour market and label the gap as involuntary unemployment. Explain one mechanism (shirking, turnover, selection) in words.',
   };
 
+  /* ── Discrimination (Becker employer discrimination) ── */
+  // Groups A and B are equally productive: each has labour demand (MRP) w = 24 − 0.5L and supply
+  // w = 4 + 0.5L, so without discrimination both earn 14 with 20 employed. A share s of employers
+  // discriminate against B with coefficient d: they act as if a B worker costs w(1 + d).
+  // Market demand for B: L = (1 − s)·2(24 − w) + s·2(24 − (1 + d)w) = 48 − 2w(1 + sd).
+  // Discriminators hire no B workers once w ≥ 24/(1 + d), so market demand has a kink there.
+  const disc = (s) => {
+    const k = 1 + s.share * s.d, wk = 24 / (1 + s.d);
+    let wB = 56 / (2 + 2 * k);                              // both kinds of employer hiring: 48 − 2kw = 2w − 8
+    if (wB > wk) wB = (4 + 24 * (1 - s.share)) / (2 - s.share); // only non-discriminators hire: 2(1 − s)(24 − w) = 2w − 8
+    const LB = 2 * (wB - 4), Lk = 2 * (1 - s.share) * (24 - wk);
+    const demB = (L) => (L <= Lk && s.share < 1 ? 24 - L / (2 * (1 - s.share)) : (48 - L) / (2 * k));
+    return { k, wA: 14, LA: 20, wB, LB, gap: 14 - wB, demB };
+  };
+  const discrimination = {
+    id: 'discrimination',
+    title: 'Labour market discrimination',
+    summary: 'Discrimination in the labour market means paying or treating equally productive workers differently because of a characteristic such as sex, ethnicity, disability or age. In Becker’s model of employer discrimination, prejudiced employers act as if hiring a worker from the disfavoured group costs more than the wage. Demand for that group falls, so its wage and employment fall, even though its productivity is the same.',
+    model: 'Group A and group B are equally productive and equally willing to work: each has labour demand (MRP) w = 24 − 0.5L and supply w = 4 + 0.5L, so without discrimination both earn 14 and 20 of each are employed. A share s of employers discriminate against B with a discrimination coefficient d: they act as if a B worker costs w(1 + d). Market demand for B is the sum of non-discriminating and discriminating employers’ demand.',
+    graph: {
+      x: { range: [0, 40], label: 'Group B workers (L_B)', ticks: range(0, 40, 5) },
+      y: { range: [0, 24], label: 'Wage ($)', ticks: range(0, 24, 4) },
+      params: [
+        { id: 'd', label: 'Discrimination coefficient (d)', min: 0, max: 1, step: 0.01, value: 0.3 },
+        { id: 'share', label: 'Share of employers who discriminate (s)', min: 0, max: 1, step: 0.01, value: 1 },
+      ],
+      draw(s) {
+        const z = disc(s), on = z.k > 1.0005, out = [];
+        if (on) out.push(A([[z.LB, z.wB], [20, 14], [z.LB, 4 + 0.5 * z.LB]], 'r', ''));
+        out.push(
+          C((L) => 24 - 0.5 * L, on ? 'ghost' : 'd', on ? 'MRP (no discrimination)' : 'D = MRP', { to: 40, labelAt: on ? 3 : 30 }),
+          C((L) => 4 + 0.5 * L, 'g', 'S_B', { to: 40, labelAt: 36 }),
+        );
+        if (on) {
+          out.push(C(z.demB, 'd', 'D_B with discrimination', { to: 40, labelAt: Math.min(30, 34 - 6 * (z.k - 1)) }));
+          out.push(Hl(14, 'ghost', 'w_A = 14', { labelLeft: true }));
+          if (z.gap > 0.6) out.push(S(z.LB, z.wB, z.LB, 14, 'o', '', { bold: true }));
+          out.push(P(20, 14, 'Group A', 'n', { small: true, dx: 9, dy: -8 }));
+        }
+        out.push(G(z.LB, z.wB, 'L_B', 'w_B'), P(z.LB, z.wB, on ? 'Group B' : 'Both groups', 'o', { dx: 9, dy: 18 }));
+        return out;
+      },
+      readout(s) {
+        const z = disc(s);
+        return {
+          rows: [
+            ['Wage of group A', money(z.wA)],
+            ['Wage of group B', money(z.wB)],
+            ['Wage gap (as % of A’s wage)', `${money(z.gap)} (${pct((100 * z.gap) / z.wA)})`],
+            ['Employment of A / of B', `${f(z.LA)} / ${f(z.LB)}`],
+            ['Cost of a B worker as discriminators see it', money(z.wB * (1 + s.d))],
+            ['Lost output (DWL)', money(0.5 * (24 - 0.5 * z.LB - (4 + 0.5 * z.LB)) * (20 - z.LB))],
+          ],
+          status: z.k <= 1.0005
+            ? 'No discrimination: equally productive groups earn the same wage and are employed in the same numbers.'
+            : s.share < 0.999
+              ? `Only some employers discriminate, so the gap (${money(z.gap)}) is smaller. Non-discriminating employers hire B workers at ${money(z.wB)} although they are worth the same as A workers: they make more profit, and in the long run competition should drive out discrimination (Becker), unless barriers protect the discriminators.`
+              : `Every employer discriminates: B workers are as productive as A but earn ${money(z.gap)} less and fewer are employed. Discriminating employers also lose: they give up profitable workers.`,
+          tone: z.k <= 1.0005 ? 'good' : 'warn',
+        };
+      },
+    },
+    equations: [
+      { name: 'Discriminating employer’s hiring rule', tex: R`MRP_L = w_B(1 + d)`, note: 'The employer hires B workers as if each cost (1 + d) times the wage.' },
+      { name: 'Wage gap with equal productivity', tex: R`w_B = \frac{MRP_L}{1 + d} < w_A = MRP_L` },
+      { name: 'Oaxaca decomposition of a measured gap', tex: R`\bar{w}_A - \bar{w}_B = \underbrace{(\bar{X}_A - \bar{X}_B)\,\beta_A}_{\text{explained}} + \underbrace{\bar{X}_B(\beta_A - \beta_B)}_{\text{unexplained}}`, note: 'X: productivity-related characteristics; β: the pay return to them. The unexplained part is an upper bound on discrimination.' },
+    ],
+    points: [
+      'Employer discrimination (taste-based, Becker): prejudiced employers pay a price for their prejudice in lost profit, so competition should erode it over time; it persists where competition is weak.',
+      'Employee and customer discrimination: co-workers or customers who dislike a group can make employers segregate the workforce or pay that group less.',
+      'Statistical discrimination: employers who cannot observe individual productivity judge by group averages. It can be profit-maximising and still unfair, and it can discourage the group from investing in skills.',
+      'Occupational crowding: if a group is kept out of some occupations, it crowds into the rest, pushing wages down there.',
+      'Not every pay gap is discrimination: differences in hours, experience, qualifications and job choice explain part. But job choice can itself reflect pre-labour-market discrimination.',
+      'Policy: equal pay and anti-discrimination law (in the UK, the Equality Act 2010), gender pay gap reporting, blind recruitment, and better childcare and parental leave.',
+    ],
+    tip: 'Draw the market for the disfavoured group with demand pushed down by the discrimination coefficient: lower wage and employment for the same MRP. Then evaluate: competition should erode employer discrimination, statistical discrimination may persist, and a measured gap overstates discrimination if productivity differs.',
+  };
+
+  /* ── Labour market policy ── */
+  // Labour demand w = 24 − 0.5L, labour supply w = 4 + bL. Policy size x from 0 to 1.
+  // 0: minimum wage w0 + 8x. 1: wage subsidy 6x per worker paid to employers. 2: tax on labour 6x per worker.
+  // 3: higher out-of-work benefits raise the reservation wage by 6x (supply shifts up).
+  const POL = ['National minimum wage', 'Wage subsidy', 'Tax on labour', 'Higher benefits'];
+  const policy = (s) => {
+    const b = s.b, L0 = 20 / (0.5 + b), w0 = 4 + b * L0, dem = (L) => 24 - 0.5 * L, sup = (L) => 4 + b * L;
+    const out = { L0, w0, dem, sup };
+    if (s.pol === 0) {
+      const w = w0 + 8 * s.x, L = 2 * (24 - w), LS = (w - 4) / b;
+      return { ...out, L, wWorker: w, wEmployer: w, LS, unemp: LS - L, budget: 0, dwl: 0.5 * (dem(L) - sup(L)) * (L0 - L) };
+    }
+    if (s.pol === 1 || s.pol === 2) {
+      const t = (s.pol === 1 ? -1 : 1) * 6 * s.x;            // wedge: employer cost − worker wage
+      const L = (20 - t) / (0.5 + b), wWorker = sup(L), wEmployer = wWorker + t;
+      return { ...out, L, wWorker, wEmployer, t, budget: t * L, dwl: 0.5 * Math.abs(t) * Math.abs(L0 - L), workerShare: Math.abs(t) > 1e-9 ? Math.abs(w0 - wWorker) / Math.abs(t) : b / (0.5 + b) };
+    }
+    const r = 6 * s.x, L = (20 - r) / (0.5 + b), w = dem(L);
+    return { ...out, L, wWorker: w, wEmployer: w, r, sup2: (x) => sup(x) + r, budget: 0, dwl: null };
+  };
+  const labourPolicy = {
+    id: 'labour-policy',
+    title: 'Labour market policy',
+    summary: 'Governments intervene in labour markets to raise low pay, increase employment and raise revenue. Each tool works differently: a minimum wage fixes the price of labour; a wage subsidy lowers what employers pay; a tax on labour drives a wedge between what employers pay and what workers take home; more generous benefits raise the wage people need before they will work. How the effects are shared depends on how elastic labour supply and demand are.',
+    model: 'Labour demand w = 24 − 0.5L and labour supply w = 4 + bL. Policy size x runs from 0 to 1: a minimum wage up to 8 above the market wage; a subsidy or a tax of up to 6 per worker; or benefits that raise the reservation wage by up to 6. The slope b sets how elastic labour supply is.',
+    graph: {
+      x: { range: [0, 48], label: 'Workers (L)', ticks: range(0, 48, 4) },
+      y: { range: [0, 30], label: 'Wage ($)', ticks: range(0, 30, 5) },
+      params: [
+        { id: 'pol', label: 'Policy', options: POL.map((label, v) => ({ v, label })), value: 2 },
+        { id: 'x', label: 'Size of the policy (x)', min: 0, max: 1, step: 0.01, value: 0.5 },
+        { id: 'b', label: 'Slope of labour supply (b)', min: 0.2, max: 2, step: 0.05, value: 0.5, hint: 'steeper = less elastic' },
+      ],
+      valid(s) {
+        const z = policy(s);
+        if (z.L < 1) return 'At this minimum wage employers would hire almost no one.';
+        return true;
+      },
+      draw(s) {
+        const z = policy(s), on = s.x > 0.005, out = [];
+        out.push(C(z.dem, 'd', 'D_L', { to: 48, labelAt: 42 }));
+        if (s.pol === 3) {
+          out.push(C(z.sup, on ? 'ghost' : 'g', 'S_L', { to: 48, labelAt: Math.min(44, 22 / s.b) }));
+          if (on) out.push(C(z.sup2, 'g', 'S_L (higher benefits)', { to: 48, labelAt: Math.max(2, Math.min(30, (20 - z.r) / s.b)) }));
+        } else {
+          out.push(C(z.sup, 'g', 'S_L', { to: 48, labelAt: Math.min(44, 24 / s.b) }));
+        }
+        if (on && s.pol === 0) {
+          out.push(Hl(z.wWorker, 'o', 'Minimum wage', { dash: true, labelLeft: true }));
+          out.push(S(z.L, z.wWorker, Math.min(48, z.LS), z.wWorker, 'r', '', { bold: true }));
+          if (z.unemp > 4) out.push(T((z.L + Math.min(48, z.LS)) / 2, z.wWorker + 1, 'Unemployed', 'r', { anchor: 'middle' }));
+        }
+        if (on && (s.pol === 1 || s.pol === 2)) {
+          const lo = Math.min(z.wWorker, z.wEmployer), hi = Math.max(z.wWorker, z.wEmployer);
+          out.push(A([[z.L, hi], [z.L0, z.w0], [z.L, lo]], 'r', ''));
+          out.push(S(z.L, lo, z.L, hi, 'o', '', { bold: true }));
+          out.push(P(z.L, z.wEmployer, 'Employer pays', 'd', { small: true, dx: s.pol === 1 ? 9 : -9, dy: s.pol === 1 ? 16 : -8 }));
+          out.push(P(z.L, z.wWorker, 'Worker gets', 'g', { small: true, dx: s.pol === 1 ? -9 : 9, dy: s.pol === 1 ? -8 : 16 }));
+        }
+        out.push(P(z.L0, z.w0, 'No policy', 'n', { small: true, dx: s.pol === 1 && on ? -10 : 10, dy: s.pol === 0 && on ? 16 : 4 }));
+        out.push(G(z.L, z.wWorker, 'L', 'w'));
+        if (!(on && (s.pol === 1 || s.pol === 2))) out.push(P(z.L, z.wWorker, 'Outcome', 'o', { dx: -9, dy: 18 }));
+        return out;
+      },
+      readout(s) {
+        const z = policy(s), on = s.x > 0.005;
+        const rows = [
+          ['Take-home wage (no policy)', `${money(z.wWorker)} (${money(z.w0)})`],
+          ['Cost of a worker to the employer', money(z.wEmployer)],
+          ['Employment (no policy)', `${f(z.L)} (${f(z.L0)})`],
+        ];
+        if (s.pol === 0) rows.push(['Workers wanting jobs but not hired', f(z.unemp)]);
+        if (s.pol === 1) rows.push(['Cost to the government', money(-z.budget)], ['Share of the subsidy reaching workers', pct(100 * z.workerShare)]);
+        if (s.pol === 2) rows.push(['Tax revenue', money(z.budget)], ['Share of the tax borne by workers', pct(100 * z.workerShare)]);
+        if (z.dwl != null) rows.push(['Deadweight loss', money(z.dwl)]);
+        let status, tone = 'info';
+        if (!on) status = 'No policy: the market clears where labour demand meets supply.';
+        else if (s.pol === 0) { status = `A minimum wage above the market wage raises pay for those who keep their jobs but cuts employment by ${f(z.L0 - z.L)} in a competitive market, and draws in ${f(z.LS - z.L0)} more job-seekers. (Under monopsony it can raise employment: see the monopsony topic.)`; tone = 'warn'; }
+        else if (s.pol === 1) { status = `The subsidy raises employment by ${f(z.L - z.L0)} and lifts take-home pay, at a cost of ${money(-z.budget)}. Workers get ${pct(100 * z.workerShare)} of it; the less elastic labour supply is, the more goes to workers.`; tone = 'good'; }
+        else if (s.pol === 2) { status = `The tax wedge cuts employment by ${f(z.L0 - z.L)} and raises ${money(z.budget)}. Workers bear ${pct(100 * z.workerShare)} of it: whoever is less elastic bears more, whichever side legally pays.`; tone = 'warn'; }
+        else { status = `Higher benefits raise the wage people need before taking a job (the reservation wage), so labour supply shifts up: the wage rises to ${money(z.wWorker)} and employment falls by ${f(z.L0 - z.L)}. This is a trade-off between protecting people out of work and work incentives.`; tone = 'info'; }
+        return { rows, status, tone };
+      },
+    },
+    equations: [
+      { name: 'Tax or subsidy wedge', tex: R`w_{employer} = w_{worker} + t \quad (t < 0 \text{ for a subsidy})` },
+      { name: 'Who bears a tax on labour', tex: R`\frac{\text{worker share}}{\text{employer share}} = \frac{\varepsilon_D}{\varepsilon_S}`, note: 'The less elastic side bears more. With very inelastic labour supply, workers bear almost all of it.' },
+      { name: 'Deadweight loss of a wedge', tex: R`DWL = \tfrac{1}{2}\,|t|\,|L_0 - L|` },
+      { name: 'Minimum wage (competitive market)', tex: R`L = L_D(w_{min}) < L_0,\qquad \text{excess supply} = L_S(w_{min}) - L_D(w_{min})` },
+    ],
+    points: [
+      'Minimum wage: raises low pay but can cost jobs in competitive markets; under monopsony a moderate minimum can raise employment. UK evidence from the Low Pay Commission finds small employment effects so far.',
+      'Wage subsidies and in-work benefits (for example Universal Credit’s taper): raise employment and take-home pay, but cost public money, and part leaks to employers. They avoid the job losses of a minimum wage.',
+      'Taxes on labour (income tax, National Insurance): the wedge reduces employment; incidence does not depend on who legally pays.',
+      'Out-of-work benefits: protect incomes but raise the reservation wage; conditionality and job-search requirements aim to limit the effect.',
+      'Supply-side policies: training and education (raise MRP, shifting demand right), better information and job matching, help with moving or childcare (reduce immobility), and immigration (raises labour supply).',
+      'Active labour market policies (training, job search help, hiring subsidies) target the unemployed directly; passive policies pay benefits.',
+    ],
+    tip: 'Name the policy’s mechanism on the diagram: a price floor (minimum wage), a wedge between employer cost and take-home pay (tax or subsidy), or a shift of supply or demand (benefits, training). Then discuss elasticities for incidence and employment, and say who pays: firms, workers or the taxpayer.',
+  };
+
   const insertAfter = (id, topic, unit, block) => {
     const i = window.TOPICS.findIndex((t) => t.id === id);
     window.TOPICS.splice(i + 1, 0, Object.assign(topic, { unit, block }));
@@ -581,4 +760,6 @@
   insertAfter('wage-differentials', humanCapital, MICRO, block);
   insertAfter('human-capital', tradeUnions, MICRO, block);
   insertAfter('trade-unions', efficiencyWages, MICRO, block);
+  insertAfter('efficiency-wages', discrimination, MICRO, block);
+  insertAfter('discrimination', labourPolicy, MICRO, block);
 })();

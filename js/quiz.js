@@ -502,6 +502,48 @@
       },
     },
     {
+      worked: 'w-discrimination', topic: 'discrimination',
+      gen() {
+        const c = pick([5, 10, 15]), a = c + 2 * int(10, 25), d = pick([0.25, 0.5, 1]);
+        const wA = (a + c) / 2, LB = (a - (1 + d) * c) / (2 + d), wB = c + LB;
+        if (LB < 4) return this.gen();
+        return {
+          q: `Groups A and B are equally productive. For each, labour demand (MRP) is w = ${a} − L and supply is w = ${c} + L. All employers discriminate against B with a discrimination coefficient of ${d}.`,
+          parts: [
+            { label: 'Wage of group A', answer: wA },
+            { label: 'Wage of group B', answer: wB },
+            { label: 'Employment of group B', answer: LB },
+          ],
+          solution: [
+            `A: ${a} − L = ${c} + L → L = ${(a - c) / 2}, w = ${wA}.`,
+            `B: employers hire until MRP = ${1 + d}w, so ${1 + d}(${c} + L) = ${a} − L → L = (${a} − ${n((1 + d) * c)})/${2 + d} = ${n(LB)}.`,
+            `w_B = ${c} + ${n(LB)} = ${n(wB)}, a gap of ${n(wA - wB)}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-labour-policy', topic: 'labour-policy',
+      gen() {
+        const c = pick([5, 10, 15]), t = pick([2, 4, 6, 8]), m = int(8, 20), a = c + t + 2 * m;
+        const L = m, wW = c + L;
+        return {
+          q: `Labour demand is w = ${a} − L and labour supply is w = ${c} + L. The government taxes employers ${t} per worker.`,
+          parts: [
+            { label: 'Employment with the tax', answer: L },
+            { label: 'Take-home wage', answer: wW },
+            { label: 'Tax revenue', answer: t * L },
+            { label: 'Deadweight loss', answer: 0.5 * t * ((a - c) / 2 - L) },
+          ],
+          solution: [
+            `Without the tax: L = ${(a - c) / 2}. With it, the employer pays take-home pay + ${t}: ${a} − L = ${c} + L + ${t} → L = ${L}.`,
+            `Take-home pay = ${c} + ${L} = ${wW}; employers pay ${wW + t}.`,
+            `Revenue = ${t} × ${L} = ${t * L}; DWL = ½ × ${t} × ${n((a - c) / 2 - L)} = ${n(0.5 * t * ((a - c) / 2 - L))}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-game-theory', topic: 'game-theory',
       gen() {
         const pay = [0, 1].map(() => [0, 1].map(() => [int(0, 9), int(0, 9)]));
@@ -827,6 +869,10 @@
     { worked: 'w-unions', topic: 'trade-unions', q: 'Which union strategy can raise both wages and employment in a competitive labour market?', choices: ['Bargaining for a wage above the market wage', 'A closed shop that limits entry', 'Raising labour productivity and so the demand for labour', 'Longer apprenticeships'], correct: 2, why: 'Shifting labour demand right raises both; the other strategies move along demand or shift supply left, cutting employment.' },
     { worked: 'w-efficiency-wage', topic: 'efficiency-wages', q: 'Why might a firm pay more than the market-clearing wage?', choices: ['Because the minimum wage forces it to', 'Because higher pay raises effort, cuts quits or attracts better workers enough to lower the cost per unit of effort', 'Because it has monopsony power', 'Because labour supply is perfectly elastic'], correct: 1, why: 'Efficiency wage theories: shirking, turnover, adverse selection and fairness.' },
     { worked: 'w-efficiency-wage', topic: 'efficiency-wages', q: 'With efficiency wages, why does unemployment not push wages down?', choices: ['Unions block wage cuts', 'Cutting the wage would reduce effort by more, raising the cost per unit of effort', 'Unemployed workers do not want jobs', 'The government fixes wages'], correct: 1, why: 'At w* the firm is already at its lowest cost per unit of effort, so it gains nothing by hiring cheaper workers.' },
+    { worked: 'w-discrimination', topic: 'discrimination', q: 'In Becker’s model, why might competition reduce employer discrimination over time?', choices: ['Discriminating firms have lower costs', 'Non-discriminating firms can hire undervalued workers, earn more profit and expand', 'The government always bans discrimination', 'Discriminated workers become more productive'], correct: 1, why: 'Prejudice is costly to the employer; profit-seeking rivals exploit the wage gap and bid it away.' },
+    { worked: 'w-discrimination', topic: 'discrimination', q: 'Statistical discrimination occurs when…', choices: ['Employers dislike a group', 'Employers judge individuals by group averages because individual productivity is hard to observe', 'Workers choose lower-paid jobs', 'Unions exclude a group'], correct: 1, why: 'It can be profit-maximising yet unfair to individuals, and can discourage the group from investing in skills.' },
+    { worked: 'w-labour-policy', topic: 'labour-policy', q: 'A payroll tax is paid by employers. If labour supply is very inelastic, who bears most of the tax?', choices: ['Employers, because they pay it', 'Workers, through lower take-home pay', 'Consumers only', 'It is split equally'], correct: 1, why: 'Incidence depends on elasticities, not on who legally pays: the less elastic side bears more.' },
+    { worked: 'w-labour-policy', topic: 'labour-policy', q: 'Compared with a minimum wage, a wage subsidy to employers…', choices: ['Reduces employment', 'Raises both employment and take-home pay, but costs public money', 'Has no cost to the government', 'Always gives the whole benefit to workers'], correct: 1, why: 'The subsidy shifts effective demand up; part goes to employers and the taxpayer funds it.' },
     { worked: 'w-specific-tax', topic: 'tax-incidence', q: 'Demand is very inelastic and supply is elastic. Who bears most of a per-unit tax?', choices: ['Sellers', 'Buyers', 'It is always split equally', 'Whoever is legally liable'], correct: 1, why: 'The less elastic side bears more: the buyers’ share is E_s/(E_s + |E_d|).' },
     { worked: 'w-comparative-advantage', topic: 'ppf', q: 'A country should specialise in the good for which it has…', choices: ['The highest output per worker', 'The lowest opportunity cost', 'The highest price', 'An absolute advantage'], correct: 1, why: 'Comparative advantage, the lower opportunity cost, determines the gains from specialisation.' },
     { worked: 'w-multiplier', topic: 'keynesian-cross', q: 'Full-employment output is 1,000, equilibrium is 860 and the multiplier is 2. The deflationary gap is…', choices: ['140', '70', '280', '1,000'], correct: 1, why: 'The deflationary gap is the shortfall of AD at Y_f: 140 ÷ 2 = 70. The 140 is the output gap.' },
