@@ -605,8 +605,67 @@
       id: 'national-income',
       title: 'National income and the circular flow',
       summary: 'Firms pay incomes to households, and households spend on firms’ output. Saving, net taxes and imports leak out of the flow; investment, government spending and exports are injected back in.',
-      model: 'Blue: the core income–spending loop. Red: leakages. Green: injections. In equilibrium, leakages equal injections.',
-      diagram: circularFlow(),
+      model: 'Set spending on domestic output (C, I, G, X), imports Z and net taxes NT, all in £bn. GDP is Y = C + I + G + X − Z, and households save what is left of their income after net taxes and consumption: S = Y − NT − C. The three bars show the same total measured as spending, as income, and as leakages against injections.',
+      graph: (function () {
+        const W = (v) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(0);
+        const nat = (s) => { const Y = s.c + s.i + s.g + s.x - s.z, S = Y - s.nt - s.c; return { Y, S, Yd: Y - s.nt, J: s.i + s.g + s.x, L: S + s.nt + s.z }; };
+        // A stacked bar: positive parts build up from zero. A negative part (imports, or saving when
+        // households dissave) is drawn in a red strip beside the bar, from the top back down to the net total.
+        const bar = (x0, x1, parts, span) => {
+          const out = []; let top = 0;
+          for (const [v, k, label] of parts.filter((p) => p[0] > 0)) { out.push(A([[x0, top], [x1, top], [x1, top + v], [x0, top + v]], k, v > span * 0.05 ? label : '')); top += v; }
+          for (const [v, , label] of parts.filter((p) => p[0] < 0)) { out.push(A([[x1 + 0.02, top + v], [x1 + 0.2, top + v], [x1 + 0.2, top], [x1 + 0.02, top]], 'r', -v > span * 0.05 ? '−' + label : '')); top += v; }
+          return out;
+        };
+        const tops = (s) => { const z = nat(s), S = Math.max(0, z.S); return Math.max(s.c + s.i + s.g + s.x, s.c + S + s.nt, z.J, S + s.nt + s.z); };
+        return {
+          x: { range: [0, 3.2], label: 'GDP measured three ways (£bn)', ticks: [0.5, 1.5, 2.3, 2.75], fmt: (v) => ({ 0.5: 'Spending', 1.5: 'Income', 2.3: 'Injections', 2.75: 'Leakages' })[v] || '' },
+          // The scale follows the tallest bar, so every combination of sliders stays on the chart.
+          y: (s) => { const top = Math.max(1600, Math.ceil((tops(s) * 1.15) / 400) * 400); return { range: [0, top], label: '£bn', ticks: range(0, top, top / 4) }; },
+          params: [
+            { id: 'c', label: 'Consumption (C)', min: 0, max: 1500, step: 10, value: 600 },
+            { id: 'i', label: 'Investment (I)', min: 0, max: 600, step: 10, value: 150 },
+            { id: 'g', label: 'Government spending (G)', min: 0, max: 600, step: 10, value: 200 },
+            { id: 'x', label: 'Exports (X)', min: 0, max: 800, step: 10, value: 250 },
+            { id: 'z', label: 'Imports (Z)', min: 0, max: 800, step: 10, value: 200 },
+            { id: 'nt', label: 'Net taxes (NT)', min: 0, max: 800, step: 10, value: 180, hint: 'taxes minus transfers' },
+          ],
+          valid(s) {
+            const z = nat(s);
+            if (z.Y <= 0) return 'Imports are part of C, I, G and X, so they cannot exceed them: GDP would be zero or negative.';
+            if (z.Yd <= 0) return 'Net taxes would take all of national income, leaving households with no disposable income.';
+            return true;
+          },
+          draw(s) {
+            const z = nat(s), span = s._y ? s._y[1] - s._y[0] : 1600;
+            return [
+              ...bar(0.1, 0.7, [[s.c, 'd', 'C'], [s.i, 'g', 'I'], [s.g, 'o', 'G'], [s.x, 's', 'X'], [-s.z, 'r', 'Z']], span),
+              ...bar(1.1, 1.7, [[s.c, 'd', 'C'], [z.S, 'g', 'S'], [s.nt, 'o', 'NT']], span),
+              ...bar(2.1, 2.5, [[s.i, 'g', 'I'], [s.g, 'o', 'G'], [s.x, 's', 'X']], span),
+              ...bar(2.55, 2.95, [[z.S, 'g', 'S'], [s.nt, 'o', 'NT'], [s.z, 'r', 'Z']], span),
+              Hl(z.Y, 'ghost', `Y = ${W(z.Y)}`),
+              T(2.3, z.J + span * 0.03, W(z.J), 'n', { anchor: 'middle' }),
+              T(2.75, (z.S < 0 ? s.nt + s.z : z.J) + span * 0.03, z.S < 0 ? `net ${W(z.L)}` : W(z.L), 'n', { anchor: 'middle' }),
+            ];
+          },
+          readout(s) {
+            const z = nat(s), gap = (v, pos, neg) => (Math.abs(v) < 0.5 ? 'balanced' : v > 0 ? `${pos} by ${W(v)}` : `${neg} by ${W(-v)}`);
+            return {
+              rows: [
+                ['GDP: C + I + G + (X − Z)', W(z.Y)],
+                ['Net exports X − Z', W(s.x - s.z)],
+                ['Disposable income Y − NT', W(z.Yd)],
+                ['Household saving S = Y_d − C', W(z.S)],
+                ['Injections I + G + X', W(z.J)],
+                ['Leakages S + NT + Z', W(z.L)],
+              ],
+              status: `Leakages (${W(z.L)}) equal injections (${W(z.J)}): this always holds, because both come from the same spending. Rearranged, S − I = (G − NT) + (X − Z): ${W(z.S - s.i)} = ${W(s.g - s.nt)} + ${W(s.x - s.z)}. The government budget is ${gap(s.nt - s.g, 'in surplus', 'in deficit')} and trade is ${gap(s.x - s.z, 'in surplus', 'in deficit')}.`
+                + (z.S < 0 ? ' Households are dissaving: they spend more than their disposable income.' : ''),
+            };
+          },
+        };
+      })(),
+      extra: `<h2>The circular flow</h2><div class="graph-wrap">${circularFlow()}</div><p class="model"><span>Read it</span> Blue: the core income–spending loop. Red: leakages. Green: injections. Leakages always equal injections.</p>`,
       equations: [
         { name: 'GDP (expenditure) identity', tex: R`GDP \equiv Y \equiv C + I + G + (X - Z)`, note: 'Z is imports; X − Z is net exports.' },
         { name: 'Leakages equal injections', tex: R`S + NT + Z \equiv I + G + X`, note: 'NT is net taxes (taxes minus transfers).' },

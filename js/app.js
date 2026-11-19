@@ -805,7 +805,7 @@
         <section class="rev-sheets">
           <h2>Block revision sheets</h2>
           <div class="btn-row"><button type="button" class="ghost-btn" id="rv-open">Open all</button><button type="button" class="ghost-btn" id="rv-close">Close all</button><button type="button" class="ghost-btn" id="rv-reset">${resetArmed ? 'Click again to clear all progress' : 'Reset revision progress'}</button></div>
-          ${['Microeconomics', 'Macroeconomics'].map((part) => `<h3 class="rev-part">${part}</h3>${SHEETS.filter((sh) => sh.part === part).map((sh) => sheetHtml(sh, openSheets.has(sh.id))).join('')}`).join('')}
+          ${['Microeconomics', 'Macroeconomics', 'Further topics'].map((part) => `<h3 class="rev-part">${part}</h3>${SHEETS.filter((sh) => sh.part === part).map((sh) => sheetHtml(sh, openSheets.has(sh.id))).join('')}`).join('')}
         </section>
       </article>`;
 

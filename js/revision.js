@@ -289,8 +289,8 @@
         { name: 'Expenditure identity', tex: R`GDP \equiv Y \equiv C + I + G + (X - Z)` },
         { name: 'Leakages equal injections', tex: R`S + NT + Z \equiv I + G + X` },
       ],
-      graphs: [{ label: 'Circular flow of income', topic: 'national-income' }],
-      topics: ['national-income'],
+      graphs: [{ label: 'Circular flow and GDP three ways', topic: 'national-income' }, { label: 'Real growth and price indices', topic: 'growth-measure' }],
+      topics: ['national-income', 'growth-measure'],
     },
     {
       id: 'b-12', block: 'Block 12', part: 'Macroeconomics', title: 'Economic growth',
@@ -461,6 +461,33 @@
         { label: 'Import quotas and quota rent', topic: 'import-quota' },
       ],
       topics: ['forex', 'interest-parity', 'j-curve', 'tariff', 'import-quota'],
+    },
+    {
+      id: 'b-further', block: 'Further topics', part: 'Further topics', title: 'Measurement, loanable funds and inequality',
+      note: 'These topics sit outside the EC1002 block breakdown. They support Blocks 11–12 (measuring output and growth) and Blocks 13 and 15 (saving, investment and fiscal policy), and add the standard tools for measuring inequality.',
+      summary: 'Price indices turn nominal values into real ones, and growth compounds. In the loanable funds market, government borrowing raises the interest rate and crowds out some private investment. The Lorenz curve and Gini coefficient measure how unequally income is shared.',
+      outcomes: [
+        'Calculate a CPI from a fixed basket and the inflation rate it implies.',
+        'Convert nominal GDP to real GDP with the deflator and find real growth.',
+        'Estimate doubling times with the rule of 70.',
+        'Find the equilibrium interest rate in the loanable funds market and show crowding out from a budget deficit.',
+        'Explain why crowding out is partial when saving responds to the interest rate.',
+        'Draw a Lorenz curve from quintile shares and estimate the Gini coefficient.',
+      ],
+      examFocus: ['Real growth ≈ nominal growth − inflation; divide by the deflator for the exact figure.', 'Plot cumulative shares on the Lorenz curve, not each quintile’s own share.'],
+      equations: [
+        { name: 'Fixed-basket price index', tex: R`CPI_t = \frac{\sum p_t q_0}{\sum p_0 q_0}\times 100` },
+        { name: 'Real GDP and real growth', tex: R`Y^{real} = \frac{Y^{nom}}{\text{deflator}/100}, \qquad g \approx g^{nom} - \pi` },
+        { name: 'Rule of 70', tex: R`t_{double} \approx \frac{70}{g\,(\%)}` },
+        { name: 'Loanable funds (closed economy)', tex: R`S = I + (G - NT) \quad\Longleftrightarrow\quad S + (NT - G) = I` },
+        { name: 'Gini coefficient', tex: R`G = \frac{A}{A + B} = 1 - 2B` },
+      ],
+      graphs: [
+        { label: 'Compound growth and doubling time', topic: 'growth-measure' },
+        { label: 'Loanable funds and crowding out', topic: 'loanable-funds' },
+        { label: 'Lorenz curve and Gini coefficient', topic: 'lorenz' },
+      ],
+      topics: ['growth-measure', 'loanable-funds', 'lorenz'],
     },
   ];
 })();
