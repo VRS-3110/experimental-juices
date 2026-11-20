@@ -331,7 +331,7 @@
     },
     {
       id: 'b-14', block: 'Block 14', part: 'Macroeconomics', title: 'Money and banking',
-      note: 'Your study-guide breakdown did not list Block 14’s content, so this sheet uses the standard money-and-banking material taught at this level. Check it against the Block 14 chapter of your guide.',
+      note: 'Your study-guide breakdown did not list Block 14’s equations. Your course reading list gives Block 14 as money and banking, interest rates and monetary transmission (BVFD chapters 21 and 22, except Maths 21.2 and 22.1), so this sheet uses the standard material from those chapters. Check it against the Block 14 chapter of your guide.',
       summary: 'Money is whatever is generally accepted in payment. The central bank creates the monetary base; commercial banks multiply it through fractional-reserve lending. Money supply and money demand set the short-run interest rate, and in the long run money growth drives inflation.',
       outcomes: [
         'Explain the three functions of money and what counts as money.',
