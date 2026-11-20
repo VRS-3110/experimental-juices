@@ -24,11 +24,11 @@
   const inflationTypes = {
     id: 'inflation-types',
     title: 'Demand-pull and cost-push inflation',
-    summary: 'Inflation can start from either side of the economy. Demand-pull inflation comes from aggregate demand growing faster than the economy can produce: output rises above potential and prices rise. Cost-push inflation comes from higher costs (oil, wages, a falling currency) shifting short-run aggregate supply up: prices rise while output falls, which is stagflation. The two call for different policy responses.',
-    model: 'AD: P = a − Y. SRAS: P = Pᵉ + (Y − 5) + v, with v a cost shock. LRAS is vertical at potential output Y* = 5. The economy starts at Y = 5, P = 5. A demand shock raises a; a cost shock raises v. The second stage shows what happens next: for demand-pull, expected prices catch up and SRAS shifts up; for cost-push, the central bank accommodates the shock by raising AD.',
+    summary: 'Inflation can start from either side of the economy. Demand-pull inflation comes from aggregate demand growing faster than the economy can produce: output rises above potential and inflation rises. Cost-push inflation comes from higher costs (oil, wages, a falling currency) shifting short-run aggregate supply up: inflation rises while output falls, which is stagflation. The two call for different policy responses.',
+    model: 'As in the guide, the vertical axis is inflation. AD: π = a − Y. SRAS: π = πᵉ + (Y − 5) + v, with v a cost shock. LRAS is vertical at potential output Y* = 5. The economy starts at Y = 5 with inflation of 5%, as expected. A demand shock raises a; a cost shock raises v. The second stage shows what happens next: for demand-pull, expected inflation catches up and SRAS shifts up; for cost-push, the central bank accommodates the shock by raising AD.',
     graph: {
       x: { range: [3, 8], label: 'Real output (Y)', ticks: range(3, 8, 1), fmt: (v) => String(v) },
-      y: { range: [0, 12], label: 'Price level (P)', ticks: range(0, 12, 2) },
+      y: { range: [0, 12], label: 'Inflation rate (π, %)', ticks: range(0, 12, 2) },
       params: [
         { id: 'type', label: 'Source', options: [{ v: 0, label: 'Demand-pull (AD rises)' }, { v: 1, label: 'Cost-push (SRAS shifts up)' }], value: 0 },
         { id: 'size', label: 'Size of the shock', min: 0, max: 15, step: 0.1, value: 1.5 },
@@ -39,11 +39,11 @@
         if (on) {
           if (z.dp) out.push(C((Y) => z.a1 - Y, 'd', 'AD₁', { from: 3, to: 8, labelAt: 7.4 }));
           else out.push(C((Y) => 5 + (Y - 5) + z.v, 'g', 'SRAS₁', { from: 3, to: 8, labelAt: Math.min(7.4, 12 - z.v - 0.6) }));
-          out.push(P(z.Y1, z.P1, 'E₁', 'o', { dx: 9, dy: 14 }), G(z.Y1, z.P1, 'Y₁', 'P₁'));
+          out.push(P(z.Y1, z.P1, 'E₁', 'o', { dx: 9, dy: 14 }), G(z.Y1, z.P1, 'Y₁', 'π₁'));
           if (s.stage === 1) {
-            if (z.dp) out.push(C((Y) => z.pe2 + (Y - 5), 's', 'SRAS₂ (higher Pᵉ)', { from: 3, to: 8, labelAt: Math.min(7.2, 12 - z.pe2 + 3 - 0.6) }));
+            if (z.dp) out.push(C((Y) => z.pe2 + (Y - 5), 's', 'SRAS₂ (higher πᵉ)', { from: 3, to: 8, labelAt: Math.min(7.2, 12 - z.pe2 + 3 - 0.6) }));
             else out.push(C((Y) => z.a2 - Y, 's', 'AD₂ (accommodated)', { from: 3, to: 8, labelAt: 7.2 }));
-            out.push(P(z.Y2, z.P2, 'E₂', 's', { dx: -24, dy: 5 }), G(z.Y2, z.P2, null, 'P₂'));
+            out.push(P(z.Y2, z.P2, 'E₂', 's', { dx: -24, dy: 5 }), G(z.Y2, z.P2, null, 'π₂'));
           }
         }
         out.push(P(5, 5, 'E₀', 'n', { small: true, dx: -18, dy: 14 }));
@@ -53,22 +53,22 @@
         const z = infl(s), last = s.stage === 1 ? [z.Y2, z.P2] : [z.Y1, z.P1];
         return {
           rows: [
-            ['Short run: output / price level', `${f(z.Y1)} / ${f(z.P1)}`],
+            ['Short run: output / inflation', `${f(z.Y1)} / ${f(z.P1)}%`],
             ['Output gap (Y − Y*) in the short run', `${z.Y1 >= 5 ? '+' : '−'}${f(Math.abs(z.Y1 - 5))}`],
-            ['Price level rise in the short run', pct((100 * (z.P1 - 5)) / 5)],
-            [s.stage === 1 ? 'After the next stage: output / price level' : 'Next stage (not shown yet)', s.stage === 1 ? `${f(last[0])} / ${f(last[1])}` : '—'],
+            ['Rise in inflation in the short run', `${f(z.P1 - 5)} points`],
+            [s.stage === 1 ? 'After the next stage: output / inflation' : 'Next stage (not shown yet)', s.stage === 1 ? `${f(last[0])} / ${f(last[1])}%` : '—'],
           ],
           status: s.size < 0.01 ? 'Choose a shock: demand-pull shifts AD right, cost-push shifts SRAS up.' : z.dp
-            ? (s.stage === 0 ? 'Demand-pull: AD shifts right, so output rises above potential and the price level rises. Unemployment falls below its natural rate.' : 'Workers and firms come to expect the higher prices, so SRAS shifts up until output is back at potential. The only lasting effect is a higher price level: demand cannot keep output above Y*.')
-            : (s.stage === 0 ? 'Cost-push: higher costs shift SRAS up, so prices rise and output falls at the same time (stagflation). The central bank faces a dilemma: fight inflation or support output.' : 'If the central bank accommodates the shock by raising AD, output returns to potential but the price level rises further, and repeated accommodation risks a wage–price spiral.'),
+            ? (s.stage === 0 ? 'Demand-pull: AD shifts right, so output rises above potential and inflation rises. Unemployment falls below its natural rate.' : 'Workers and firms come to expect the higher inflation, so SRAS shifts up until output is back at potential. The only lasting effect is higher inflation: demand cannot keep output above Y*.')
+            : (s.stage === 0 ? 'Cost-push: higher costs shift SRAS up, so inflation rises and output falls at the same time (stagflation). The central bank faces a dilemma: fight inflation or support output.' : 'If the central bank accommodates the shock by raising AD, output returns to potential but inflation rises further, and repeated accommodation risks a wage–price spiral.'),
           tone: s.size < 0.01 ? 'info' : z.dp ? 'info' : 'warn',
         };
       },
     },
     equations: [
-      { name: 'Short-run equilibrium', tex: R`AD:\ P = a - Y \qquad SRAS:\ P = P^e + \gamma(Y - Y^*) + v` },
-      { name: 'Demand-pull', tex: R`\Delta a > 0 \;\Rightarrow\; Y \uparrow,\; P \uparrow` },
-      { name: 'Cost-push', tex: R`\Delta v > 0 \;\Rightarrow\; Y \downarrow,\; P \uparrow \quad (\text{stagflation})` },
+      { name: 'Short-run equilibrium', tex: R`AD:\ \pi = a - Y \qquad SRAS:\ \pi = \pi^e + \gamma(Y - Y^*) + v` },
+      { name: 'Demand-pull', tex: R`\Delta a > 0 \;\Rightarrow\; Y \uparrow,\; \pi \uparrow` },
+      { name: 'Cost-push', tex: R`\Delta v > 0 \;\Rightarrow\; Y \downarrow,\; \pi \uparrow \quad (\text{stagflation})` },
     ],
     points: [
       'Demand-pull causes: loose monetary or fiscal policy, a consumer or investment boom, strong export demand. Remedy: tighter demand policy, with little cost to long-run output.',

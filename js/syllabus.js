@@ -687,15 +687,15 @@
       id: 'solow',
       title: 'Solow growth model',
       summary: 'Capital per effective worker grows while investment exceeds effective depreciation. The steady state is where they meet. Higher saving raises the level of output per worker, not its long-run growth rate.',
-      model: 'y = k^α; investment s·f(k); effective depreciation (n + d + g)k.',
+      model: 'y = k^α; investment s·f(k); effective depreciation (δ + n + t)k, in the guide’s notation: δ depreciation, n population growth, t the rate of technical progress.',
       graph: {
         x: { range: [0, 10], label: 'Capital per effective worker (k)' },
         y: { range: [0, 3], label: 'Output and investment per worker', ticks: range(0, 3, 1) },
         params: [
           { id: 's', label: 'Saving rate (s)', min: 0.01, max: 0.99, step: 0.01, value: 0.3 },
           { id: 'n', label: 'Population growth (n)', min: 0, max: 0.29, step: 0.005, value: 0.02 },
-          { id: 'd', label: 'Depreciation (d)', min: 0.005, max: 0.4, step: 0.005, value: 0.05 },
-          { id: 'g', label: 'Technological progress (g)', min: 0, max: 0.24, step: 0.005, value: 0.03 },
+          { id: 'd', label: 'Depreciation (δ)', min: 0.005, max: 0.4, step: 0.005, value: 0.05 },
+          { id: 'g', label: 'Technological progress (t)', min: 0, max: 0.24, step: 0.005, value: 0.03 },
           { id: 'al', label: 'Capital share (α)', min: 0.05, max: 0.69, step: 0.01, value: 0.33 },
         ],
         draw(s) {
@@ -703,7 +703,7 @@
           return [
             C((k) => Math.pow(k, s.al), 'n', 'f(k)'),
             C((k) => s.s * Math.pow(k, s.al), 'd', 's·f(k)'),
-            C((k) => b * k, 's', '(n + d + g)k'),
+            C((k) => b * k, 's', '(δ + n + t)k'),
             V(kg, 'ghost', 'k gold'),
             G(ks, b * ks, 'k*', null),
             P(ks, Math.pow(ks, s.al), 'y*', 'n', { small: true }),
@@ -720,10 +720,10 @@
       },
       equations: [
         { name: 'Production per effective worker', tex: R`y = f(k) = k^{\alpha}`, note: 'Diminishing returns to capital.' },
-        { name: 'Capital accumulation', tex: R`\Delta k = s f(k) - (n + d + g)k`, note: 'Investment minus effective depreciation.' },
-        { name: 'Steady-state condition', tex: R`s f(k^*) = (n + d + g)k^*`, note: 'k stops changing.' },
-        { name: 'Steady-state capital', tex: R`k^* = \left(\frac{s}{n + d + g}\right)^{\frac{1}{1-\alpha}}`, note: 'For Cobb–Douglas f(k) = k^α.' },
-        { name: 'Golden rule', tex: R`f'(k_{g}) = n + d + g \;\Rightarrow\; s_g = \alpha`, note: 'Maximises steady-state consumption.' },
+        { name: 'Capital accumulation', tex: R`\Delta k = s f(k) - (\delta + n + t)k`, note: 'Investment minus effective depreciation.' },
+        { name: 'Steady-state condition', tex: R`s f(k^*) = (\delta + n + t)k^*`, note: 'k stops changing.' },
+        { name: 'Steady-state capital', tex: R`k^* = \left(\frac{s}{\delta + n + t}\right)^{\frac{1}{1-\alpha}}`, note: 'For Cobb–Douglas f(k) = k^α.' },
+        { name: 'Golden rule', tex: R`f'(k_{gold}) = \delta + n + t \;\Rightarrow\; s_{gold} = \alpha`, note: 'Maximises steady-state consumption.' },
         { name: 'Growth accounting', tex: R`g_Y = g_A + \alpha g_K + (1 - \alpha) g_L`, note: 'The residual g_A is TFP growth.' },
       ],
       points: [
@@ -853,15 +853,15 @@
     {
       id: 'ad-as',
       title: 'Aggregate demand and aggregate supply',
-      summary: 'Short-run output and prices are set where AD meets SRAS. Over time, price expectations adjust and SRAS shifts until output returns to potential, on the vertical LRAS.',
-      model: 'AD: P = a − Y. SRAS: P = Pᵉ + γ(Y − Y*) + v. LRAS at Y* = 5.',
+      summary: 'Short-run output and inflation are set where AD meets SRAS. Over time, inflation expectations adjust and SRAS shifts until output returns to potential, on the vertical LRAS. As in the guide, the vertical axis is the inflation rate, not the price level.',
+      model: 'AD: π = a − Y, a straight-line version of the guide’s π = (h − kY)/g. SRAS: π = πᵉ + γ(Y − Y*) + v, the guide’s Y = Y* + α(π − πᵉ) with γ = 1/α. LRAS at Y* = 5.',
       graph: {
         x: { range: [0, 10], label: 'Real output (Y)' },
-        y: { range: [0, 10], label: 'Price level (P)' },
+        y: { range: [-2, 10], label: 'Inflation rate (π, %)', ticks: range(-2, 10, 2) },
         params: [
           { id: 'a', label: 'Aggregate demand (a)', min: 1.1, max: 36, step: 0.1, value: 10, hint: 'Fiscal stimulus shifts AD right' },
           { id: 'v', label: 'Supply shock (v)', min: -8.9, max: 8.9, step: 0.1, value: 0, hint: 'An oil price spike is v > 0' },
-          { id: 'pe', label: 'Expected price level (Pᵉ)', min: 0, max: 13.9, step: 0.1, value: 5 },
+          { id: 'pe', label: 'Expected inflation (πᵉ, %)', min: -5, max: 13.9, step: 0.1, value: 5 },
           { id: 'gm', label: 'SRAS slope (γ)', min: 0.05, max: 6, step: 0.05, value: 0.8 },
         ],
         actions: [{ label: 'Let expectations adjust (long run)', run: (s) => { s.pe = s.a - 5 - s.v; } }],
@@ -873,30 +873,30 @@
             V(5, 'g', 'LRAS'),
             C((Y) => s.a - Y, 'd', 'AD'),
             C((Y) => s.pe + s.gm * (Y - 5) + s.v, 's', 'SRAS'),
-            G(y, p, 'Y', 'P'),
-            T(5, 0.4, 'Y*', 'g', { anchor: 'middle' }),
+            G(y, p, 'Y', 'π'),
+            T(5, -1.6, 'Y*', 'g', { anchor: 'middle' }),
             P(y, p, 'E'),
           ];
         },
         readout(s) {
           const y = (s.a - s.pe - s.v + 5 * s.gm) / (1 + s.gm), p = s.a - y, gap = ((y - 5) / 5) * 100;
           return {
-            rows: [['Output Y', f(y)], ['Price level P', f(p)], ['Output gap', pct(gap)], ['P − Pᵉ (price surprise)', f(p - s.pe)]],
-            status: Math.abs(gap) < 0.5 ? 'Long-run equilibrium: output at potential and prices as expected.' : gap < 0 ? 'Recessionary gap. Expectations will fall, shifting SRAS down. Press “Let expectations adjust”.' : 'Inflationary gap. Expectations will rise, shifting SRAS up. Press “Let expectations adjust”.',
+            rows: [['Output Y', f(y)], ['Inflation π', f(p) + '%'], ['Output gap', pct(gap)], ['π − πᵉ (inflation surprise)', f(p - s.pe)]],
+            status: Math.abs(gap) < 0.5 ? 'Long-run equilibrium: output at potential and inflation as expected.' : gap < 0 ? 'Recessionary gap: inflation is below what people expected. Expected inflation will fall, shifting SRAS down. Press “Let expectations adjust”.' : 'Inflationary gap: inflation is above what people expected. Expected inflation will rise, shifting SRAS up. Press “Let expectations adjust”.',
             tone: Math.abs(gap) < 0.5 ? 'good' : 'warn',
           };
         },
       },
       equations: [
-        { name: 'Aggregate demand', tex: R`AD = C + I + G + NX`, note: 'Slopes down in P–Y space.' },
-        { name: 'Long-run aggregate supply', tex: R`Y = Y^*`, note: 'Potential output, independent of the price level.' },
-        { name: 'Short-run aggregate supply', tex: R`P = P^e + \gamma\,(Y - Y^*)`, note: 'Output exceeds potential only when prices exceed expectations.' },
-        { name: 'Taylor rule', tex: R`r = r^* + \alpha(\pi - \pi^*) + \beta(Y - Y^*)`, note: 'The central bank raises r when inflation or output is above target.' },
+        { name: 'Aggregate demand', tex: R`r = g\pi,\quad r = h - kY \;\Rightarrow\; \pi = \frac{h - kY}{g}`, note: 'The policy rule and the IS schedule together. AD slopes down in π–Y space. (The guide prints (h − Y)/g, dropping the k.)' },
+        { name: 'Long-run aggregate supply', tex: R`Y = Y^*`, note: 'Potential output, independent of inflation.' },
+        { name: 'Short-run aggregate supply', tex: R`Y = Y^* + \alpha(\pi - \pi^e) \;\Leftrightarrow\; \pi = \pi^e + \gamma(Y - Y^*),\ \gamma = \tfrac{1}{\alpha}`, note: 'Output exceeds potential only when inflation exceeds expectations.' },
+        { name: 'Taylor rule', tex: R`r = r^* + \alpha_\pi(\pi - \pi^*) + \beta(Y - Y^*)`, note: 'The central bank raises r when inflation or output is above target.' },
         { name: 'Output gap', tex: R`\frac{Y - Y^*}{Y^*}\times 100`, note: 'Negative is recessionary, positive is inflationary.' },
       ],
       points: [
-        'Demand shock: short run moves along SRAS; long run returns to Y* at a new price level.',
-        'Supply shock (oil): SRAS shifts up, giving stagflation, higher P and lower Y.',
+        'Demand shock: short run moves along SRAS; long run returns to Y* at a new inflation rate.',
+        'Supply shock (oil): SRAS shifts up, giving stagflation, higher π and lower Y.',
         'Policy can speed adjustment to a demand shock but faces a trade-off after a supply shock.',
       ],
       tip: 'Show short run and long run separately: E₀ → E₁ (short run) → E₂ (long run), with arrows.',
@@ -907,14 +907,14 @@
       id: 'phillips',
       title: 'Phillips curve',
       summary: 'In the short run lower unemployment comes with higher inflation. When expectations adjust, the SRPC shifts vertically, so in the long run unemployment returns to u* at any inflation rate.',
-      model: 'SRPC: π = πᵉ − γ(u − u*) + v, with u* = 5%.',
+      model: 'SRPC: π = πᵉ − b(u − u*) + v, with u* = 5%. In the guide b = h/α, where α is the slope of aggregate supply and h is Okun’s coefficient.',
       graph: {
         x: { range: [0, 10], label: 'Unemployment rate (%)', ticks: range(0, 10, 2), fmt: (v) => v + '%' },
         y: { range: [-2, 10], label: 'Inflation rate (%)', ticks: range(-2, 10, 2), fmt: (v) => v + '%' },
         params: [
           { id: 'u', label: 'Actual unemployment (u)', min: 0.1, max: 36, step: 0.1, value: 4 },
           { id: 'pe', label: 'Expected inflation (πᵉ)', min: -10, max: 40, step: 0.1, value: 2 },
-          { id: 'gm', label: 'Slope (γ)', min: 0.1, max: 8, step: 0.05, value: 1 },
+          { id: 'gm', label: 'Slope (b)', min: 0.1, max: 8, step: 0.05, value: 1 },
           { id: 'v', label: 'Supply shock (v)', min: -20, max: 20, step: 0.1, value: 0 },
         ],
         actions: [{ label: 'Expectations catch up', run: (s) => { s.pe = s.pe - s.gm * (s.u - 5) + s.v; } }],
@@ -939,7 +939,7 @@
         },
       },
       equations: [
-        { name: 'Expectations-augmented Phillips curve', tex: R`\pi = \pi^e - \gamma\,(u - u^*) + \text{supply shock}`, note: 'Only unexpected inflation lowers unemployment.' },
+        { name: 'Expectations-augmented Phillips curve', tex: R`\pi = \pi^e - b\,(u - u^*) + v, \qquad b = \frac{h}{\alpha}`, note: 'Only unexpected inflation lowers unemployment. v is a supply shock.' },
         { name: 'Natural rate / NAIRU', tex: R`\pi = \pi^e \;\Rightarrow\; u = u^*`, note: 'The long-run Phillips curve is vertical at u*.' },
         { name: 'Adaptive expectations', tex: R`\pi^e_t = \pi_{t-1}`, note: 'Holding u below u* means accelerating inflation.' },
         { name: 'Okun’s law', tex: R`\frac{Y - Y^*}{Y^*} = -2\,(u - u^*)`, note: 'Links the Phillips curve to the output gap.' },

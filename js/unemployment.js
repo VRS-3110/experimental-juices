@@ -7,7 +7,7 @@
 
   /* ── Unemployment: stocks, flows and types ── */
   // Monthly flows: a share s of the employed lose their jobs, a share f of the unemployed find one.
-  // u(t+1) = u(t) + s(1 − u(t)) − f·u(t); steady state u* = s/(s + f).
+  // u(t+1) = u(t) + j(1 − u(t)) − h·u(t); steady state u* = j/(j + h) (the guide's notation).
   const path = (s, months = 48) => {
     const sr = s.s / 100, fr = s.f / 100, out = [s.u0 / 100];
     for (let t = 0; t < months; t++) { const u = out[t]; out.push(u + sr * (1 - u) - fr * u); }
@@ -35,13 +35,13 @@
     id: 'unemployment',
     title: 'Unemployment: measurement, types and flows',
     summary: 'The unemployed are people without a job who are available for work and actively looking (the ILO definition). The unemployment rate is a stock, but behind it are large flows: every month some workers lose or leave jobs and some of the unemployed find work. The rate settles where the two flows balance, so anything that raises job separations or slows job finding raises unemployment.',
-    model: 'Each month a share s of the employed lose their jobs and a share f of the unemployed find one. Starting from u₀, unemployment follows u(t+1) = u(t) + s(1 − u(t)) − f·u(t) and settles at the steady state u* = s/(s + f), where inflows equal outflows.',
+    model: 'Each month a share j of the employed lose their jobs and a share h of the unemployed are hired. Starting from u₀, unemployment follows u(t+1) = u(t) + j(1 − u(t)) − h·u(t) and settles at the steady state u* = j/(j + h), where inflows equal outflows (jE = hU).',
     graph: {
       x: { range: [0, 48], label: 'Months', ticks: range(0, 48, 6), fmt: (v) => String(v) },
       y: { range: [0, 20], label: 'Unemployment rate (%)', ticks: range(0, 20, 4), fmt: (v) => v + '%' },
       params: [
-        { id: 's', label: 'Job separation rate (s, % of employed a month)', min: 0.1, max: 6, step: 0.1, value: 1.5 },
-        { id: 'f', label: 'Job-finding rate (f, % of unemployed a month)', min: 1, max: 100, step: 1, value: 25 },
+        { id: 's', label: 'Job-loss rate (j, % of employed a month)', min: 0.1, max: 6, step: 0.1, value: 1.5 },
+        { id: 'f', label: 'Hiring rate (h, % of unemployed a month)', min: 1, max: 100, step: 1, value: 25 },
         { id: 'u0', label: 'Starting unemployment rate (%)', min: 0, max: 60, step: 0.5, value: 10 },
       ],
       valid(s) {
@@ -61,9 +61,9 @@
         const z = flowStats(s);
         return {
           rows: [
-            ['Steady-state rate u* = s/(s + f)', pct(100 * z.ustar, 2)],
+            ['Steady-state rate u* = j/(j + h)', pct(100 * z.ustar, 2)],
             ['Unemployment after 12 months', pct(100 * z.u12, 2)],
-            ['Average spell of unemployment (1/f)', `${f(z.duration, 1)} months`],
+            ['Average spell of unemployment (1/h)', `${f(z.duration, 1)} months`],
             ['Months to close half the gap to u*', f(z.half, 1)],
             ['Monthly inflow = outflow at u* (% of labour force)', pct(100 * z.inflow, 2)],
           ],
@@ -80,9 +80,9 @@
     equations: [
       { name: 'Unemployment rate', tex: R`u = \frac{U}{U + E} \times 100`, note: 'U: unemployed (no job, available, actively seeking). E: employed. U + E is the labour force.' },
       { name: 'Participation rate', tex: R`\text{participation} = \frac{U + E}{\text{working-age population}} \times 100`, note: 'People neither working nor looking are economically inactive (students, carers, retired, discouraged workers).' },
-      { name: 'Stock–flow dynamics', tex: R`\Delta U = s\,E - f\,U` },
-      { name: 'Steady-state unemployment', tex: R`s\,E = f\,U \;\Rightarrow\; u^* = \frac{s}{s + f}` },
-      { name: 'Average duration of a spell', tex: R`\text{duration} \approx \frac{1}{f}` },
+      { name: 'Stock–flow dynamics', tex: R`\Delta U = jE - hU` },
+      { name: 'Steady-state unemployment', tex: R`jE = hU \;\Rightarrow\; u^* = \frac{j}{j + h}`, note: 'j: job-loss rate. h: hiring rate. As in the guide.' },
+      { name: 'Average duration of a spell', tex: R`\text{duration} \approx \frac{1}{h}` },
     ],
     points: [
       'Two UK measures: the Labour Force Survey uses the ILO definition (no job, available, looked in the last four weeks); the claimant count covers people claiming unemployment-related benefits. The LFS measure is usually higher.',
@@ -162,7 +162,7 @@
       { name: 'Wage-setting curve', tex: R`\frac{w}{P} = z - c\,u`, note: 'Lower unemployment strengthens workers’ bargaining position. z: benefits, union power, employment protection.' },
       { name: 'Price-setting curve', tex: R`\frac{w}{P} = \frac{A}{1 + \mu}`, note: 'Firms charge a mark-up μ over unit labour costs; A is labour productivity.' },
       { name: 'Natural rate', tex: R`z - c\,u^* = \frac{A}{1 + \mu} \;\Rightarrow\; u^* = \frac{1}{c}\Big(z - \frac{A}{1 + \mu}\Big)` },
-      { name: 'Link to the Phillips curve', tex: R`\pi = \pi^e - \gamma\,(u - u^*)`, note: 'Inflation rises when u < u* and falls when u > u*.' },
+      { name: 'Link to the Phillips curve', tex: R`\pi = \pi^e - b\,(u - u^*)`, note: 'Inflation rises when u < u* and falls when u > u*.' },
     ],
     points: [
       'The natural rate is not zero: it includes frictional and structural unemployment, and in the WS–PS model the unemployment needed to keep wage claims in line with what firms can pay.',

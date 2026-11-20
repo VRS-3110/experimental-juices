@@ -112,6 +112,7 @@
           <p class="eyebrow">${t.block ? esc(t.block) + ' <span aria-hidden="true">·</span> ' : ''}${esc(t.unit)}</p>
           <h1>${esc(t.title)}</h1>
           <p class="lede">${esc(t.summary)}</p>
+          ${(window.SYLLABUS_NOTES || {})[t.id] ? `<p class="rev-note syl-note">${esc(window.SYLLABUS_NOTES[t.id])}</p>` : ''}
           <button type="button" class="master-toggle" id="master-toggle" aria-pressed="${mastered.has(t.id)}">
             <span class="box" aria-hidden="true"></span><span class="lbl">${mastered.has(t.id) ? 'Mastered' : 'Mark as mastered'}</span>
           </button>
@@ -765,8 +766,11 @@
             <ul class="rev-checks">${sh.outcomes.map((o, i) => `<li><label><input type="checkbox" data-sheet="${sh.id}" data-i="${i}" ${mine.includes(i) ? 'checked' : ''}> <span>${rich(o)}</span></label></li>`).join('')}</ul>
           </section>
           <section><h3>${sh.note ? 'Key equations' : 'Key equations from the guide'}</h3>
-            <ul class="rev-eqs">${sh.equations.map((e) => `<li><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div></li>`).join('')}</ul>
+            <ul class="rev-eqs">${sh.equations.filter((e) => !e.beyond).map((e) => `<li><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div>${e.note ? `<p class="eq-note">${esc(e.note)}</p>` : ''}</li>`).join('')}</ul>
           </section>
+          ${sh.equations.some((e) => e.beyond) ? `<section class="rev-beyond"><h3>Beyond the guide</h3><p class="rev-beyond-intro">Used in this app’s graphs but not given in the subject guide, or marked there as not examinable.</p>
+            <ul class="rev-eqs">${sh.equations.filter((e) => e.beyond).map((e) => `<li><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.beyond)}</p></li>`).join('')}</ul>
+          </section>` : ''}
           <div class="rev-cols">
             <section><h3>Graphs to practise</h3><ul class="rev-links">${sh.graphs.map((gr) => `<li><a href="#${gr.topic}">${rich(gr.label)}</a></li>`).join('')}</ul></section>
             <section><h3>Exam focus</h3><ul class="rev-focus">${sh.examFocus.map((f) => `<li>${rich(f)}</li>`).join('')}</ul></section>
@@ -789,7 +793,7 @@
         <header class="topic-head">
           <p class="eyebrow">Revision</p>
           <h1>Revision planner</h1>
-          <p class="lede">One sheet per study block of the EC1002 guide breakdown: what you should be able to do, the guide’s equations, the graphs to practise and a quick test. Your breakdown groups Blocks 6–8, 17–18 and 19–20, so the sheets do the same. It did not list Block 14, so that sheet uses standard money-and-banking material.</p>
+          <p class="lede">One sheet per block of the EC1002 subject guide (2022): what you should be able to do, the guide’s equations, the graphs to practise and a quick test. Blocks 6–8, 17–18 and 19–20 share a sheet. Equations the guide does not give, or marks as not examinable, are listed separately under “Beyond the guide”, and topics outside the guide have their own sheet.</p>
         </header>
         <section class="rev-dash">
           <div class="stat"><p class="stat-k">Checklist</p><p class="stat-v" id="rd-ready">${pctReady}%</p><p class="stat-s" id="rd-ready-s">${r.done} of ${r.total} can-do statements ticked</p><div class="bar"><i id="rd-bar" style="width:${pctReady}%"></i></div></div>

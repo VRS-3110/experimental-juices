@@ -12,7 +12,7 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 | Macroeconomics (Blocks 11–20) | Circular flow and national income (GDP measured as spending, as income and as leakages against injections), Solow growth, Keynesian cross and multipliers, injections and leakages, money and banking (Block 14), IS–MP, AD–AS with shock adjustment, unemployment (measurement, types, flows and the steady state), the natural rate (WS–PS model), Phillips curve, foreign exchange (floating and fixed), demand-pull and cost-push inflation, the Laffer curve, investment demand and the liquidity trap, interest rate parity, the J-curve and the Marshall–Lerner condition |
 | Further topics | Price indices and growth rates, loanable funds, Lorenz curve, tariffs, import quotas (quota rent and voluntary export restraints) |
 
-Notation follows the guide: M for income in micro, Z for imports and NT for net taxes in macro, (n + d + g) in Solow, γ in SRAS and the Phillips curve.
+Notation follows the subject guide: M for income in micro, Z for imports and NT for net taxes in macro, (δ + n + t) in Solow, α for aggregate supply (Y = Y* + α(π − πᵉ)), b for the slope of the Phillips curve (b = h/α, with h Okun’s coefficient), and j and h for the job-loss and hiring rates. The AD–AS graphs plot inflation, not the price level, as the guide does.
 
 ## Your own supply and demand
 
@@ -56,10 +56,10 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 
 ## Revision
 
-The **Revision** tab has one sheet per study block of the EC1002 guide breakdown (Blocks 1–5, 6–8, 9–16, 17–18 and 19–20). The breakdown did not list Block 14, so its money-and-banking sheet uses standard material and says so. A **Further topics** sheet covers price indices and growth rates, loanable funds and the Lorenz curve, which sit outside the breakdown. Each sheet has:
+The **Revision** tab has one sheet per block of the EC1002 subject guide (Blocks 6–8, 17–18 and 19–20 share a sheet). A **Beyond the guide** sheet collects the topics the guide does not cover: price indices and growth rates, loanable funds, the Lorenz curve, the kinked demand curve, interest parity and trade policy. Each sheet has:
 
-- a "you should be able to" checklist to tick off (114 statements in all)
-- the key equations for that block (86 in all)
+- a "you should be able to" checklist to tick off (117 statements in all)
+- the key equations for that block, checked against the guide (80 from the guide, plus 21 that the app uses but the guide does not give or marks as not examinable, listed separately under "Beyond the guide"; the Beyond the guide sheet has 6 more)
 - the graphs to practise, each linked to its interactive topic
 - exam focus points, the block's worked answers and key terms
 - a **Test this block** button that starts a 6-question quiz on the block's topics
@@ -109,7 +109,7 @@ js/worked.js      step-by-step worked answers
 js/quiz.js        quiz question generators and concept questions
 js/practice.js    worked answers and quiz questions for the remaining topics
 js/vendor/        KaTeX (MIT licence), bundled so equations render offline
-js/revision.js    block revision sheets from the EC1002 guide breakdown
+js/revision.js    block revision sheets checked against the EC1002 subject guide
 js/app.js         navigation, formula sheet, flashcards
 scripts/build.mjs bundles everything into dist/marginal-notes.html
 ```

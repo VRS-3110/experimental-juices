@@ -456,13 +456,13 @@
       question: 'An economy has a working-age population of 40 million. 28.5 million are employed and 1.5 million are without work, available and actively looking; the rest are inactive. (a) Find the labour force, the participation rate and the unemployment rate. (b) Each month 1% of the employed lose their jobs and 19% of the unemployed find one. Find the steady-state unemployment rate and the average length of a spell. (c) In a recession the job-finding rate falls to 9%. What happens? (d) 0.5 million discouraged workers stop looking. How does the measured rate change?',
       steps: [
         { t: '(a) Labour force = employed + unemployed:', m: R`LF = 28.5 + 1.5 = 30\text{m},\quad \text{participation} = \frac{30}{40} = 75\%,\quad u = \frac{1.5}{30} = 5\%` },
-        { t: '(b) In the steady state inflows equal outflows, s·E = f·U:', m: R`u^* = \frac{s}{s + f} = \frac{0.01}{0.01 + 0.19} = 5\%,\qquad \text{duration} = \frac{1}{0.19} \approx 5.3 \text{ months}` },
-        { t: '(c) With f = 9%:', m: R`u^* = \frac{0.01}{0.01 + 0.09} = 10\%,\qquad \text{duration} = \frac{1}{0.09} \approx 11.1 \text{ months}` },
+        { t: '(b) In the steady state inflows equal outflows, jE = hU (j: job-loss rate, h: hiring rate):', m: R`u^* = \frac{j}{j + h} = \frac{0.01}{0.01 + 0.19} = 5\%,\qquad \text{duration} = \frac{1}{0.19} \approx 5.3 \text{ months}` },
+        { t: '(c) With h = 9%:', m: R`u^* = \frac{0.01}{0.01 + 0.09} = 10\%,\qquad \text{duration} = \frac{1}{0.09} \approx 11.1 \text{ months}` },
         { t: 'Halving the job-finding rate doubles the steady-state rate and the average spell: cyclical unemployment rises.' },
         { t: '(d) Discouraged workers leave the labour force:', m: R`u = \frac{1.0}{29.5} \approx 3.4\%` },
         { t: 'The measured rate falls although no one found a job: the unemployment rate understates slack when people give up looking.' },
       ],
-      answer: 'Labour force 30m, participation 75%, unemployment 5%. Steady state u* = 1/(1 + 19) = 5% with spells of about 5.3 months. If f falls to 9%, u* = 10% and spells last about 11 months. If 0.5m stop looking, measured unemployment falls to about 3.4%.',
+      answer: 'Labour force 30m, participation 75%, unemployment 5%. Steady state u* = 1/(1 + 19) = 5% with spells of about 5.3 months. If h falls to 9%, u* = 10% and spells last about 11 months. If 0.5m stop looking, measured unemployment falls to about 3.4%.',
       mistakes: ['Dividing by the working-age population instead of the labour force.', 'Counting the inactive as unemployed.', 'Reading a falling unemployment rate as good news without checking participation.'],
     },
     {
@@ -514,8 +514,8 @@
       steps: [
         { t: 'Define: an oil price rise is an adverse supply shock. It raises firms’ costs at every level of output.' },
         { t: 'Draw AD, SRAS₀ and a vertical LRAS at Y*, starting from long-run equilibrium E₀ where all three meet.' },
-        { t: 'Short run: SRAS shifts up/left to SRAS₁. The new equilibrium E₁ has a higher price level and lower output: stagflation. Unemployment rises above its natural rate (Okun’s law).' },
-        { t: 'Long run without policy: with output below potential, unemployment pushes wages and expected prices down, SRAS drifts back towards SRAS₀ and the economy returns to E₀. This can be slow.' },
+        { t: 'Short run: SRAS shifts up/left to SRAS₁. The new equilibrium E₁ has higher inflation and lower output: stagflation. Unemployment rises above its natural rate (Okun’s law).' },
+        { t: 'Long run without policy: with output below potential, unemployment pushes wage growth and expected inflation down, SRAS drifts back towards SRAS₀ and the economy returns to E₀. This can be slow.' },
         { t: 'Policy dilemma: expanding AD restores output faster but raises inflation further; tightening to fight inflation deepens the recession. Monetary policy cannot fix both with one instrument.' },
         { t: 'Evaluate: the outcome depends on whether expectations stay anchored. Credible inflation targeting lets the bank “look through” a one-off shock; if wages chase prices, a wage–price spiral can develop.' },
       ],

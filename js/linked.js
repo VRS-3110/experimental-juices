@@ -261,7 +261,7 @@
     id: 'adas-phillips',
     title: 'AD–AS and the Phillips curve together',
     summary: 'The same shock seen twice. Moving along SRAS raises output and inflation; through Okun’s law, higher output means lower unemployment, which is a move along the short-run Phillips curve. Both panels share the inflation axis.',
-    model: 'AD: π = 2 + d − 0.6(Y − 100). SRAS: π = πᵉ + 0.5(Y − 100) + v. Okun: u = 5 − 0.5(Y − 100). Together they give SRPC: π = πᵉ + v − (u − 5).',
+    model: 'AD: π = 2 + d − 0.6(Y − 100). SRAS: π = πᵉ + 0.5(Y − 100) + v, the guide’s Y = Y* + α(π − πᵉ) with α = 2. Okun: Y − 100 = −2(u − 5), so h = 2. Together they give the SRPC π = πᵉ + v − b(u − 5) with b = h/α = 1.',
     graph: {
       layout: 'row',
       params: [
@@ -320,9 +320,9 @@
     },
     equations: [
       { name: 'Aggregate demand (from the Taylor rule)', tex: R`\pi = \pi_0 + d - \phi\,(Y - Y^*)`, note: 'Higher inflation makes the central bank raise r, lowering spending.' },
-      { name: 'Short-run aggregate supply', tex: R`\pi = \pi^e + \gamma\,(Y - Y^*) + v`, note: 'Firms raise prices faster when output is above potential.' },
-      { name: 'Okun’s law', tex: R`u - u^* = -\beta\,\frac{Y - Y^*}{Y^*}`, note: 'Links the output gap to cyclical unemployment.' },
-      { name: 'Short-run Phillips curve', tex: R`\pi = \pi^e - \frac{\gamma}{\beta}\,(u - u^*) + v`, note: 'SRAS rewritten in unemployment using Okun’s law.' },
+      { name: 'Short-run aggregate supply', tex: R`Y = Y^* + \alpha(\pi - \pi^e) \;\Leftrightarrow\; \pi = \pi^e + \frac{1}{\alpha}(Y - Y^*) + v`, note: 'Firms raise prices faster when output is above potential.' },
+      { name: 'Okun’s law', tex: R`Y - Y^* = -h\,(u - u^*), \quad h > 0`, note: 'Links the output gap to cyclical unemployment.' },
+      { name: 'Short-run Phillips curve', tex: R`\pi = \pi^e - b\,(u - u^*) + v, \qquad b = \frac{h}{\alpha}`, note: 'SRAS rewritten in unemployment using Okun’s law.' },
       { name: 'Long run', tex: R`\pi = \pi^e \;\Rightarrow\; Y = Y^*,\; u = u^*`, note: 'Vertical LRAS and LRPC.' },
     ],
     points: [

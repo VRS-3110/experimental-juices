@@ -196,7 +196,7 @@
         { t: '(d)', m: R`\pi = 2 - 0 + 2 = 4\%` },
         { t: 'A supply shock shifts the SRPC up: higher inflation at the same unemployment (stagflation). Only at u = u* is π = πᵉ, so the long-run Phillips curve is vertical at 5%.' },
       ],
-      answer: '(a) 3%. (b) 4%, then 5%: inflation accelerates. (c) u = 7%. (d) 4%. The graph’s defaults (u = 4, πᵉ = 2, γ = 1) show part (a); press “Expectations catch up” for part (b).',
+      answer: '(a) 3%. (b) 4%, then 5%: inflation accelerates. (c) u = 7%. (d) 4%. The graph’s defaults (u = 4, πᵉ = 2, b = 1) show part (a); press “Expectations catch up” for part (b).',
       mistakes: ['Treating the short-run trade-off as permanent.', 'Getting the sign wrong: unemployment below u* raises inflation.', 'Moving along the SRPC for a supply shock instead of shifting it.'],
     },
 

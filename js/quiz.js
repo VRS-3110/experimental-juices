@@ -575,8 +575,8 @@
           ],
           solution: [
             `u = ${U}/(${U} + ${E}) = ${n((100 * U) / (U + E))}%.`,
-            `Steady state: u* = s/(s + f) = ${sep}/(${sep} + ${fnd}) = ${n((100 * sep) / (sep + fnd))}%.`,
-            `Duration ≈ 1/f = 1/${fnd / 100} = ${n(100 / fnd)} months.`,
+            `Steady state: u* = j/(j + h) = ${sep}/(${sep} + ${fnd}) = ${n((100 * sep) / (sep + fnd))}%.`,
+            `Duration ≈ 1/h = 1/${fnd / 100} = ${n(100 / fnd)} months.`,
           ],
         };
       },
