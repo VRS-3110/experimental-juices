@@ -423,7 +423,7 @@
     model: 'y = Ak. Saving per worker is sAk; the investment needed to keep k constant is (δ + n)k. Both are straight lines from the origin, so the gap between them grows with k, and k and y grow at the constant rate g = sA − (δ + n).',
     graph: {
       x: { range: [0, 10], label: 'Capital per worker (k)' },
-      y: { range: [0, 10], label: 'Output and investment per worker' },
+      y: { range: [0, 6], label: 'Output and investment per worker' },
       params: [
         { id: 'A', label: 'Productivity of capital (A)', min: 0.1, max: 1, step: 0.01, value: 0.5 },
         { id: 's', label: 'Saving rate (s)', min: 0, max: 0.8, step: 0.01, value: 0.3 },

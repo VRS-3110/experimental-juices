@@ -521,6 +521,7 @@
       <article class="wk" id="${w.id}" data-wk="${w.id}">
         <p class="card-kicker">${t ? `${esc(t.block || t.unit)} <span aria-hidden="true">·</span> <a href="#${t.id}">${esc(t.title)}</a> <span aria-hidden="true">·</span> ` : ''}${KIND[w.kind]}</p>
         <h3>${rich(w.title)}</h3>
+        ${w.source ? `<p class="past-tag">Past paper: ${esc(w.source)}</p>` : ''}
         ${(window.WORKED_SCOPE || {})[w.id] ? `<p class="rev-note wk-scope">${window.WORKED_SCOPE[w.id].level === 'beyond' ? 'Beyond the guide: ' : 'Partly beyond the guide: '}${esc(window.WORKED_SCOPE[w.id].note)}</p>` : ''}
         <p class="wk-q"><strong>Question.</strong> ${rich(w.question)}</p>
         <ol class="wk-steps">${w.steps.slice(0, n).map((st) => `<li><p>${rich(st.t)}</p>${st.m ? `<div class="eq-math">${tex(st.m, true)}</div>` : ''}</li>`).join('')}</ol>
@@ -528,7 +529,7 @@
         <div class="btn-row">
           ${done ? '' : `<button type="button" class="primary" data-wk-act="next">${n ? 'Next step' : 'Start the run-through'} <span class="wk-count">${n}/${w.steps.length}</span></button><button type="button" class="ghost-btn" data-wk-act="all">Show full answer</button>`}
           ${n ? '<button type="button" class="ghost-btn" data-wk-act="hide">Hide answer</button>' : ''}
-          ${hasDrill(w.id) ? `<a class="ghost-btn" href="#q-${w.id}">Practise with new numbers</a>` : ''}
+          ${hasDrill(w.id) ? `<a class="ghost-btn" href="#q-${w.id}">${w.source ? 'Answer it as a quiz question' : 'Practise with new numbers'}</a>` : ''}
         </div>
       </article>`;
   }
@@ -547,7 +548,7 @@
   const wkFilter = { unit: 'All', kind: 'all' };
   function renderWorked(focus) {
     const units = ['All', ...UNITS.filter((u) => WORKED.some((w) => byId[w.topic]?.unit === u))];
-    const list = WORKED.filter((w) => (wkFilter.unit === 'All' || byId[w.topic]?.unit === wkFilter.unit) && (wkFilter.kind === 'all' || w.kind === wkFilter.kind));
+    const list = WORKED.filter((w) => (wkFilter.unit === 'All' || byId[w.topic]?.unit === wkFilter.unit) && (wkFilter.kind === 'all' || (wkFilter.kind === 'past' ? !!w.source : w.kind === wkFilter.kind)));
     main.innerHTML = `
       <article class="worked">
         <header class="topic-head">
@@ -558,7 +559,7 @@
         <div class="card-bar">
           <div class="chips" role="group" aria-label="Unit">${units.map((u) => `<button type="button" class="chip" data-wk-unit="${esc(u)}" aria-pressed="${wkFilter.unit === u}">${esc(u)}</button>`).join('')}</div>
           <div class="seg" role="group" aria-label="Question type">
-            ${[['all', 'All'], ['calc', 'Calculations'], ['diagram', 'Diagram answers']].map(([v, l]) => `<button type="button" data-wk-kind="${v}" aria-pressed="${wkFilter.kind === v}">${l}</button>`).join('')}
+            ${[['all', 'All'], ['calc', 'Calculations'], ['diagram', 'Diagram answers'], ['past', 'From past papers']].map(([v, l]) => `<button type="button" data-wk-kind="${v}" aria-pressed="${wkFilter.kind === v}">${l}</button>`).join('')}
           </div>
         </div>
         <div class="wk-list">${list.map(workedCard).join('') || '<p class="empty">No run-throughs match this filter.</p>'}</div>
@@ -572,7 +573,7 @@
   const QUIZ_ITEMS = (window.QUIZ && window.QUIZ.items) || [];
   const workedById = Object.fromEntries(WORKED.map((w) => [w.id, w]));
   const hasDrill = (id) => QUIZ_ITEMS.some((it) => it.worked === id);
-  const quiz = { phase: 'setup', opts: { n: 10, area: 'All', type: 'mixed', scope: 'guide' }, list: [], i: 0, label: '' };
+  const quiz = { phase: 'setup', opts: { n: 10, area: 'All', type: 'mixed', scope: 'guide', src: 'any' }, list: [], i: 0, label: '' };
   const beyondGuide = (it) => ((window.WORKED_SCOPE || {})[it.worked] || {}).level === 'beyond';
   const fmtAns = (v) => String(+(+v).toFixed(Math.abs(v) < 1 && v !== 0 ? 3 : 2));
   const parseNum = (raw) => {
@@ -584,7 +585,7 @@
   const closeEnough = (v, a) => Number.isFinite(v) && Math.abs(v - a) <= Math.max(0.01, Math.abs(a) * 0.01);
 
   function quizPool(o) {
-    return QUIZ_ITEMS.filter((it) => (o.scope === 'all' || !beyondGuide(it)) && (o.area === 'All' || byId[it.topic]?.unit === o.area) && (o.type === 'mixed' || (o.type === 'calc' ? it.kind === 'calc' : it.kind === 'concept')));
+    return QUIZ_ITEMS.filter((it) => (o.scope === 'all' || !beyondGuide(it)) && (o.area === 'All' || byId[it.topic]?.unit === o.area) && (o.type === 'mixed' || (o.type === 'calc' ? it.kind === 'calc' : it.kind === 'concept')) && (!o.src || o.src === 'any' || (o.src === 'past') === !!it.source));
   }
   function startQuiz(items, count, label) {
     const order = shuffle(items.slice()), list = [];
@@ -608,16 +609,17 @@
     if (quiz.phase === 'setup') {
       const o = quiz.opts, pool = quizPool(o), best = store.get('mn-quiz-best', null);
       const seg = (name, val, opts) => `<div class="seg" role="group" aria-label="${name}">${opts.map(([v, l]) => `<button type="button" data-q-${name}="${v}" aria-pressed="${String(val) === String(v)}">${l}</button>`).join('')}</div>`;
-      main.innerHTML = `<article class="quiz">${head('Questions built on the worked answers, with new numbers every time, so you practise the method rather than remembering the example. Calculation answers are accepted within 1%.')}
+      main.innerHTML = `<article class="quiz">${head('Questions built on the worked answers, with new numbers every time, so you practise the method rather than remembering the example, plus questions from past EC1002 papers, each labelled with its paper. Calculation answers are accepted within 1%.')}
         <div class="quiz-setup panel">
           <div class="q-row"><span class="ctrl-label">Questions</span>${seg('n', o.n, [[5, '5'], [10, '10'], [15, '15']])}</div>
           <div class="q-row"><span class="ctrl-label">Area</span>${seg('area', o.area, [['All', 'All'], ...UNITS.filter((u) => QUIZ_ITEMS.some((it) => byId[it.topic]?.unit === u)).map((u) => [u, u])])}</div>
           <div class="q-row"><span class="ctrl-label">Type</span>${seg('type', o.type, [['mixed', 'Mixed'], ['calc', 'Calculations'], ['concept', 'Concepts']])}</div>
+          <div class="q-row"><span class="ctrl-label">Source</span>${seg('src', o.src, [['any', 'All questions'], ['past', 'Past papers only'], ['app', 'App questions only']])}</div>
           <div class="q-row"><span class="ctrl-label">Scope</span>${seg('scope', o.scope, [['guide', 'EC1002 guide only'], ['all', 'Include beyond the guide']])}</div>
           <p class="q-pool">${pool.length} question types match.${best ? ` Best score so far: ${best.pct}% (${best.marks}/${best.total}).` : ''}</p>
           <div class="btn-row"><button type="button" class="primary" id="q-start" ${pool.length ? '' : 'disabled'}>Start quiz</button></div>
         </div></article>`;
-      ['n', 'area', 'type', 'scope'].forEach((name) => main.querySelectorAll(`[data-q-${name}]`).forEach((b) => b.addEventListener('click', () => {
+      ['n', 'area', 'type', 'src', 'scope'].forEach((name) => main.querySelectorAll(`[data-q-${name}]`).forEach((b) => b.addEventListener('click', () => {
         const v = b.getAttribute(`data-q-${name}`); quiz.opts[name] = name === 'n' ? +v : v; renderQuiz();
       })));
       $('#q-start')?.addEventListener('click', () => { startQuiz(quizPool(quiz.opts), quiz.opts.n, ''); renderQuiz(); $('.q-card input, .q-card [type=radio]')?.focus(); });
@@ -659,11 +661,12 @@
       }
       return `<div class="q-part${state}"><label for="qp${k}">${rich(p.label)}</label><div class="q-input"><input id="qp${k}" inputmode="decimal" autocomplete="off" value="${x.given[k] !== undefined ? esc(x.given[k]) : ''}" ${x.checked ? 'disabled' : ''}>${fb}</div></div>`;
     };
-    main.innerHTML = `<article class="quiz">${head(quiz.label ? `Practising: ${esc(quiz.label)}. New numbers each time.` : 'Type numbers to 2 decimal places where needed. Fractions like 1/3 are fine.')}
+    main.innerHTML = `<article class="quiz">${head(quiz.label ? `Practising: ${esc(quiz.label)}. ${quiz.list.every((x) => x.it.source) ? 'The question keeps the past paper’s numbers.' : 'New numbers each time.'}` : 'Type numbers to 2 decimal places where needed. Fractions like 1/3 are fine.')}
       <div class="card-meter"><span>Question ${quiz.i + 1} of ${quiz.list.length} · ${marks()} marks so far</span><div class="bar"><i style="width:${(100 * quiz.i) / quiz.list.length}%"></i></div></div>
       <form class="q-card panel" id="q-form" novalidate>
         <p class="card-kicker">${t ? `${esc(t.block || t.unit)} <span aria-hidden="true">·</span> ${esc(t.title)} <span aria-hidden="true">·</span> ` : ''}${x.it.kind === 'calc' ? 'Calculation' : 'Concept'}</p>
         ${beyondGuide(x.it) ? '<p class="rev-note wk-scope">Beyond the guide</p>' : ''}
+        ${x.it.source ? `<p class="past-tag">Past paper: ${esc(x.it.source)}</p>` : ''}
         <p class="q-text">${rich(x.inst.q)}</p>
         ${x.inst.parts.map(partHtml).join('')}
         <p class="fn-error" id="q-err" role="alert" hidden></p>
