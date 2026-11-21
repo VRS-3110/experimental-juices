@@ -157,7 +157,7 @@
       params: [
         { id: 'M', label: 'Money supply (M)', min: 0.5, max: 60, step: 0.1, value: 6 },
         { id: 'I0', label: 'Business confidence: investment at i = 0 (I₀)', min: 1, max: 60, step: 0.1, value: 14 },
-        { id: 'd', label: 'Interest sensitivity of investment (d)', min: 0.05, max: 11, step: 0.05, value: 1.2 },
+        { id: 'd', label: 'Interest sensitivity of investment (b)', min: 0.05, max: 11, step: 0.05, value: 1.2 },
       ],
       panels: [
         {

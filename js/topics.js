@@ -160,7 +160,7 @@ window.TOPICS = (function () {
         },
         readout(s) {
           const x = s.I / (2 * s.px), y = s.I / (2 * s.py);
-          return { rows: [['Optimal X*', f(x)], ['Optimal Y*', f(y)], ['Utility U*', f(Math.sqrt(x * y))], ['MRS = Px / Py', f(s.px / s.py)]], status: 'With Cobb–Douglas utility, half of income goes to each good whatever the prices.' };
+          return { rows: [['Optimal X*', f(x)], ['Optimal Y*', f(y)], ['Utility U*', f(Math.sqrt(x * y))], ['|MRS| = P_X/P_Y', f(s.px / s.py)]], status: 'With Cobb–Douglas utility, half of income goes to each good whatever the prices.' };
         },
       },
       equations: [

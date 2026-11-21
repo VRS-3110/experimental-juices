@@ -229,7 +229,7 @@
     id: 'special-preferences',
     title: 'Perfect substitutes and perfect complements',
     summary: 'Indifference curves are not always smooth and bowed in. If two goods are perfect substitutes (the consumer only cares about the total, such as two brands of bottled water), indifference curves are straight lines and the consumer buys only the cheaper good per unit of satisfaction: a corner solution. If they are perfect complements (always used in fixed proportions, such as left and right shoes), indifference curves are L-shaped and the consumer buys them in that ratio whatever the prices.',
-    model: 'Income 24. Perfect substitutes: U = aX + Y, so the MRS is constant at a. Perfect complements: U = min(X, Y/a), so the consumer wants a units of Y for each unit of X. Cobb–Douglas U = √(XY) is shown for comparison.',
+    model: 'Income 24. Perfect substitutes: U = aX + Y, so |MRS| is constant at a. Perfect complements: U = min(X, Y/a), so the consumer wants a units of Y for each unit of X. Cobb–Douglas U = √(XY) is shown for comparison.',
     graph: {
       x: { range: [0, 24], label: 'Good X', ticks: range(0, 24, 4) },
       y: { range: [0, 24], label: 'Good Y', ticks: range(0, 24, 4) },
@@ -237,7 +237,7 @@
         { id: 'type', label: 'Preferences', options: [{ v: 0, label: 'Perfect substitutes' }, { v: 1, label: 'Perfect complements' }, { v: 2, label: 'Cobb–Douglas (smooth)' }], value: 0 },
         { id: 'px', label: 'Price of X (P_X)', min: 0.3, max: 25, step: 0.1, value: 2 },
         { id: 'py', label: 'Price of Y (P_Y)', min: 0.3, max: 25, step: 0.1, value: 3 },
-        { id: 'a', label: 'Substitutes: MRS a · Complements: units of Y per X', min: 0.1, max: 8, step: 0.05, value: 1 },
+        { id: 'a', label: 'Substitutes: |MRS| a · Complements: units of Y per X', min: 0.1, max: 8, step: 0.05, value: 1 },
       ],
       draw(s) {
         const z = spOpt(s), out = [];
@@ -258,14 +258,14 @@
         const rows = [['Optimal X* / Y*', `${f(z.x)} / ${f(z.y)}`], ['Price ratio P_X / P_Y', f(r, 2)]];
         let status;
         if (s.type === 0) {
-          rows.push(['MRS (constant)', f(s.a, 2)]);
-          status = z.corner === 'X' ? 'MRS > P_X/P_Y: X gives more satisfaction per pound, so the consumer spends everything on X (a corner solution).' : z.corner === 'Y' ? 'MRS < P_X/P_Y: Y gives more satisfaction per pound, so the consumer buys only Y (a corner solution).' : 'MRS = P_X/P_Y: every bundle on the budget line is equally good.';
+          rows.push(['|MRS| (constant)', f(s.a, 2)]);
+          status = z.corner === 'X' ? '|MRS| > P_X/P_Y: X gives more satisfaction per pound, so the consumer spends everything on X (a corner solution).' : z.corner === 'Y' ? '|MRS| < P_X/P_Y: Y gives more satisfaction per pound, so the consumer buys only Y (a corner solution).' : 'MRS = P_X/P_Y: every bundle on the budget line is equally good.';
         } else if (s.type === 1) {
           rows.push(['Demand for X', `24/(P_X + ${f(s.a, 2)}P_Y)`]);
           status = 'The consumer always buys the goods in the fixed ratio, at the corner of an L-shaped indifference curve. A price change has no substitution effect, only an income effect.';
         } else {
-          rows.push(['MRS at E', f(z.y / z.x, 2)]);
-          status = 'Smooth preferences: the optimum is a tangency where MRS = P_X/P_Y, and the consumer buys some of both goods.';
+          rows.push(['|MRS| at E', f(z.y / z.x, 2)]);
+          status = 'Smooth preferences: the optimum is a tangency where |MRS| = P_X/P_Y, and the consumer buys some of both goods.';
         }
         return { rows, status, tone: 'info' };
       },

@@ -70,7 +70,7 @@
           status: Math.abs(s.u0 / 100 - z.ustar) < 0.002
             ? 'Unemployment starts at its steady state: inflows and outflows already balance.'
             : s.u0 / 100 > z.ustar
-              ? `More people find jobs each month than lose them, so unemployment falls toward ${pct(100 * z.ustar, 1)}. Raising the job-finding rate (better matching) or cutting separations lowers the steady state.`
+              ? `More people find jobs each month than lose them, so unemployment falls toward ${pct(100 * z.ustar, 1)}. Raising the hiring rate h (better matching) or cutting the job-loss rate j lowers the steady state.`
               : `More people lose jobs each month than find them, so unemployment rises toward ${pct(100 * z.ustar, 1)}.`,
           tone: 'info',
         };

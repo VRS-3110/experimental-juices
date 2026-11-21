@@ -586,6 +586,9 @@
     (window.GLOSSARY || []).forEach((g) => { if (/Not in the EC1002 syllabus|Not on the EC1002 syllabus|not covered in the EC1002|Not part of EC1002|not part of EC1002|Not examinable/i.test(g.def)) g.beyond = true; });
   })();
 
+  // Checklist items on the block sheets that go beyond the guide (index → reason).
+  window.OUTCOMES_BEYOND = {"b-4": {6: "Intertemporal choice is not in the guide."}, "b-6-8": {9: "The repeated-game condition goes beyond the guide.", 12: "Price leadership is not in the guide.", 13: "The Stackelberg and n-firm parts go beyond the guide.", 16: "Limit pricing is not in the guide."}, "b-9": {5: "Bilateral monopoly is not in the guide.", 7: "Present-value calculations go beyond the guide.", 9: "The Solow condition goes beyond the guide."}, "b-12": {2: "The golden rule is not in the guide."}, "b-15": {4: "The liquidity trap model is not in the guide."}, "b-17-18": {5: "The WS–PS model is not in the guide."}};
+
   // Worked answers (and the quiz questions built on them) checked against the guide and the textbook sections it assigns.
   // 'beyond': outside the EC1002 guide, left out of guide-only quizzes. 'partial': in the guide, but one part goes further.
   window.WORKED_SCOPE = {
@@ -620,6 +623,22 @@
     'price-discrimination': 'The two-part tariff (BVFD 9.10) is not examinable, according to the guide’s Block 7.',
     'contestable-markets': 'Not in the EC1002 syllabus: the guide’s Block 8 reading is BVFD Chapter 10 except 10.6, the section on entry, potential competition and contestable markets.',
     'discrimination': 'Not in the EC1002 syllabus: the guide’s Block 9 reading is BVFD Chapter 11 except 11.8, the section on wage discrimination.',
+    'intertemporal': 'Beyond the guide: intertemporal choice is not in the EC1002 guide or its assigned reading.',
+    'price-leadership': 'Beyond the guide: the dominant-firm price leadership model is not in the EC1002 guide or its assigned reading.',
+    'bilateral-monopoly': 'Beyond the guide: bilateral monopoly is not in the EC1002 guide or its assigned reading.',
+    'natural-rate': 'Beyond the guide: the WS–PS model is not in the guide or the textbook. The guide treats the natural rate as unemployment in long-run labour market equilibrium (Block 18).',
+    'entry-barriers': 'Partly beyond the guide: the guide covers barriers to entry and entry deterrence through credible threats (BVFD 10.7), but not limit-price calculations.',
+    'investment-trap': 'Partly beyond the guide: the money market and investment demand are in the guide; the liquidity trap model is not (the guide and textbook only note that interest rates cannot fall below zero).',
+    'money-ismp': 'Partly beyond the guide: the guide works with IS–MP and says you are not required to know IS–LM, so the fixed-money-supply (LM) option goes beyond it.',
+    'solow': 'Partly beyond the guide: the steady state is in the guide (Block 12); the golden rule is not.',
+    'efficiency-wages': 'Partly beyond the guide: the guide covers efficiency wages in words; the effort curve and the Solow condition go further.',
+    'human-capital': 'Partly beyond the guide: the guide covers human capital in words; present-value calculations are BVFD Chapter 12, which it does not assign.',
+    'bertrand': 'Partly beyond the guide: the guide covers Bertrand competition with identical goods; the differentiated-goods case goes further.',
+    'prisoners-dilemma': 'Partly beyond the guide: one-shot games and dominant strategies are in the guide; the repeated-game condition for collusion is not.',
+    'collusion': 'Partly beyond the guide: the tension between collusion and cheating is in the guide; the repeated-game condition for cartel stability is not.',
+    'oligopoly-compare': 'Partly beyond the guide: monopoly, Cournot and Bertrand are in the guide; the Stackelberg figures and n-firm Cournot go further.',
+    'commons': 'Partly beyond the guide: the guide describes common property but gives no model.',
+    'lemons': 'Partly beyond the guide: the guide mentions adverse selection but gives no model.',
     'tariff': 'Trade policy is not covered in the EC1002 subject guide.',
     'import-quota': 'Trade policy is not covered in the EC1002 subject guide.',
   };

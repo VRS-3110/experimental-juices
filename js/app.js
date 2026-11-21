@@ -770,7 +770,7 @@
           ${sh.note ? `<p class="rev-note">${rich(sh.note)}</p>` : ''}
           <p class="rev-sum">${rich(sh.summary)}</p>
           <section><h3>You should be able to</h3>
-            <ul class="rev-checks">${sh.outcomes.map((o, i) => `<li><label><input type="checkbox" data-sheet="${sh.id}" data-i="${i}" ${mine.includes(i) ? 'checked' : ''}> <span>${rich(o)}</span></label></li>`).join('')}</ul>
+            <ul class="rev-checks">${sh.outcomes.map((o, i) => { const why = ((window.OUTCOMES_BEYOND || {})[sh.id] || {})[i]; return `<li><label><input type="checkbox" data-sheet="${sh.id}" data-i="${i}" ${mine.includes(i) ? 'checked' : ''}> <span>${rich(o)}${why ? ` <em class="beyond-tag" title="${esc(why)}">beyond the guide</em>` : ''}</span></label></li>`; }).join('')}</ul>
           </section>
           <section><h3>${sh.note ? 'Key equations' : 'Key equations from the guide'}</h3>
             <ul class="rev-eqs">${sh.equations.filter((e) => !e.beyond).map((e) => `<li><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div>${e.note ? `<p class="eq-note">${esc(e.note)}</p>` : ''}</li>`).join('')}</ul>
@@ -779,7 +779,7 @@
             <ul class="rev-eqs">${sh.equations.filter((e) => e.beyond).map((e) => `<li><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.beyond)}</p></li>`).join('')}</ul>
           </section>` : ''}
           <div class="rev-cols">
-            <section><h3>Graphs to practise</h3><ul class="rev-links">${sh.graphs.map((gr) => `<li><a href="#${gr.topic}">${rich(gr.label)}</a></li>`).join('')}</ul></section>
+            <section><h3>Graphs to practise</h3><ul class="rev-links">${sh.graphs.map((gr) => { const n = sh.id !== 'b-further' && (window.SYLLABUS_NOTES || {})[gr.topic]; return `<li><a href="#${gr.topic}">${rich(gr.label)}</a>${n ? ` <em class="beyond-tag" title="${esc(n)}">${/^Partly/.test(n) || /idea of Stackelberg|two-part tariff/.test(n) ? 'partly beyond the guide' : 'beyond the guide'}</em>` : ''}</li>`; }).join('')}</ul></section>
             <section><h3>Exam focus</h3><ul class="rev-focus">${sh.examFocus.map((f) => `<li>${rich(f)}</li>`).join('')}</ul></section>
           </div>
           ${runs.length ? `<section><h3>Worked answers</h3><ul class="rev-links">${runs.map((w) => `<li><a href="#${w.id}">${rich(w.title)}</a></li>`).join('')}</ul></section>` : ''}
