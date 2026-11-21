@@ -466,6 +466,21 @@
       mistakes: ['Dividing by the working-age population instead of the labour force.', 'Counting the inactive as unemployed.', 'Reading a falling unemployment rate as good news without checking participation.'],
     },
     {
+      id: 'w-labour-rates', topic: 'unemployment', kind: 'calc',
+      title: 'Employment, unemployment and inactivity from labour demand and supply',
+      question: 'A country has a working-age population of 25. Labour demand is N_D = 24 − W and labour supply is N_S = 3 + 2W, where W is the real wage. (a) Find the equilibrium wage and employment, and the employment, unemployment and inactivity rates. (b) The government sets a minimum wage of 9. Find the new rates. What type of unemployment is this? (c) Why is unemployment zero in (a), and is that realistic? (Subject guide, Activity SG18.4.)',
+      steps: [
+        { t: '(a) Labour demand equals labour supply:', m: R`24 - W = 3 + 2W \;\Rightarrow\; W = 7,\qquad E = 24 - 7 = 17` },
+        { t: 'Everyone who wants to work at W = 7 has a job, so the labour force is 17 and U = 0. The other 8 are inactive:', m: R`e = \frac{17}{25} = 68\%,\qquad u = \frac{0}{17} = 0\%,\qquad \text{inactivity} = \frac{25 - 17}{25} = 32\%` },
+        { t: '(b) At W = 9 firms hire fewer people and more people want to work:', m: R`E = N_D = 24 - 9 = 15,\qquad LF = N_S = 3 + 2(9) = 21,\qquad U = 21 - 15 = 6` },
+        { m: R`e = \frac{15}{25} = 60\%,\qquad u = \frac{6}{21} \approx 28.6\%,\qquad \text{inactivity} = \frac{25 - 21}{25} = 16\%` },
+        { t: 'This is classical unemployment: the wage is held above the level that clears the market. BVFD count it as part of equilibrium (voluntary) unemployment, because it comes from society’s choice of a minimum wage, although the people affected would take a job at the going wage.' },
+        { t: '(c) The simple supply-and-demand model has no job search. Real economies always have frictional and structural unemployment, so unemployment in long-run equilibrium (the natural rate) is never zero.' },
+      ],
+      answer: 'Equilibrium W = 7 and E = 17: employment rate 68%, unemployment 0%, inactivity 32%. With a minimum wage of 9: E = 15, LF = 21, U = 6, so the employment rate is 60%, unemployment about 28.6% and inactivity 16%. The unemployment is classical.',
+      mistakes: ['Dividing the inactive by the labour force instead of the working-age population.', 'Taking the labour force from labour demand rather than labour supply at the going wage.', 'Saying the minimum wage raises inactivity: the higher wage draws people into the labour force, so inactivity falls while unemployment rises.', 'Claiming long-run unemployment is zero in a real economy.'],
+    },
+    {
       id: 'w-natural-rate', topic: 'natural-rate', kind: 'calc',
       title: 'The natural rate in the WS–PS model',
       question: 'Wage setting gives a real wage of w = 12 − 0.5u (u in %). Firms set prices as a 25% mark-up on unit labour costs, and labour productivity is 10, so the price-setting real wage is 10/1.25. (a) Find the natural rate of unemployment. (b) What happens to inflation if unemployment is held at 4%? (c) Find the natural rate if stronger competition cuts the mark-up to 10%. (d) Find it if more generous benefits raise wage-push so that w = 13 − 0.5u (mark-up back at 25%).',

@@ -79,7 +79,8 @@
     extra: typesTable,
     equations: [
       { name: 'Unemployment rate', tex: R`u = \frac{U}{U + E} \times 100`, note: 'U: unemployed (no job, available, actively seeking). E: employed. U + E is the labour force.' },
-      { name: 'Participation rate', tex: R`\text{participation} = \frac{U + E}{\text{working-age population}} \times 100`, note: 'People neither working nor looking are economically inactive (students, carers, retired, discouraged workers).' },
+      { name: 'Working-age population', tex: R`P = LF + NLF, \qquad LF = E + U`, note: 'NLF: people not in the labour force, the inactive (students, carers, the retired, the long-term sick, discouraged workers). As in the guide (Block 18).' },
+      { name: 'Employment, participation and inactivity rates', tex: R`e = \frac{E}{P}, \qquad lfp = \frac{LF}{P}, \qquad \text{inactivity rate} = \frac{NLF}{P} = 1 - lfp`, note: 'These divide by the working-age population P; only the unemployment rate divides by the labour force.' },
       { name: 'Stock–flow dynamics', tex: R`\Delta U = jE - hU` },
       { name: 'Steady-state unemployment', tex: R`jE = hU \;\Rightarrow\; u^* = \frac{j}{j + h}`, note: 'j: job-loss rate. h: hiring rate. As in the guide.' },
       { name: 'Average duration of a spell', tex: R`\text{duration} \approx \frac{1}{h}` },

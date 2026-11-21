@@ -122,7 +122,7 @@
           <section class="eqs" aria-labelledby="eq-h">
             <h2 id="eq-h">Key equations</h2>
             <ul class="eq-list">
-              ${t.equations.map((e) => `<li class="eq${e.beyond ? ' eq-beyond' : ''}"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.note)}</p>${e.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(e.beyond)}</p>` : ''}</li>`).join('')}
+              ${t.equations.map((e) => `<li class="eq${e.beyond ? ' eq-beyond' : ''}"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div>${e.note ? `<p class="eq-note">${esc(e.note)}</p>` : ''}${e.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(e.beyond)}</p>` : ''}</li>`).join('')}
             </ul>
           </section>
         </div>
@@ -438,11 +438,11 @@
         let unitHtml = '';
         for (const t of TOPICS.filter((x) => x.unit === unit)) {
           const topicHit = !q || (t.title + ' ' + unit).toLowerCase().includes(q);
-          const eqs = t.equations.filter((e) => (sheetScope === 'all' || !e.beyond) && (topicHit || (e.name + ' ' + e.note).toLowerCase().includes(q)));
+          const eqs = t.equations.filter((e) => (sheetScope === 'all' || !e.beyond) && (topicHit || (e.name + ' ' + (e.note || '')).toLowerCase().includes(q)));
           if (!eqs.length) continue;
           count += eqs.length;
           unitHtml += `<section class="sheet-topic"><h3><a href="#${t.id}">${esc(t.title)}</a></h3><div class="sheet-grid">
-            ${eqs.map((e) => `<div class="sheet-eq${e.beyond ? ' eq-beyond' : ''}"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.note)}</p>${e.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(e.beyond)}</p>` : ''}</div>`).join('')}
+            ${eqs.map((e) => `<div class="sheet-eq${e.beyond ? ' eq-beyond' : ''}"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div>${e.note ? `<p class="eq-note">${esc(e.note)}</p>` : ''}${e.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(e.beyond)}</p>` : ''}</div>`).join('')}
           </div></section>`;
         }
         if (unitHtml) html += `<h2 class="sheet-unit">${esc(unit)}</h2>${unitHtml}`;
@@ -878,7 +878,7 @@
           : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-hint">Name this formula and say what it tells you.</p>`);
       const back = card.def
         ? `<p class="card-big small">${rich(card.name)}</p><p class="card-def">${rich(card.note)}</p>`
-        : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-big small">${esc(card.name)}</p><p class="eq-note">${esc(card.note)}</p>${card.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(card.beyond)}</p>` : ''}`;
+        : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-big small">${esc(card.name)}</p>${card.note ? `<p class="eq-note">${esc(card.note)}</p>` : ''}${card.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(card.beyond)}</p>` : ''}`;
       face = `<div class="card${cards.flipped ? ' flipped' : ''}">
         <p class="card-kicker">${esc(card.topic.unit)} <span aria-hidden="true">·</span> <a href="#${card.topic.id}">${esc(card.topic.title)}</a></p>
         ${cards.flipped ? back : front}

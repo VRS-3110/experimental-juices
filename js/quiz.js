@@ -582,6 +582,27 @@
       },
     },
     {
+      worked: 'w-labour-rates', topic: 'unemployment',
+      gen() {
+        const s0 = int(2, 5), W = int(5, 9), N = s0 + 2 * W, a = N + W, wm = W + int(1, 3);
+        const E1 = a - wm, LF1 = s0 + 2 * wm, P = LF1 + int(3, 9);
+        return {
+          q: `A country has a working-age population of ${P}. Labour demand is N_D = ${a} − W and labour supply is N_S = ${s0} + 2W, where W is the real wage. The government then sets a minimum wage of ${wm}.`,
+          parts: [
+            { label: 'Equilibrium employment', answer: N },
+            { label: 'Inactivity rate in equilibrium (%)', answer: (100 * (P - N)) / P },
+            { label: 'Unemployment rate with the minimum wage (%)', answer: (100 * (LF1 - E1)) / LF1 },
+            { label: 'Inactivity rate with the minimum wage (%)', answer: (100 * (P - LF1)) / P },
+          ],
+          solution: [
+            `${a} − W = ${s0} + 2W → W = ${W}, E = ${N}. Unemployment is 0; the other ${P - N} are inactive: ${P - N}/${P} = ${n((100 * (P - N)) / P)}%.`,
+            `At W = ${wm}: E = ${a} − ${wm} = ${E1} and LF = ${s0} + 2(${wm}) = ${LF1}, so U = ${LF1 - E1} and u = ${LF1 - E1}/${LF1} = ${n((100 * (LF1 - E1)) / LF1)}%.`,
+            `Inactivity = (${P} − ${LF1})/${P} = ${n((100 * (P - LF1)) / P)}%: it falls, because the higher wage draws people into the labour force.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-natural-rate', topic: 'natural-rate',
       gen() {
         const A = pick([8, 10, 12]), mu = pick([0.2, 0.25, 0.5]), c = pick([0.5, 1]), ps = A / (1 + mu);
@@ -1060,6 +1081,10 @@
     { worked: 'w-oil-shock', topic: 'ad-as', q: 'Why does an adverse supply shock pose a dilemma for the central bank?', choices: ['It cannot change interest rates after a supply shock', 'Stimulating output adds to inflation, while fighting inflation deepens the recession', 'Supply shocks only affect the long run', 'Fiscal policy automatically offsets it'], correct: 1, why: 'One instrument cannot move output up and inflation down at the same time when SRAS has shifted.' },
     { worked: 'w-unemployment-flows', topic: 'unemployment', q: 'A steelworker loses their job when the industry closes and their skills are not wanted elsewhere. This is…', choices: ['Frictional unemployment', 'Structural unemployment', 'Cyclical unemployment', 'Seasonal unemployment'], correct: 1, why: 'A lasting mismatch between workers’ skills or location and the jobs available is structural.' },
     { worked: 'w-unemployment-flows', topic: 'unemployment', q: 'If discouraged workers stop looking for work, the measured unemployment rate…', choices: ['Rises, because they are still without jobs', 'Falls, because they leave the labour force', 'Is unchanged', 'Rises, because participation falls'], correct: 1, why: 'They move from unemployed to inactive, so both U and the labour force fall and u drops.' },
+    { worked: 'w-labour-rates', topic: 'unemployment', q: 'The employment rate is…', choices: ['Employed ÷ labour force', 'Employed ÷ working-age population', 'Labour force ÷ working-age population', '100% minus the unemployment rate'], correct: 1, why: 'The guide defines e = E/P. Only the unemployment rate divides by the labour force.' },
+    { worked: 'w-labour-rates', topic: 'unemployment', q: 'In a competitive labour market, a minimum wage set above the market-clearing wage…', choices: ['Raises employment and lowers inactivity', 'Lowers employment, creates unemployment and lowers inactivity', 'Lowers employment and raises inactivity', 'Changes neither the labour force nor inactivity'], correct: 1, why: 'Firms hire fewer workers while more people want to work at the higher wage. The labour force grows, so inactivity falls, and the gap is classical unemployment.' },
+    { worked: 'w-money-creation', topic: 'money-market', q: 'In a liquidity crisis, a bank…', choices: ['Has liabilities greater than its assets', 'Has assets greater than its liabilities but cannot turn them into cash fast enough to repay depositors', 'Cannot be helped by the central bank', 'Has lost its banking licence'], correct: 1, why: 'The bank is solvent but illiquid, so the central bank can lend to it as lender of last resort. In a solvency crisis liabilities exceed assets, and lending alone does not fix that.' },
+    { worked: 'w-money-creation', topic: 'money-market', q: 'Holding money as a low-risk store of wealth, rather than in riskier assets, reflects the…', choices: ['Transactions motive', 'Precautionary motive', 'Asset motive', 'Unit-of-account function'], correct: 2, why: 'The asset motive: money is a safe asset in a portfolio. The transactions motive is for planned spending; the precautionary motive is for unexpected spending.' },
     { worked: 'w-natural-rate', topic: 'natural-rate', q: 'Which change would lower the natural rate of unemployment in the WS–PS model?', choices: ['Higher unemployment benefits', 'Stronger union bargaining power', 'More competition in product markets, cutting firms’ mark-ups', 'An increase in government spending'], correct: 2, why: 'A lower mark-up raises the PS real wage, so WS meets PS at lower unemployment. Demand policy does not move u* in the long run.' },
     { worked: 'w-natural-rate', topic: 'natural-rate', q: 'Hysteresis in unemployment means that…', choices: ['Unemployment always returns quickly to the natural rate', 'A long period of high unemployment can raise the natural rate itself', 'Inflation and unemployment are unrelated', 'The natural rate is zero'], correct: 1, why: 'Long-term unemployed workers lose skills and attachment, so the economy can settle at a higher u* after a deep recession.' },
     { worked: 'w-shutdown', topic: 'costs', q: 'A competitive firm’s price is above minimum AVC but below minimum ATC. In the short run it should…', choices: ['Shut down immediately', 'Keep producing where P = MC', 'Raise its price to ATC', 'Produce where ATC is lowest'], correct: 1, why: 'Revenue covers variable cost and part of fixed cost, so the loss is smaller than the fixed cost it would lose by closing.' },

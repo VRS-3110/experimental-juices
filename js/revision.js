@@ -361,8 +361,9 @@
         'Show how fractional-reserve banking creates deposits, and calculate the money multiplier with and without cash held by the public.',
         'Explain how open market operations and the policy rate change the monetary base and interest rates.',
         'Draw the money market and show the effect of a change in money supply or in income.',
-        'Explain the motives for holding money and why real money demand falls as the interest rate rises and rises with real income.',
+        'Explain the transactions, precautionary and asset motives for holding money, and why real money demand falls as the interest rate rises and rises with real income.',
         'Distinguish nominal and real interest rates using the Fisher equation.',
+        'Distinguish a liquidity crisis from a solvency crisis, and say which one central bank lending can solve.',
       ],
       examFocus: [
         'A higher reserve ratio, or more cash held outside banks, shrinks the multiplier.',
@@ -440,16 +441,16 @@
         'Explain the natural rate (NAIRU) and why the long-run Phillips curve is vertical.',
         'Show accelerating inflation when unemployment is held below the natural rate.',
         'Link the Phillips curve to AD–AS through Okun’s law.',
-        'Measure unemployment and participation, classify unemployment by type, and find steady-state unemployment from job flows.',
+        'Calculate the unemployment, employment, participation and inactivity rates (including from labour demand and supply with a minimum wage), classify unemployment by type, and find steady-state unemployment from job flows.',
         'Distinguish voluntary from involuntary unemployment, explain how supply-side policies reduce equilibrium unemployment, and explain hysteresis.',
       ],
-      examFocus: ['Moves along SRPC come from demand; shifts of SRPC come from expectations or supply shocks.'],
+      examFocus: ['Moves along SRPC come from demand; shifts of SRPC come from expectations or supply shocks.', 'With labour demand and supply and a working-age population: employment is labour demand at the going wage, the labour force is labour supply, and the rest are inactive. A minimum wage above equilibrium creates classical unemployment and lowers inactivity.', 'Unemployment is never zero in long-run equilibrium or at full employment: there is always frictional and structural unemployment.'],
       equations: [
         { name: 'Fisher equation', tex: R`r \approx i - \pi, \qquad 1 + r = \frac{1 + i}{1 + \pi}` },
         { name: 'Original Phillips curve', tex: R`\pi = a_0 - a_1 u` },
         { name: 'Okun’s law', tex: R`Y - Y^* = -h(u - u^*), \quad h > 0` },
         { name: 'Expectations-augmented Phillips curve', tex: R`\pi = \pi^e - b(u - u^*) + v, \qquad b = \frac{h}{\alpha}`, note: 'v is a supply shock. BVFD Maths 25.1 combines the same Phillips curve with Okun’s law to get aggregate supply Y = Y* + (h/b)(π − πᵉ), so α = h/b.' },
-        { name: 'Labour market rates', tex: R`u = \frac{U}{LF}, \qquad lfp = \frac{LF}{P}, \qquad LF = E + U` },
+        { name: 'Labour market rates', tex: R`u = \frac{U}{LF}, \qquad e = \frac{E}{P}, \qquad lfp = \frac{LF}{P}, \qquad P = LF + NLF`, note: 'As in the guide (Block 18). NLF is the inactive; the inactivity rate is NLF/P = 1 − lfp.' },
         { name: 'Steady-state unemployment', tex: R`jE = hU \;\Rightarrow\; u = \frac{j}{j + h}`, note: 'j is the job-loss rate and h the hiring rate.' },
       ],
       graphs: [
@@ -486,7 +487,7 @@
     },
     {
       id: 'b-further', block: 'Further topics', part: 'Further topics', title: 'Beyond the guide',
-      note: 'These topics are outside the EC1002 subject guide. Price indices, loanable funds and the Lorenz curve support Blocks 11–15. The guide leaves the others out on purpose: its Block 8 reading excludes the kinked demand curve and contestable markets (BVFD 10.6), its Block 9 reading excludes wage discrimination (BVFD 11.8), it says interest parity is covered in EC2065 rather than EC1002, and it does not cover trade policy. Intertemporal choice, price leadership, bilateral monopoly, the liquidity trap and the WS–PS model are in neither the guide nor its assigned reading, and none appeared in the May 2024, May 2025 or October 2025 exams.',
+      note: 'These topics are outside the EC1002 subject guide. Price indices, loanable funds and the Lorenz curve support Blocks 11–15. The guide leaves the others out on purpose: its Block 8 reading excludes the kinked demand curve and contestable markets (BVFD 10.6), its Block 9 reading excludes wage discrimination (BVFD 11.8), it says interest parity is covered in EC2065 rather than EC1002 (it was last examined in October 2022, under the previous guide), and it does not cover trade policy. Intertemporal choice, price leadership, bilateral monopoly, the liquidity trap and the WS–PS model are in neither the guide nor its assigned reading, and none appeared in the 2022–2025 papers checked.',
       summary: 'Price indices turn nominal values into real ones, and growth compounds. In the loanable funds market, government borrowing raises the interest rate and crowds out some private investment. The Lorenz curve and Gini coefficient measure how unequally income is shared.',
       outcomes: [
         'Calculate a CPI from a fixed basket and the inflation rate it implies.',
