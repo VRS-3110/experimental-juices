@@ -429,7 +429,7 @@
         { name: 'Short-run aggregate supply', tex: R`Y = Y^* + \alpha(\pi - \pi^e), \quad \alpha > 0`, note: 'The app’s AD–AS graph writes this as π = πᵉ + γ(Y − Y*), so γ = 1/α.' },
         { name: 'Long-run aggregate supply', tex: R`Y = Y^*` },
         { name: 'Taylor rule', tex: R`r - r^* = a(\pi - \pi^*) + b(Y - Y^*), \qquad i - i^* = (1 + a)(\pi - \pi^*) + b(Y - Y^*)`, note: 'BVFD Maths 24.1 (a, b > 0, i* = r* + π*). The guide describes it in words: the rate responds to inflation and to the output gap, and nominal rates must rise by more than inflation.' },
-        { name: 'Revenue-maximising tax rate', tex: R`B = B_0(1 - t)^{\varepsilon} \Rightarrow t^* = \frac{1}{1 + \varepsilon}`, beyond: 'The Laffer curve is not in the guide.' },
+        { name: 'Revenue-maximising tax rate', tex: R`B = B_0(1 - t)^{\varepsilon} \Rightarrow t^* = \frac{1}{1 + \varepsilon}`, note: 'The Laffer curve is in BVFD 15.4 (taxation and supply-side economics), assigned in the guide’s Block 10.' },
       ],
       graphs: [
         { label: 'AD–AS with LRAS at potential output', topic: 'ad-as' },
@@ -533,6 +533,32 @@
       topics: ['growth-measure', 'loanable-funds', 'lorenz', 'kinked-demand', 'interest-parity', 'tariff', 'import-quota', 'contestable-markets', 'discrimination'],
     },
   ];
+
+  // Worked answers (and the quiz questions built on them) checked against the guide and the textbook sections it assigns.
+  // 'beyond': outside the EC1002 guide, left out of guide-only quizzes. 'partial': in the guide, but one part goes further.
+  window.WORKED_SCOPE = {
+    'w-contestable': { level: 'beyond', note: 'Contestable markets are BVFD 10.6, which the guide’s Block 8 reading excludes.' },
+    'w-kinked-demand': { level: 'beyond', note: 'The guide’s Block 8 reading excludes the kinked demand curve.' },
+    'w-discrimination': { level: 'beyond', note: 'Wage discrimination is BVFD 11.8, which the guide’s Block 9 reading excludes.' },
+    'w-interest-parity': { level: 'beyond', note: 'The guide says interest parity is covered in EC2065, not EC1002.' },
+    'w-tariff': { level: 'beyond', note: 'Trade policy is not covered in the EC1002 guide (it is BVFD Chapter 30, which the guide does not assign).' },
+    'w-import-quota': { level: 'beyond', note: 'Trade policy is not covered in the EC1002 guide (it is BVFD Chapter 30, which the guide does not assign).' },
+    'w-loanable-funds': { level: 'beyond', note: 'The loanable funds model is not in the guide or its assigned reading.' },
+    'w-lorenz': { level: 'beyond', note: 'The Lorenz curve is BVFD 12.9, which the guide does not assign.' },
+    'w-stackelberg': { level: 'beyond', note: 'The guide examines the idea of Stackelberg leadership but says the model’s mathematics (BVFD A10.2) is not examinable.' },
+    'w-limit-pricing': { level: 'beyond', note: 'The guide covers entry deterrence through credible threats (BVFD 10.7), but not limit-price calculations.' },
+    'w-intertemporal': { level: 'beyond', note: 'Intertemporal choice is not in the guide or its assigned reading.' },
+    'w-price-leadership': { level: 'beyond', note: 'The dominant-firm price leadership model is not in the guide or its assigned reading.' },
+    'w-bilateral': { level: 'beyond', note: 'Bilateral monopoly is not in the guide or its assigned reading.' },
+    'w-natural-rate': { level: 'beyond', note: 'The WS–PS model is not in the guide or the textbook. The guide treats the natural rate as the unemployment rate in long-run labour market equilibrium.' },
+    'w-investment-trap': { level: 'beyond', note: 'The guide and textbook note that interest rates cannot fall below zero, but do not use the liquidity trap model.' },
+    'w-solow': { level: 'partial', note: 'The steady state is in the guide (Block 12); the golden rule is not.' },
+    'w-human-capital': { level: 'partial', note: 'The guide covers human capital in words; present-value calculations are BVFD Chapter 12, which it does not assign.' },
+    'w-cartel': { level: 'partial', note: 'The tension between collusion and cheating is in the guide (Block 8); the repeated-game condition for stability goes further.' },
+    'w-oligopoly-compare': { level: 'partial', note: 'Monopoly, Cournot and Bertrand are in the guide; the Stackelberg figures and the n-firm Cournot result go beyond it.' },
+    'w-growth-measure': { level: 'partial', note: 'Real GDP and the deflator are in the guide (Block 11); the rule of 70 is not.' },
+    'w-efficiency-wage': { level: 'partial', note: 'The guide covers efficiency wages in words (Block 9); minimising the wage per unit of effort goes further.' },
+  };
 
   // Where the subject guide says a topic (or part of it) is not examinable, the topic page says so.
   window.SYLLABUS_NOTES = {

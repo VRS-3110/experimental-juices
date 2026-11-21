@@ -57,7 +57,7 @@
       steps: [
         { t: '(a) At P = 7, Q = 50 and dQ/dP = −10:', m: R`PED = \frac{dQ}{dP}\cdot\frac{P}{Q} = -10 \times \frac{7}{50} = -1.4` },
         { t: '(b) At P = 6, Q = 60; at P = 8, Q = 40. Use averages (P̄ = 7, Q̄ = 50):', m: R`PED = \frac{-20/50}{2/7} = \frac{-0.4}{0.286} = -1.4` },
-        { t: '(c) |PED| = 1.4 > 1, so demand is elastic here: a price cut raises total revenue. Revenue is maximised where |PED| = 1, at the midpoint P = 6, Q = 60 (TR = 360 versus 350 at P = 7).' },
+        { t: '(c) PED = −1.4 < −1 (|PED| > 1), so demand is elastic here: a price cut raises total revenue. Revenue is maximised where |PED| = 1, at the midpoint P = 6, Q = 60 (TR = 360 versus 350 at P = 7).' },
         { t: '(d) Income rises by 2,000/20,000 = 10%:', m: R`IED = \frac{12\%}{10\%} = 1.2` },
       ],
       answer: 'PED = −1.4 (elastic), both as a point and an arc measure. Cut price towards 6 to raise revenue. IED = 1.2, so the good is normal and a luxury.',
@@ -412,11 +412,11 @@
     {
       id: 'w-solow', topic: 'solow', kind: 'calc',
       title: 'Solow steady state and the golden rule',
-      question: 'y = k^{0.5}, saving rate s = 0.2, population growth n = 0.01, depreciation d = 0.04, no technological progress. Find steady-state k, y and c. Find the golden-rule saving rate and consumption.',
+      question: 'y = k^{0.5}, saving rate s = 0.2, population growth n = 0.01, depreciation δ = 0.04, no technological progress. Find steady-state k, y and c. Find the golden-rule saving rate and consumption.',
       steps: [
-        { t: 'Steady-state condition:', m: R`s\,k^{0.5} = (n + d)k \;\Rightarrow\; k^{0.5} = \frac{s}{n + d} = \frac{0.2}{0.05} = 4` },
+        { t: 'Steady-state condition:', m: R`s\,k^{0.5} = (\delta + n)k \;\Rightarrow\; k^{0.5} = \frac{s}{\delta + n} = \frac{0.2}{0.05} = 4` },
         { t: 'So k* = 16, y* = 4, c* = (1 − 0.2)(4) = 3.2.' },
-        { t: 'Golden rule: MPK = n + d. With Cobb–Douglas this gives s = α = 0.5:', m: R`k_g^{0.5} = \frac{0.5}{0.05} = 10 \;\Rightarrow\; k_g = 100,\; y_g = 10,\; c_g = 5` },
+        { t: 'Golden rule (beyond the guide): MPK = δ + n. With Cobb–Douglas this gives s = α = 0.5:', m: R`k_g^{0.5} = \frac{0.5}{0.05} = 10 \;\Rightarrow\; k_g = 100,\; y_g = 10,\; c_g = 5` },
       ],
       answer: 'Steady state k = 16, y = 4, c = 3.2. The economy saves too little relative to the golden rule (s = 0.5, c = 5), but reaching it means lower consumption during the transition.',
       mistakes: ['Thinking a higher saving rate raises the long-run growth rate (it raises the level only).'],
@@ -845,15 +845,15 @@
     {
       id: 'w-inflation-types', topic: 'inflation-types', kind: 'calc',
       title: 'Demand-pull and cost-push in AD–AS',
-      question: 'AD is P = a − Y and SRAS is P = Pᵉ + (Y − 5) + v, with potential output 5. Initially a = 10, Pᵉ = 5, v = 0. (a) Find the initial equilibrium. (b) Demand rises: a = 12. Find the short-run outcome and the long run after expectations adjust. (c) Instead a cost shock v = 2 hits. Find the short-run outcome and the outcome if the central bank accommodates to restore potential output.',
+      question: 'As in the guide, plot inflation π against output. AD is π = a − Y and SRAS is π = πᵉ + (Y − 5) + v, with potential output 5. Initially a = 10, πᵉ = 5, v = 0. (a) Find the initial equilibrium. (b) Demand rises: a = 12. Find the short-run outcome and the long run after expectations adjust. (c) Instead a cost shock v = 2 hits. Find the short-run outcome and the outcome if the central bank accommodates to restore potential output.',
       steps: [
-        { t: '(a)', m: R`10 - Y = 5 + (Y - 5) \;\Rightarrow\; Y = 5,\quad P = 5` },
-        { t: '(b) Short run:', m: R`12 - Y = Y \;\Rightarrow\; Y = 6,\quad P = 6` },
-        { t: 'Long run: Pᵉ rises until Y = 5, so P = 12 − 5 = 7 and Pᵉ = 7. Output is back at potential; only the price level is higher.' },
-        { t: '(c) Short run:', m: R`10 - Y = Y + 2 \;\Rightarrow\; Y = 4,\quad P = 6 \quad (\text{stagflation})` },
-        { t: 'Accommodation: AD must pass through SRAS₁ at Y = 5, where P = 5 + 2 = 7, so a = 12. Output is restored but the price level rises further, to 7.' },
+        { t: '(a)', m: R`10 - Y = 5 + (Y - 5) \;\Rightarrow\; Y = 5,\quad \pi = 5\%` },
+        { t: '(b) Short run:', m: R`12 - Y = Y \;\Rightarrow\; Y = 6,\quad \pi = 6\%` },
+        { t: 'Long run: πᵉ rises until Y = 5, so π = 12 − 5 = 7% and πᵉ = 7%. Output is back at potential; only inflation is higher.' },
+        { t: '(c) Short run:', m: R`10 - Y = Y + 2 \;\Rightarrow\; Y = 4,\quad \pi = 6\% \quad (\text{stagflation})` },
+        { t: 'Accommodation: AD must pass through SRAS₁ at Y = 5, where π = 5 + 2 = 7%, so a = 12. Output is restored but inflation rises further, to 7%.' },
       ],
-      answer: 'Start: Y = 5, P = 5. Demand-pull: Y = 6, P = 6, then Y = 5, P = 7. Cost-push: Y = 4, P = 6; accommodated: Y = 5, P = 7.',
+      answer: 'Start: Y = 5, π = 5%. Demand-pull: Y = 6, π = 6%, then Y = 5, π = 7%. Cost-push: Y = 4, π = 6%; accommodated: Y = 5, π = 7%.',
       mistakes: ['Shifting AD for a cost shock.', 'Thinking demand stimulus can keep output above potential once expectations adjust.'],
     },
     {

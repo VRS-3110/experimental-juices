@@ -518,6 +518,7 @@
       <article class="wk" id="${w.id}" data-wk="${w.id}">
         <p class="card-kicker">${t ? `${esc(t.block || t.unit)} <span aria-hidden="true">·</span> <a href="#${t.id}">${esc(t.title)}</a> <span aria-hidden="true">·</span> ` : ''}${KIND[w.kind]}</p>
         <h3>${rich(w.title)}</h3>
+        ${(window.WORKED_SCOPE || {})[w.id] ? `<p class="rev-note wk-scope">${window.WORKED_SCOPE[w.id].level === 'beyond' ? 'Beyond the guide: ' : 'Partly beyond the guide: '}${esc(window.WORKED_SCOPE[w.id].note)}</p>` : ''}
         <p class="wk-q"><strong>Question.</strong> ${rich(w.question)}</p>
         <ol class="wk-steps">${w.steps.slice(0, n).map((st) => `<li><p>${rich(st.t)}</p>${st.m ? `<div class="eq-math">${tex(st.m, true)}</div>` : ''}</li>`).join('')}</ol>
         ${done ? `<div class="wk-answer"><p><strong>Answer.</strong> ${rich(w.answer)}</p>${w.mistakes?.length ? `<p class="wk-mistakes-h">Common mistakes</p><ul class="wk-mistakes">${w.mistakes.map((m) => `<li>${rich(m)}</li>`).join('')}</ul>` : ''}</div>` : ''}
@@ -568,7 +569,8 @@
   const QUIZ_ITEMS = (window.QUIZ && window.QUIZ.items) || [];
   const workedById = Object.fromEntries(WORKED.map((w) => [w.id, w]));
   const hasDrill = (id) => QUIZ_ITEMS.some((it) => it.worked === id);
-  const quiz = { phase: 'setup', opts: { n: 10, area: 'All', type: 'mixed' }, list: [], i: 0, label: '' };
+  const quiz = { phase: 'setup', opts: { n: 10, area: 'All', type: 'mixed', scope: 'guide' }, list: [], i: 0, label: '' };
+  const beyondGuide = (it) => ((window.WORKED_SCOPE || {})[it.worked] || {}).level === 'beyond';
   const fmtAns = (v) => String(+(+v).toFixed(Math.abs(v) < 1 && v !== 0 ? 3 : 2));
   const parseNum = (raw) => {
     const s = String(raw).replace(/[−–—]/g, '-').replace(/[,£$%\s]/g, '');
@@ -579,7 +581,7 @@
   const closeEnough = (v, a) => Number.isFinite(v) && Math.abs(v - a) <= Math.max(0.01, Math.abs(a) * 0.01);
 
   function quizPool(o) {
-    return QUIZ_ITEMS.filter((it) => (o.area === 'All' || byId[it.topic]?.unit === o.area) && (o.type === 'mixed' || (o.type === 'calc' ? it.kind === 'calc' : it.kind === 'concept')));
+    return QUIZ_ITEMS.filter((it) => (o.scope === 'all' || !beyondGuide(it)) && (o.area === 'All' || byId[it.topic]?.unit === o.area) && (o.type === 'mixed' || (o.type === 'calc' ? it.kind === 'calc' : it.kind === 'concept')));
   }
   function startQuiz(items, count, label) {
     const order = shuffle(items.slice()), list = [];
@@ -608,10 +610,11 @@
           <div class="q-row"><span class="ctrl-label">Questions</span>${seg('n', o.n, [[5, '5'], [10, '10'], [15, '15']])}</div>
           <div class="q-row"><span class="ctrl-label">Area</span>${seg('area', o.area, [['All', 'All'], ...UNITS.filter((u) => QUIZ_ITEMS.some((it) => byId[it.topic]?.unit === u)).map((u) => [u, u])])}</div>
           <div class="q-row"><span class="ctrl-label">Type</span>${seg('type', o.type, [['mixed', 'Mixed'], ['calc', 'Calculations'], ['concept', 'Concepts']])}</div>
+          <div class="q-row"><span class="ctrl-label">Scope</span>${seg('scope', o.scope, [['guide', 'EC1002 guide only'], ['all', 'Include beyond the guide']])}</div>
           <p class="q-pool">${pool.length} question types match.${best ? ` Best score so far: ${best.pct}% (${best.marks}/${best.total}).` : ''}</p>
           <div class="btn-row"><button type="button" class="primary" id="q-start" ${pool.length ? '' : 'disabled'}>Start quiz</button></div>
         </div></article>`;
-      ['n', 'area', 'type'].forEach((name) => main.querySelectorAll(`[data-q-${name}]`).forEach((b) => b.addEventListener('click', () => {
+      ['n', 'area', 'type', 'scope'].forEach((name) => main.querySelectorAll(`[data-q-${name}]`).forEach((b) => b.addEventListener('click', () => {
         const v = b.getAttribute(`data-q-${name}`); quiz.opts[name] = name === 'n' ? +v : v; renderQuiz();
       })));
       $('#q-start')?.addEventListener('click', () => { startQuiz(quizPool(quiz.opts), quiz.opts.n, ''); renderQuiz(); $('.q-card input, .q-card [type=radio]')?.focus(); });
@@ -657,6 +660,7 @@
       <div class="card-meter"><span>Question ${quiz.i + 1} of ${quiz.list.length} · ${marks()} marks so far</span><div class="bar"><i style="width:${(100 * quiz.i) / quiz.list.length}%"></i></div></div>
       <form class="q-card panel" id="q-form" novalidate>
         <p class="card-kicker">${t ? `${esc(t.block || t.unit)} <span aria-hidden="true">·</span> ${esc(t.title)} <span aria-hidden="true">·</span> ` : ''}${x.it.kind === 'calc' ? 'Calculation' : 'Concept'}</p>
+        ${beyondGuide(x.it) ? '<p class="rev-note wk-scope">Beyond the guide</p>' : ''}
         <p class="q-text">${rich(x.inst.q)}</p>
         ${x.inst.parts.map(partHtml).join('')}
         <p class="fn-error" id="q-err" role="alert" hidden></p>
