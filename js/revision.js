@@ -96,7 +96,7 @@
         'Derive an individual demand curve from the price–consumption curve.',
         'Build market demand by horizontal summation.',
         'Find optimal bundles for perfect substitutes (corner) and perfect complements (kink).',
-        'Draw the intertemporal budget line and show saving or borrowing at the optimum.',
+        'Describe diminishing marginal utility and diminishing MRS, and calculate the MRS from marginal utilities.',
       ],
       examFocus: ['Draw the compensated budget line parallel to the new budget line.', 'Add quantities, not prices, when summing demand curves.'],
       equations: [
@@ -104,7 +104,6 @@
         { name: 'Marginal rate of substitution', tex: R`MRS = \frac{\Delta Y}{\Delta X} = -\frac{MU_X}{MU_Y}`, note: 'The slope of the indifference curve. The guide sometimes quotes its absolute value instead.' },
         { name: 'Utility maximisation', tex: R`-\frac{MU_X}{MU_Y} = -\frac{P_X}{P_Y} \;\Rightarrow\; \frac{MU_X}{P_X} = \frac{MU_Y}{P_Y}` },
         { name: 'Perfect complements', tex: R`X^* = \frac{M}{P_X + aP_Y}`, beyond: 'The guide sets a perfect-complements activity but gives no formula.' },
-        { name: 'Intertemporal budget constraint', tex: R`c_1 + \frac{c_2}{1 + r} = y_1 + \frac{y_2}{1 + r}`, beyond: 'Intertemporal choice is not in the guide.' },
       ],
       graphs: [
         { label: 'Deriving the Engel curve from the income–consumption curve', topic: 'engel-derivation' },
@@ -113,9 +112,8 @@
         { label: 'Price–consumption curve and the demand curve', topic: 'demand-derivation' },
         { label: 'Market demand by horizontal summation', topic: 'market-demand' },
         { label: 'Perfect substitutes and perfect complements', topic: 'special-preferences' },
-        { label: 'Intertemporal choice: saving and borrowing', topic: 'intertemporal' },
       ],
-      topics: ['consumer-choice', 'income-substitution', 'demand-derivation', 'engel-derivation', 'market-demand', 'special-preferences', 'intertemporal'],
+      topics: ['consumer-choice', 'income-substitution', 'demand-derivation', 'engel-derivation', 'market-demand', 'special-preferences'],
     },
     {
       id: 'b-5', block: 'Block 5', part: 'Microeconomics', title: 'Production and costs',
@@ -165,7 +163,7 @@
         'Explain why cartels are a prisoner’s dilemma and when repetition can sustain collusion (δ ≥ (T − R)/(T − P)).',
         'Draw a cartel beside one member’s residual demand, show why each member gains by exceeding its quota, and find the cheat’s best output.',
         'List the factors that make collusion easier or harder, and explain how competition policy and leniency programmes attack cartels.',
-        'Derive the dominant firm’s residual demand from market demand and fringe supply, and find the leader’s price and both firms’ outputs.',
+        'Recognise imperfect competition, oligopoly and monopolistic competition, and say which model fits a given industry.',
         'Compare output, price, profit and deadweight loss across monopoly, Cournot, Stackelberg and Bertrand, and show the Cournot price falling toward MC as n grows.',
         'Explain the idea of Stackelberg leadership and why moving first helps (the guide does not examine the Stackelberg mathematics).',
         'Compare regulation options for a natural monopoly.',
@@ -188,7 +186,6 @@
         { name: 'Limit price (linear demand, sunk cost F)', tex: R`P_L = c + 2\sqrt{bF}`, beyond: 'The guide covers strategic entry deterrence (BVFD 10.7) but not the limit-price formula.' },
         { name: 'Collusion in a repeated prisoner’s dilemma', tex: R`\delta \ge \frac{T - R}{T - P}`, beyond: 'The guide mentions repeated games but gives no condition.' },
         { name: 'Cartel stability (grim trigger)', tex: R`\delta \ge \frac{\pi_D - \pi_C}{\pi_D - \pi_P}`, beyond: 'Not in the guide.' },
-        { name: 'Dominant firm’s residual demand', tex: R`D_L(P) = D(P) - S_F(P)`, beyond: 'Price leadership is not in the guide.' },
         { name: 'Cournot with n firms', tex: R`Q = \frac{n}{n + 1}\cdot\frac{a - c}{b},\qquad P = \frac{a + nc}{n + 1}`, beyond: 'The guide solves Cournot for two firms only.' },
       ],
       graphs: [
@@ -205,10 +202,9 @@
         { label: 'Payoff matrices, Nash equilibrium and the entry game', topic: 'game-theory' },
         { label: 'Prisoner’s dilemma and the repeated-game condition', topic: 'prisoners-dilemma' },
         { label: 'Cartel: industry output beside a member’s incentive to cheat', topic: 'collusion' },
-        { label: 'Dominant-firm price leadership with a competitive fringe', topic: 'price-leadership' },
         { label: 'Oligopoly models compared on one demand curve', topic: 'oligopoly-compare' },
       ],
-      topics: ['costs', 'lr-industry', 'monopoly', 'price-discrimination', 'natural-monopoly', 'entry-barriers', 'monopolistic-competition', 'cournot', 'bertrand', 'stackelberg', 'game-theory', 'prisoners-dilemma', 'collusion', 'price-leadership', 'oligopoly-compare'],
+      topics: ['costs', 'lr-industry', 'monopoly', 'price-discrimination', 'natural-monopoly', 'entry-barriers', 'monopolistic-competition', 'cournot', 'bertrand', 'stackelberg', 'game-theory', 'prisoners-dilemma', 'collusion', 'oligopoly-compare'],
     },
     {
       id: 'b-9', block: 'Block 9', part: 'Microeconomics', title: 'Factor and labour markets',
@@ -219,7 +215,7 @@
         'Find the number of workers hired using MRP_L = w.',
         'Show the effect of a minimum wage in a competitive market and explain how monopsony differs.',
         'Derive MFC from a linear supply curve, find monopsony employment and wage, and show how a minimum wage can raise employment.',
-        'Show the employer’s and the union’s preferred outcomes in a bilateral monopoly and explain why the wage depends on bargaining power.',
+        'Define economic rent and transfer earnings, and explain why rent is large when the supply of a factor is inelastic.',
         'Distinguish compensating (equilibrium) from disequilibrium wage differentials, and find the allocation of workers between two sectors with free movement.',
         'Evaluate an investment in education with NPV and the internal rate of return, including earnings forgone, and discuss signalling.',
         'Show three ways a union can raise wages in a competitive labour market and explain how the elasticity of labour demand affects job losses.',
@@ -238,7 +234,6 @@
         { name: 'Net present value of education', tex: R`NPV = \sum_{t=0}^{T} \frac{B_t - C_t}{(1 + r)^t}`, beyond: 'The guide discusses human capital but gives no formula.' },
         { name: 'Union wage: employment and excess supply', tex: R`L = L_D(w_U),\qquad L_S(w_U) - L_D(w_U)` },
         { name: 'Labour–leisure budget', tex: R`C = w(T - \ell) + V` },
-        { name: 'Bilateral monopoly wage range', tex: R`w_m \le w \le w_U`, beyond: 'Bilateral monopoly is not in the guide.' },
         { name: 'Efficiency wage (Solow condition)', tex: R`\frac{de}{dw}\cdot\frac{w}{e} = 1`, beyond: 'The guide mentions efficiency wages but not this condition.' },
         { name: 'Employer discrimination (Becker)', tex: R`MRP_L = w_B(1 + d)`, beyond: 'Not examinable: the guide’s Block 9 reading excludes BVFD 11.8 (wage discrimination).' },
         { name: 'Incidence of a tax on labour', tex: R`\frac{\text{worker share}}{\text{employer share}} = \frac{\varepsilon_D}{\varepsilon_S}`, beyond: 'Not stated in Block 9 (the general incidence rule is in Block 3).' },
@@ -247,7 +242,6 @@
         { label: 'Deriving labour demand: total product above MVP', topic: 'mvp-demand' },
         { label: 'Labour market beside one firm, with a minimum wage', topic: 'labour-market' },
         { label: 'Monopsony: S, MFC and MRP, with a minimum wage', topic: 'monopsony' },
-        { label: 'Bilateral monopoly: employer’s and union’s preferred wages', topic: 'bilateral-monopoly' },
         { label: 'Two-sector diagram: compensating and disequilibrium differentials', topic: 'wage-differentials' },
         { label: 'Age–earnings profiles and the return to education', topic: 'human-capital' },
         { label: 'Union wage, restricted supply and raised demand', topic: 'trade-unions' },
@@ -255,7 +249,7 @@
         { label: 'Labour market policies: minimum wage, subsidy, tax, benefits', topic: 'labour-policy' },
         { label: 'Labour–leisure choice and backward-bending labour supply', topic: 'labour-leisure' },
       ],
-      topics: ['mvp-demand', 'labour-market', 'monopsony', 'bilateral-monopoly', 'wage-differentials', 'human-capital', 'trade-unions', 'efficiency-wages', 'labour-policy', 'labour-leisure'],
+      topics: ['mvp-demand', 'labour-market', 'monopsony', 'wage-differentials', 'human-capital', 'trade-unions', 'efficiency-wages', 'labour-policy', 'labour-leisure'],
     },
     {
       id: 'b-10', block: 'Block 10', part: 'Microeconomics', title: 'Welfare economics and externalities',
@@ -395,7 +389,7 @@
         'Find equilibrium with a flat or upward-sloping MP schedule.',
         'Show the effects of fiscal and monetary policy, and when crowding out occurs.',
         'Explain how the money market behaves when the central bank sets the interest rate.',
-        'Show how monetary policy works through investment, and why it fails in a liquidity trap.',
+        'Discuss the impact of a shock to money demand and use IS–MP graphs to show the mix of monetary and fiscal policy.',
       ],
       examFocus: ['Say which curve shifts and why before describing the new equilibrium.'],
       equations: [
@@ -406,9 +400,8 @@
       graphs: [
         { label: 'IS–MP diagram', topic: 'is-mp' },
         { label: 'Money market beside IS–MP', topic: 'money-ismp' },
-        { label: 'Money market beside investment demand: the liquidity trap', topic: 'investment-trap' },
       ],
-      topics: ['is-mp', 'money-ismp', 'investment-trap'],
+      topics: ['is-mp', 'money-ismp'],
     },
     {
       id: 'b-16', block: 'Block 16', part: 'Macroeconomics', title: 'Aggregate demand and aggregate supply',
@@ -448,7 +441,7 @@
         'Show accelerating inflation when unemployment is held below the natural rate.',
         'Link the Phillips curve to AD–AS through Okun’s law.',
         'Measure unemployment and participation, classify unemployment by type, and find steady-state unemployment from job flows.',
-        'Derive the natural rate from the WS and PS curves and explain what raises or lowers it, including hysteresis.',
+        'Distinguish voluntary from involuntary unemployment, explain how supply-side policies reduce equilibrium unemployment, and explain hysteresis.',
       ],
       examFocus: ['Moves along SRPC come from demand; shifts of SRPC come from expectations or supply shocks.'],
       equations: [
@@ -458,15 +451,13 @@
         { name: 'Expectations-augmented Phillips curve', tex: R`\pi = \pi^e - b(u - u^*) + v, \qquad b = \frac{h}{\alpha}`, note: 'v is a supply shock. BVFD Maths 25.1 combines the same Phillips curve with Okun’s law to get aggregate supply Y = Y* + (h/b)(π − πᵉ), so α = h/b.' },
         { name: 'Labour market rates', tex: R`u = \frac{U}{LF}, \qquad lfp = \frac{LF}{P}, \qquad LF = E + U` },
         { name: 'Steady-state unemployment', tex: R`jE = hU \;\Rightarrow\; u = \frac{j}{j + h}`, note: 'j is the job-loss rate and h the hiring rate.' },
-        { name: 'Natural rate (WS = PS)', tex: R`z - c\,u^* = \frac{A}{1 + \mu}`, beyond: 'The wage-setting/price-setting model is not in the guide.' },
       ],
       graphs: [
         { label: 'Unemployment flows and the steady-state rate', topic: 'unemployment' },
-        { label: 'WS–PS: the natural rate of unemployment', topic: 'natural-rate' },
         { label: 'SRPC shifting along a vertical LRPC', topic: 'phillips' },
         { label: 'AD–AS beside the Phillips curve', topic: 'adas-phillips' },
       ],
-      topics: ['unemployment', 'natural-rate', 'phillips', 'adas-phillips'],
+      topics: ['unemployment', 'phillips', 'adas-phillips'],
     },
     {
       id: 'b-19-20', block: 'Blocks 19–20', part: 'Macroeconomics', title: 'Exchange rates and the open economy',
@@ -495,7 +486,7 @@
     },
     {
       id: 'b-further', block: 'Further topics', part: 'Further topics', title: 'Beyond the guide',
-      note: 'These topics are outside the EC1002 subject guide. Price indices, loanable funds and the Lorenz curve support Blocks 11–15. The guide leaves the others out on purpose: its Block 8 reading excludes the kinked demand curve and contestable markets (BVFD 10.6), its Block 9 reading excludes wage discrimination (BVFD 11.8), it says interest parity is covered in EC2065 rather than EC1002, and it does not cover trade policy.',
+      note: 'These topics are outside the EC1002 subject guide. Price indices, loanable funds and the Lorenz curve support Blocks 11–15. The guide leaves the others out on purpose: its Block 8 reading excludes the kinked demand curve and contestable markets (BVFD 10.6), its Block 9 reading excludes wage discrimination (BVFD 11.8), it says interest parity is covered in EC2065 rather than EC1002, and it does not cover trade policy. Intertemporal choice, price leadership, bilateral monopoly, the liquidity trap and the WS–PS model are in neither the guide nor its assigned reading, and none appeared in the May 2024, May 2025 or October 2025 exams.',
       summary: 'Price indices turn nominal values into real ones, and growth compounds. In the loanable funds market, government borrowing raises the interest rate and crowds out some private investment. The Lorenz curve and Gini coefficient measure how unequally income is shared.',
       outcomes: [
         'Calculate a CPI from a fixed basket and the inflation rate it implies.',
@@ -509,6 +500,11 @@
         'Compare an import quota with the equivalent tariff.',
         'Explain contestable markets and why sunk costs, not the number of firms, decide whether incumbents can earn supernormal profit.',
         'Show how employer discrimination lowers a group’s wage and employment, and explain why a measured pay gap is not all discrimination.',
+        'Draw the intertemporal budget line and show saving or borrowing at the optimum.',
+        'Derive the dominant firm’s residual demand from market demand and fringe supply, and find the leader’s price and both firms’ outputs.',
+        'Show the employer’s and the union’s preferred outcomes in a bilateral monopoly and explain why the wage depends on bargaining power.',
+        'Show how monetary policy works through investment, and why it fails in a liquidity trap.',
+        'Derive the natural rate from the WS and PS curves and explain what raises or lowers it.',
       ],
       examFocus: ['Real growth ≈ nominal growth − inflation; divide by the deflator for the exact figure.', 'Plot cumulative shares on the Lorenz curve, not each quintile’s own share.'],
       equations: [
@@ -518,6 +514,10 @@
         { name: 'Loanable funds (closed economy)', tex: R`S = I + (G - NT) \quad\Longleftrightarrow\quad S + (NT - G) = I` },
         { name: 'Gini coefficient', tex: R`G = \frac{A}{A + B} = 1 - 2B` },
         { name: 'Uncovered interest parity', tex: R`i = i^* + \frac{E^e - E}{E}` },
+        { name: 'Intertemporal budget constraint', tex: R`c_1 + \frac{c_2}{1 + r} = y_1 + \frac{y_2}{1 + r}` },
+        { name: 'Dominant firm’s residual demand', tex: R`D_L(P) = D(P) - S_F(P)` },
+        { name: 'Bilateral monopoly wage range', tex: R`w_m \le w \le w_U` },
+        { name: 'Natural rate (WS = PS)', tex: R`z - c\,u^* = \frac{A}{1 + \mu}` },
       ],
       graphs: [
         { label: 'Compound growth and doubling time', topic: 'growth-measure' },
@@ -529,8 +529,13 @@
         { label: 'Import quotas and quota rent', topic: 'import-quota' },
         { label: 'Contestable markets: price held at average cost', topic: 'contestable-markets' },
         { label: 'Employer discrimination: demand for the disfavoured group', topic: 'discrimination' },
+        { label: 'Intertemporal choice: saving and borrowing', topic: 'intertemporal' },
+        { label: 'Dominant-firm price leadership with a competitive fringe', topic: 'price-leadership' },
+        { label: 'Bilateral monopoly: employer’s and union’s preferred wages', topic: 'bilateral-monopoly' },
+        { label: 'Money market beside investment demand: the liquidity trap', topic: 'investment-trap' },
+        { label: 'WS–PS: the natural rate of unemployment', topic: 'natural-rate' },
       ],
-      topics: ['growth-measure', 'loanable-funds', 'lorenz', 'kinked-demand', 'interest-parity', 'tariff', 'import-quota', 'contestable-markets', 'discrimination'],
+      topics: ['growth-measure', 'loanable-funds', 'lorenz', 'kinked-demand', 'interest-parity', 'tariff', 'import-quota', 'contestable-markets', 'discrimination', 'intertemporal', 'price-leadership', 'bilateral-monopoly', 'investment-trap', 'natural-rate'],
     },
   ];
 
@@ -587,7 +592,7 @@
   })();
 
   // Checklist items on the block sheets that go beyond the guide (index → reason).
-  window.OUTCOMES_BEYOND = {"b-4": {6: "Intertemporal choice is not in the guide."}, "b-6-8": {9: "The repeated-game condition goes beyond the guide.", 12: "Price leadership is not in the guide.", 13: "The Stackelberg and n-firm parts go beyond the guide.", 16: "Limit pricing is not in the guide."}, "b-9": {5: "Bilateral monopoly is not in the guide.", 7: "Present-value calculations go beyond the guide.", 9: "The Solow condition goes beyond the guide."}, "b-12": {2: "The golden rule is not in the guide."}, "b-15": {4: "The liquidity trap model is not in the guide."}, "b-17-18": {5: "The WS–PS model is not in the guide."}};
+  window.OUTCOMES_BEYOND = {"b-6-8": {9: "The repeated-game condition goes beyond the guide.", 13: "The Stackelberg and n-firm parts go beyond the guide.", 16: "Limit pricing is not in the guide."}, "b-9": {7: "Present-value calculations go beyond the guide.", 9: "The Solow condition goes beyond the guide."}, "b-12": {2: "The golden rule is not in the guide."}};
 
   // Worked answers (and the quiz questions built on them) checked against the guide and the textbook sections it assigns.
   // 'beyond': outside the EC1002 guide, left out of guide-only quizzes. 'partial': in the guide, but one part goes further.
