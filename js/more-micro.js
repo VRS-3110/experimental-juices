@@ -271,9 +271,9 @@
       },
     },
     equations: [
-      { name: 'Perfect substitutes', tex: R`U = aX + Y,\quad MRS = a;\qquad X^* = \frac{I}{P_X} \text{ if } a > \frac{P_X}{P_Y},\quad Y^* = \frac{I}{P_Y} \text{ if } a < \frac{P_X}{P_Y}` },
-      { name: 'Perfect complements', tex: R`U = \min\Big(X, \frac{Y}{a}\Big) \;\Rightarrow\; Y = aX,\qquad X^* = \frac{I}{P_X + aP_Y}` },
-      { name: 'Smooth (Cobb–Douglas)', tex: R`MRS = \frac{P_X}{P_Y} \text{ at a tangency}` },
+      { name: 'Perfect substitutes', tex: R`U = aX + Y,\quad MRS = a;\qquad X^* = \frac{M}{P_X} \text{ if } a > \frac{P_X}{P_Y},\quad Y^* = \frac{M}{P_Y} \text{ if } a < \frac{P_X}{P_Y}`, note: 'Here MRS is quoted as a positive number, a = MU_X/MU_Y.' },
+      { name: 'Perfect complements', tex: R`U = \min\Big(X, \frac{Y}{a}\Big) \;\Rightarrow\; Y = aX,\qquad X^* = \frac{M}{P_X + aP_Y}` },
+      { name: 'Smooth (Cobb–Douglas)', tex: R`\frac{MU_X}{MU_Y} = \frac{P_X}{P_Y} \text{ at a tangency}` },
     ],
     points: [
       'With perfect substitutes the demand for X jumps from zero to everything when its relative price falls below the MRS: demand is perfectly elastic at that price.',
@@ -428,7 +428,7 @@
     },
     equations: [
       { name: 'Budget constraint', tex: R`C = w\,(T - \ell) + V`, note: 'T: total hours; ℓ: leisure; V: non-labour income. The slope −w is the price of an hour of leisure.' },
-      { name: 'Optimum', tex: R`MRS_{\ell C} = \frac{MU_\ell}{MU_C} = w` },
+      { name: 'Optimum', tex: R`\frac{MU_\ell}{MU_C} = w`, note: 'The indifference curve is tangent to the budget line C = w(T − ℓ) + V, whose slope is −w (BVFD Maths 11.1).' },
       { name: 'Effects of a wage rise', tex: R`\Delta h = \underbrace{\Delta h^{SE}}_{>\,0} + \underbrace{\Delta h^{IE}}_{<\,0 \text{ if leisure is normal}}`, note: 'Labour supply slopes up if the substitution effect is larger, and bends back if the income effect is larger.' },
     ],
     points: [

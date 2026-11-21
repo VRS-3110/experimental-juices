@@ -534,6 +534,58 @@
     },
   ];
 
+  // Topic equations (topic pages, formula sheet, flashcards) checked against the guide and its assigned reading.
+  // Whole topics outside the guide, then single equations, get e.beyond = reason.
+  (function markEquations() {
+    const T = Object.fromEntries((window.TOPICS || []).map((t) => [t.id, t]));
+    const topics = {
+      'kinked-demand': 'The guide’s Block 8 reading excludes the kinked demand curve.',
+      'contestable-markets': 'Contestable markets are BVFD 10.6, which the guide’s Block 8 reading excludes.',
+      'discrimination': 'Wage discrimination is BVFD 11.8, which the guide’s Block 9 reading excludes.',
+      'interest-parity': 'The guide says interest parity is covered in EC2065, not EC1002.',
+      'tariff': 'Trade policy is not covered in the EC1002 guide.',
+      'import-quota': 'Trade policy is not covered in the EC1002 guide.',
+      'loanable-funds': 'The loanable funds model is not in the guide or its assigned reading.',
+      'lorenz': 'The Lorenz curve is BVFD 12.9, which the guide does not assign.',
+      'intertemporal': 'Intertemporal choice is not in the guide or its assigned reading.',
+      'price-leadership': 'The dominant-firm price leadership model is not in the guide or its assigned reading.',
+      'bilateral-monopoly': 'Bilateral monopoly is not in the guide or its assigned reading.',
+    };
+    const single = {
+      'income-substitution': { 'Slutsky equation': 'The guide covers income and substitution effects with diagrams, not this calculus form.' },
+      'price-discrimination': { 'Two-part tariff': 'Not examinable (guide, Block 7).' },
+      'natural-monopoly': { 'Two-part tariff': 'Not examinable (guide, Block 7).' },
+      'entry-barriers': { 'Residual demand facing the entrant': 'Limit pricing is not in the guide, which covers entry deterrence through credible threats.', 'Entrant’s best profit': 'Limit pricing is not in the guide.', 'Limit output and limit price': 'Limit pricing is not in the guide.', 'Blockaded entry': 'Limit pricing is not in the guide.' },
+      'stackelberg': { 'Follower’s reaction function': 'The Stackelberg mathematics (BVFD A10.2) is not examinable.', 'Leader’s problem': 'The Stackelberg mathematics (BVFD A10.2) is not examinable.', 'Equal costs: outputs': 'The Stackelberg mathematics (BVFD A10.2) is not examinable.', 'Equal costs: profits': 'The Stackelberg mathematics (BVFD A10.2) is not examinable.' },
+      'bertrand': { 'Differentiated demand': 'The guide covers Bertrand competition with identical goods.', 'Price reaction function': 'The guide covers Bertrand competition with identical goods.', 'Symmetric equilibrium price': 'The guide covers Bertrand competition with identical goods.' },
+      'game-theory': { 'Mixed strategy (2×2)': 'Mixed strategies are not in the guide.' },
+      'prisoners-dilemma': { 'Value of colluding for ever': 'The guide mentions repeated games but gives no conditions.', 'Value of cheating under grim trigger': 'The guide mentions repeated games but gives no conditions.', 'Condition for collusion': 'The guide mentions repeated games but gives no conditions.' },
+      'collusion': { 'Grim-trigger condition': 'The guide mentions repeated games but gives no conditions.', 'Two firms, linear demand, Cournot punishment': 'The guide mentions repeated games but gives no conditions.' },
+      'oligopoly-compare': { 'Cournot with n identical firms': 'The guide solves Cournot for two firms.', 'Stackelberg duopoly': 'The Stackelberg mathematics (BVFD A10.2) is not examinable.' },
+      'monopsony': { 'Rate of exploitation (Pigou)': 'Not in the guide.' },
+      'human-capital': { 'Net present value of education': 'Present values are BVFD Chapter 12, which the guide does not assign.', 'Internal rate of return': 'Present values are BVFD Chapter 12, which the guide does not assign.', 'Perpetuity shortcut': 'Present values are BVFD Chapter 12, which the guide does not assign.', 'Two-period version': 'Present values are BVFD Chapter 12, which the guide does not assign.' },
+      'trade-unions': { 'Wage-bill-maximising union': 'Not in the guide.' },
+      'efficiency-wages': { 'Firm’s problem': 'The guide covers efficiency wages in words only.', 'Solow condition': 'The guide covers efficiency wages in words only.', 'This model': 'The guide covers efficiency wages in words only.' },
+      'public-goods': { 'Lindahl prices': 'Not in the guide.' },
+      'commons': { 'Open access': 'The guide describes common property but gives no formulas.', 'Efficient use': 'The guide describes common property but gives no formulas.', 'Correcting tax per user': 'The guide describes common property but gives no formulas.' },
+      'lemons': { 'Adverse selection': 'The guide mentions adverse selection but gives no model.', 'This model': 'The guide mentions adverse selection but gives no model.' },
+      'solow': { 'Golden rule': 'The golden rule is not in the guide.' },
+      'is-mp': { 'MP schedule': 'The guide describes the MP curve in words; this equation is the app’s.' },
+      'money-ismp': { 'MP rule': 'The guide describes the MP curve in words; this equation is the app’s.', 'LM curve (fixed money supply)': 'The guide says you are not required to know the IS–LM model.' },
+      'investment-trap': { 'Liquidity trap': 'The guide and textbook note that interest rates cannot fall below zero, but do not use the liquidity trap model.' },
+      'natural-rate': { 'Wage-setting curve': 'The WS–PS model is not in the guide or the textbook.', 'Price-setting curve': 'The WS–PS model is not in the guide or the textbook.', 'Natural rate': 'The WS–PS model is not in the guide or the textbook.' },
+      'forex': { 'Uncovered interest parity': 'The guide says interest parity is covered in EC2065, not EC1002.' },
+    };
+    for (const [id, why] of Object.entries(topics)) (T[id]?.equations || []).forEach((e) => { e.beyond = why; });
+    for (const [id, map] of Object.entries(single)) for (const [name, why] of Object.entries(map)) {
+      const e = (T[id]?.equations || []).find((x) => x.name === name);
+      if (!e) throw new Error(`No equation "${name}" on topic ${id}`);
+      e.beyond = why;
+    }
+    // Glossary terms for content the guide excludes (their definitions say so).
+    (window.GLOSSARY || []).forEach((g) => { if (/Not in the EC1002 syllabus|Not on the EC1002 syllabus|not covered in the EC1002|Not part of EC1002|not part of EC1002|Not examinable/i.test(g.def)) g.beyond = true; });
+  })();
+
   // Worked answers (and the quiz questions built on them) checked against the guide and the textbook sections it assigns.
   // 'beyond': outside the EC1002 guide, left out of guide-only quizzes. 'partial': in the guide, but one part goes further.
   window.WORKED_SCOPE = {

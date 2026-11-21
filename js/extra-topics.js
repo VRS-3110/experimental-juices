@@ -678,7 +678,7 @@
     equations: [
       { name: 'Price elasticity of demand', tex: R`|E| = \left|\frac{\%\Delta Q}{\%\Delta P}\right|`, note: 'Elastic: |E| > 1. Inelastic: |E| < 1. Unit elastic: |E| = 1.' },
       { name: 'Arc (midpoint) elasticity', tex: R`|E| = \left|\frac{(Q_1 - Q_0)/\bar{Q}}{(P_1 - P_0)/\bar{P}}\right|` },
-      { name: 'Total revenue and elasticity', tex: R`\Delta TR \approx Q\,\Delta P\,(1 - |E|)`, note: 'A price rise raises revenue when |E| < 1 and lowers it when |E| > 1.' },
+      { name: 'Total revenue and elasticity', tex: R`\frac{\Delta TR}{\Delta P} = Q\,(1 + PED) = Q\,(1 - |E|)`, note: 'The guide’s form. A price rise raises revenue when demand is inelastic (−1 < PED < 0) and lowers it when demand is elastic (PED < −1).' },
       { name: 'The extremes', tex: R`\text{horizontal } D: |E| = \infty \qquad \text{vertical } D: |E| = 0` },
     ],
     points: [
@@ -875,7 +875,7 @@
       },
     },
     equations: [
-      { name: 'Optimum at each income', tex: R`MRS_{XY} = \frac{P_X}{P_Y},\qquad P_X X + P_Y Y = M` },
+      { name: 'Optimum at each income', tex: R`\frac{MU_X}{MU_Y} = \frac{P_X}{P_Y},\qquad P_X X + P_Y Y = M` },
       { name: 'Engel curve', tex: R`X^* = X^*(M) \quad (\text{prices held fixed})` },
       { name: 'Normal (Stone–Geary) example', tex: R`U = \ln(X - 2) + \ln Y \;\Rightarrow\; X^* = 1 + \frac{M}{2},\qquad IED = \frac{M/2}{1 + M/2} < 1` },
       { name: 'Inferior example', tex: R`U = 16\ln X + \tfrac{1}{2}Y^2 \;\Rightarrow\; XY = 16,\qquad X^* = \frac{M - \sqrt{M^2 - 64}}{2}` },

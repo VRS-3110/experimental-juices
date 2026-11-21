@@ -77,13 +77,13 @@ Topic pages link to the sheet that covers them. Progress, results and the exam d
 - **Glossary**: 353 key terms with plain-language definitions, checked against the textbook glossary and the guide (terms for content the guide excludes say so), an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
 - **Worked answers**: 79 exam-style run-throughs (74 calculations, 5 diagram answers), at least one for every topic, revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type. Every answer was checked against the guide and its assigned textbook reading; 15 that go beyond the guide, and 6 with one part that does, carry a note saying so.
 - **Quiz**: 194 question types built on the worked answers. 66 calculation types generate new numbers every time, so you practise the method rather than the example; 128 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type, and choose the scope: EC1002 guide only (the default, 157 question types) or including the 37 that go beyond the guide. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
-- **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck.
+- **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck; in guide-only scope it leaves out the 15 terms for content the guide excludes.
 
 ## Modes
 
 - **Graphs**: move the sliders to shift curves. Equilibria, surplus areas, deadweight loss and other values update live.
-- **Formula sheet**: every equation on one filterable page.
-- **Flashcards**: name → formula or formula → name, by unit. Keys: `Space` reveals, `1` again, `2` got it.
+- **Formula sheet**: every equation on one filterable page. Each was checked against the guide and its assigned textbook reading: by default the sheet shows the 248 in the EC1002 syllabus; switch to “Include beyond the guide” to add the other 87, each marked with the reason.
+- **Flashcards**: name → formula or formula → name, by unit, with the same scope switch (EC1002 guide only by default). Keys: `Space` reveals, `1` again, `2` got it.
 
 Mark a topic as mastered to track progress. Progress is kept in your browser's local storage.
 

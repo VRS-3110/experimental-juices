@@ -209,7 +209,7 @@
     },
     equations: [
       { name: 'Investment decision', tex: R`\text{invest if expected return on capital (MEC)} > i` },
-      { name: 'Investment demand', tex: R`I = I_0 - d\,i` },
+      { name: 'Investment demand', tex: R`I = I_0 - b\,i`, note: 'The guide writes I = I₀ − br.' },
       { name: 'Liquidity trap', tex: R`i = 0:\ \frac{\Delta i}{\Delta M} = 0 \;\Rightarrow\; \frac{\Delta I}{\Delta M} = 0` },
     ],
     points: [

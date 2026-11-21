@@ -271,7 +271,7 @@
       },
       equations: [
         { name: 'Isocost line', tex: R`C = wL + rK \;\Rightarrow\; K = \frac{C}{r} - \frac{w}{r}L`, note: 'Slope −w/r.' },
-        { name: 'Marginal rate of technical substitution', tex: R`MRTS = -\frac{MP_L}{MP_K}`, note: 'Slope of the isoquant.' },
+        { name: 'Marginal rate of technical substitution', tex: R`MRTS = -\frac{MP_L}{MP_K}`, note: 'Slope of the isoquant with labour on the horizontal axis, as drawn here. The guide and BVFD put capital on the horizontal axis and write MRTS = MP_K/MP_L = r/w: the same least-cost condition.' },
         { name: 'Least-cost tangency', tex: R`MRTS = -\frac{w}{r} \;\Rightarrow\; \frac{MP_L}{w} = \frac{MP_K}{r}`, note: 'The last pound spent on each input adds the same output.' },
         { name: 'Returns to scale', tex: R`F(\lambda L, \lambda K) \gtreqless \lambda F(L, K)`, note: 'Increasing, constant or decreasing returns to scale.' },
       ],
@@ -836,7 +836,7 @@
         },
       },
       equations: [
-        { name: 'IS curve', tex: R`Y = C(Y - T) + I(r) + G + NX`, note: 'Slopes down: a lower r raises investment and output.' },
+        { name: 'IS curve', tex: R`C = A_0 - ar + c(Y - T),\quad I = I_0 - br \;\Rightarrow\; (1 - c)Y + (a + b)r = A_0 + I_0 + G - cT`, note: 'The guide’s derivation. Slopes down: a lower r raises consumption and investment, so output.' },
         { name: 'Linear IS', tex: R`Y = K\,(\bar{A} - b\,r)`, note: 'K is the multiplier; b is the interest sensitivity of investment.' },
         { name: 'MP schedule', tex: R`r = r_0 + \beta\,(Y - Y^*)`, note: 'The central bank sets r; β = 0 is a horizontal MP line.' },
         { name: 'Fisher equation', tex: R`r \approx i - \pi^e`, note: 'The central bank sets i; spending depends on r.' },
@@ -942,7 +942,7 @@
         { name: 'Expectations-augmented Phillips curve', tex: R`\pi = \pi^e - b\,(u - u^*) + v, \qquad b = \frac{h}{\alpha}`, note: 'Only unexpected inflation lowers unemployment. v is a supply shock.' },
         { name: 'Natural rate / NAIRU', tex: R`\pi = \pi^e \;\Rightarrow\; u = u^*`, note: 'The long-run Phillips curve is vertical at u*.' },
         { name: 'Adaptive expectations', tex: R`\pi^e_t = \pi_{t-1}`, note: 'Holding u below u* means accelerating inflation.' },
-        { name: 'Okun’s law', tex: R`\frac{Y - Y^*}{Y^*} = -2\,(u - u^*)`, note: 'Links the Phillips curve to the output gap.' },
+        { name: 'Okun’s law', tex: R`Y - Y^* = -h\,(u - u^*), \quad h > 0`, note: 'The guide’s and BVFD’s form. A common rule of thumb: each point of unemployment above u* costs about 2% of output.' },
       ],
       points: [
         'A demand expansion is a move up and left along the SRPC.',

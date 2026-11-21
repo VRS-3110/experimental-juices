@@ -122,7 +122,7 @@
           <section class="eqs" aria-labelledby="eq-h">
             <h2 id="eq-h">Key equations</h2>
             <ul class="eq-list">
-              ${t.equations.map((e) => `<li class="eq"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.note)}</p></li>`).join('')}
+              ${t.equations.map((e) => `<li class="eq${e.beyond ? ' eq-beyond' : ''}"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.note)}</p>${e.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(e.beyond)}</p>` : ''}</li>`).join('')}
             </ul>
           </section>
         </div>
@@ -415,6 +415,7 @@
   }
 
   /* ── Formula sheet ── */
+  let sheetScope = 'guide';
   function renderSheet() {
     main.innerHTML = `
       <article class="sheet">
@@ -422,6 +423,7 @@
           <p class="eyebrow">Reference</p>
           <h1>Formula sheet</h1>
           <p class="lede">Every equation in the kit on one page. Filter by name, topic or unit, then open a topic to see its graph.</p>
+          <div class="seg" role="group" aria-label="Scope" id="sheet-scope"><button type="button" data-sheet-scope="guide" aria-pressed="${sheetScope === 'guide'}">EC1002 guide only</button><button type="button" data-sheet-scope="all" aria-pressed="${sheetScope === 'all'}">Include beyond the guide</button></div>
           <label class="sheet-filter" for="sheet-filter"><span class="visually-hidden">Filter formulas</span>
             <input type="search" id="sheet-filter" placeholder="Filter formulas, e.g. multiplier, elasticity" value="${esc(query)}">
           </label>
@@ -436,11 +438,11 @@
         let unitHtml = '';
         for (const t of TOPICS.filter((x) => x.unit === unit)) {
           const topicHit = !q || (t.title + ' ' + unit).toLowerCase().includes(q);
-          const eqs = t.equations.filter((e) => topicHit || (e.name + ' ' + e.note).toLowerCase().includes(q));
+          const eqs = t.equations.filter((e) => (sheetScope === 'all' || !e.beyond) && (topicHit || (e.name + ' ' + e.note).toLowerCase().includes(q)));
           if (!eqs.length) continue;
           count += eqs.length;
           unitHtml += `<section class="sheet-topic"><h3><a href="#${t.id}">${esc(t.title)}</a></h3><div class="sheet-grid">
-            ${eqs.map((e) => `<div class="sheet-eq"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.note)}</p></div>`).join('')}
+            ${eqs.map((e) => `<div class="sheet-eq${e.beyond ? ' eq-beyond' : ''}"><p class="eq-name">${esc(e.name)}</p><div class="eq-math">${tex(e.tex, true)}</div><p class="eq-note">${esc(e.note)}</p>${e.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(e.beyond)}</p>` : ''}</div>`).join('')}
           </div></section>`;
         }
         if (unitHtml) html += `<h2 class="sheet-unit">${esc(unit)}</h2>${unitHtml}`;
@@ -449,6 +451,7 @@
       return count;
     };
     paint();
+    main.querySelectorAll('[data-sheet-scope]').forEach((b) => b.addEventListener('click', () => { sheetScope = b.dataset.sheetScope; renderSheet(); }));
     const input = $('#sheet-filter');
     input.addEventListener('input', () => { query = input.value.trim(); $('#search').value = query; renderNav(null); paint(); });
   }
@@ -847,12 +850,12 @@
 
   /* ── Flashcards ── */
   const allCards = TOPICS.flatMap((t) => t.equations.map((e) => ({ ...e, topic: t })));
-  const defCards = (window.GLOSSARY || []).filter((g) => byId[g.topics[0]]).map((g) => ({ name: g.term, note: g.def, def: true, topic: byId[g.topics[0]] }));
-  const cards = { unit: 'All', dir: 'name', deck: [], known: 0, flipped: false, kind: 'formulas' };
+  const defCards = (window.GLOSSARY || []).filter((g) => byId[g.topics[0]]).map((g) => ({ name: g.term, note: g.def, def: true, topic: byId[g.topics[0]], beyond: g.beyond }));
+  const cards = { unit: 'All', dir: 'name', deck: [], known: 0, flipped: false, kind: 'formulas', scope: 'guide' };
 
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   function newDeck() {
-    cards.deck = shuffle((cards.kind === 'defs' ? defCards : allCards).filter((c) => cards.unit === 'All' || c.topic.unit === cards.unit));
+    cards.deck = shuffle((cards.kind === 'defs' ? defCards : allCards).filter((c) => (cards.scope === 'all' || !c.beyond) && (cards.unit === 'All' || c.topic.unit === cards.unit)));
     cards.known = 0;
     cards.flipped = false;
   }
@@ -875,7 +878,7 @@
           : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-hint">Name this formula and say what it tells you.</p>`);
       const back = card.def
         ? `<p class="card-big small">${rich(card.name)}</p><p class="card-def">${rich(card.note)}</p>`
-        : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-big small">${esc(card.name)}</p><p class="eq-note">${esc(card.note)}</p>`;
+        : `<div class="card-math">${tex(card.tex, true)}</div><p class="card-big small">${esc(card.name)}</p><p class="eq-note">${esc(card.note)}</p>${card.beyond ? `<p class="eq-scope">Beyond the guide: ${esc(card.beyond)}</p>` : ''}`;
       face = `<div class="card${cards.flipped ? ' flipped' : ''}">
         <p class="card-kicker">${esc(card.topic.unit)} <span aria-hidden="true">·</span> <a href="#${card.topic.id}">${esc(card.topic.title)}</a></p>
         ${cards.flipped ? back : front}
@@ -902,6 +905,7 @@
             <button type="button" data-dir="name" aria-pressed="${cards.dir === 'name'}">${cards.kind === 'defs' ? 'Term → definition' : 'Name → formula'}</button>
             <button type="button" data-dir="tex" aria-pressed="${cards.dir === 'tex'}">${cards.kind === 'defs' ? 'Definition → term' : 'Formula → name'}</button>
           </div>
+          <div class="seg" role="group" aria-label="Scope"><button type="button" data-cscope="guide" aria-pressed="${cards.scope === 'guide'}">EC1002 guide only</button><button type="button" data-cscope="all" aria-pressed="${cards.scope === 'all'}">Include beyond the guide</button></div>
           <div class="chips" role="group" aria-label="Unit">${chips}</div>
         </div>
         <div class="card-meter"><span>${cards.known} of ${total} recalled</span><div class="bar"><i style="width:${total ? (cards.known / total) * 100 : 0}%"></i></div></div>
@@ -909,6 +913,7 @@
       </article>`;
 
     main.querySelectorAll('.chip').forEach((b) => b.addEventListener('click', () => { cards.unit = b.dataset.unit; newDeck(); renderCards(); }));
+    main.querySelectorAll('[data-cscope]').forEach((b) => b.addEventListener('click', () => { cards.scope = b.dataset.cscope; newDeck(); renderCards(); }));
     main.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => { cards.kind = b.dataset.kind; newDeck(); renderCards(); }));
     main.querySelectorAll('[data-dir]').forEach((b) => b.addEventListener('click', () => { cards.dir = b.dataset.dir; cards.flipped = false; renderCards(); }));
     $('#flip')?.addEventListener('click', flip);
