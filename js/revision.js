@@ -476,9 +476,9 @@
         'Use PPP and relative PPP to predict exchange-rate movements.',
         'Read the balance of payments accounts and explain what determines current account flows.',
         'Explain the J-curve and the Marshall–Lerner condition: why a devaluation can worsen the trade balance before it improves it.',
-        'Define internal and external balance and analyse monetary and fiscal policy under fixed and floating exchange rates.',
+        'Define internal and external balance, and analyse monetary and fiscal policy under fixed and floating exchange rates with perfect or limited capital mobility.',
       ],
-      examFocus: ['State how the rate is quoted before calling a rise an appreciation.'],
+      examFocus: ['State how the rate is quoted before calling a rise an appreciation.', 'Fixed rate with perfect capital mobility: fiscal policy very effective, monetary policy powerless. Floating rate: monetary policy powerful, fiscal policy weakened.', 'A fiscal expansion under floating rates makes the currency appreciate, not depreciate (the guide’s Block 20 text has a misprint; BVFD 28.5 is right).'],
       equations: [
         { name: 'Real exchange rate', tex: R`RER = e \times \frac{P}{P^*}`, note: 'Nominal rate × domestic price level ÷ foreign price level.' },
         { name: 'Purchasing power parity', tex: R`\text{PPP path: constant real exchange rate}` },
@@ -488,8 +488,9 @@
       graphs: [
         { label: 'Foreign exchange market: floating versus fixed', topic: 'forex' },
         { label: 'J-curve after a depreciation', topic: 'j-curve' },
+        { label: 'Fiscal and monetary policy under fixed and floating exchange rates', topic: 'open-policy' },
       ],
-      topics: ['forex', 'j-curve'],
+      topics: ['forex', 'j-curve', 'open-policy'],
     },
     {
       id: 'b-further', block: 'Further topics', part: 'Further topics', title: 'Beyond the guide',

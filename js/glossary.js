@@ -385,5 +385,8 @@ window.GLOSSARY = [
   { term: 'Trade balance', def: 'The value of exports minus imports of goods and services (net exports).', topics: ['forex', 'j-curve'] },
   { term: 'Financial account', def: 'The part of the balance of payments that records cross-border purchases and sales of financial assets.', topics: ['forex'] },
   { term: 'Internal and external balance', def: 'Internal balance is output at potential with stable inflation; external balance is a current account that is sustainable (in the simplest case, zero).', topics: ['forex', 'j-curve'] },
+  { term: 'Capital controls', def: 'Limits on moving funds into or out of a country. They let domestic interest rates differ from world rates, giving a country with a fixed exchange rate some room for its own monetary policy.', topics: ['open-policy'] },
+  { term: 'Internal balance', def: 'Output at its potential level, with stable inflation.', topics: ['open-policy'] },
+  { term: 'External balance', def: 'A current account that can be sustained, without persistent deficits that build up foreign debt or drain reserves.', topics: ['open-policy'] },
   { term: 'Perfect capital mobility', def: 'Funds move freely and very quickly between currencies whenever expected returns differ, so interest rates cannot differ for long without an expected exchange rate change.', topics: ['forex'] },
 ];

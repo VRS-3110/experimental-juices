@@ -553,6 +553,21 @@
       mistakes: ['Saying the firm shuts down whenever it makes a loss.', 'Drawing MC cutting ATC away from its minimum.'],
     },
     {
+      id: 'w-open-policy', topic: 'open-policy', kind: 'diagram',
+      title: 'Fiscal and monetary policy under fixed and floating exchange rates',
+      question: 'An open economy has perfect capital mobility. Using IS–MP diagrams, compare the effects of (a) a fiscal expansion and (b) a monetary expansion when the exchange rate is fixed and when it floats. (c) How does low capital mobility change the fixed-rate case?',
+      steps: [
+        { t: 'Set up IS–MP with output on the horizontal axis and the interest rate on the vertical. Net exports are part of the demand behind IS, so a real appreciation shifts IS left and a depreciation shifts it right.' },
+        { t: '(a) Fixed rate: with perfect capital mobility the domestic rate must equal the world rate, so MP is horizontal at i*. A rise in G shifts IS right. Any upward pressure on r draws capital in; to stop an appreciation the central bank sells its own currency, so the money supply rises and r stays at i*. Output rises by the full multiplier: no crowding out, so fiscal policy is very effective.' },
+        { t: '(a) Floating rate: the rise in G raises output and the central bank raises r. Capital flows in and the currency appreciates, so net exports fall and IS shifts back part of the way. Fiscal policy is weaker than in a closed economy.' },
+        { t: '(b) Fixed rate: a cut in r (MP down) starts a capital outflow and pressure to devalue. To hold the peg the central bank buys its own currency with reserves, which shrinks the money supply and returns MP to i*. Monetary policy is ineffective.' },
+        { t: '(b) Floating rate: a cut in r drives capital out and the currency depreciates, so net exports rise and IS shifts right. The exchange rate reinforces the interest-rate effect, so monetary policy is more powerful than in a closed economy.' },
+        { t: '(c) With capital controls a gap between domestic and world rates can persist, so MP slopes up. A fiscal expansion then raises r and crowds out some spending, so output rises by less; the central bank also gains some room for its own monetary policy.' },
+      ],
+      answer: 'Fixed rate with perfect capital mobility: fiscal policy very effective, monetary policy powerless. Floating rate: monetary policy powerful, fiscal policy weakened by appreciation. Lower capital mobility weakens fiscal policy under a peg and gives monetary policy some room.',
+      mistakes: ['Saying a fiscal expansion under floating rates depreciates the currency. The higher interest rate attracts capital, so it appreciates. (The guide’s Block 20 text says “depreciate” by mistake; BVFD 28.5 has appreciation.)', 'Forgetting that defending a peg changes the money supply: the central bank pays for its intervention in its own currency.', 'Describing the shift in IS without saying which way the exchange rate moves and why.'],
+    },
+    {
       id: 'w-fiscal-regimes', topic: 'money-ismp', kind: 'diagram',
       title: 'Does fiscal policy crowd out investment?',
       question: 'Explain with diagrams how the effect of a rise in government spending depends on how the central bank conducts monetary policy.',

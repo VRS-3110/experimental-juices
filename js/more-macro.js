@@ -1,7 +1,7 @@
 /* More macroeconomics: demand-pull and cost-push inflation, the Laffer curve, investment demand and the
    liquidity trap, interest rate parity and the J-curve. Loads after more-micro.js. */
 (function () {
-  const { R, f, money, pct, C, V, Hl, P, G, A, S, T, range } = window.TOPIC_KIT;
+  const { R, f, money, pct, C, V, Hl, P, G, A, S, T, ghost, range } = window.TOPIC_KIT;
   const MACRO = 'Macroeconomics';
   const blockOf = (id, fb) => (window.TOPICS.find((t) => t.id === id) || {}).block || fb;
   const unitOf = (id, fb) => (window.TOPICS.find((t) => t.id === id) || {}).unit || fb;
@@ -336,9 +336,88 @@
     tip: 'Plot the trade balance against time: an initial dip (price effect) and a gradual rise (volume effect). State the Marshall–Lerner condition and why short-run elasticities are low.',
   };
 
+
+  /* ── Fiscal and monetary policy under fixed and floating exchange rates (guide Block 20, BVFD 28.2 and 28.5) ── */
+  // IS: r = a − 0.8Y, Y* = 5, world rate i* = 5. MP: flat at i* under a peg with perfect capital mobility,
+  // otherwise r = r₀ + 0.8(Y − 5). Under a float the exchange rate moves net exports by 60% of the policy shift.
+  const K_NX = 0.6, BETA = 0.8;
+  const openEq = (a, r0, beta) => { const Y = (a - r0 + 5 * beta) / (0.8 + beta); return { Y, r: a - 0.8 * Y }; };
+  const openModel = (s) => {
+    const fiscal = s.pol === 0, d = s.size, beta = s.reg === 0 ? 0 : BETA;
+    let a = 9, r0 = 5, aBefore = null, r0Tried = null;
+    if (fiscal) {
+      if (s.reg === 2) { aBefore = 9 + d; a = 9 + d * (1 - K_NX); } else a = 9 + d;
+    } else if (s.reg === 0) { r0Tried = 5 - d; }
+    else { r0 = 5 - d; if (s.reg === 2) { aBefore = 9; a = 9 + K_NX * d; } }
+    const e = openEq(a, r0, beta), closed = fiscal ? openEq(9 + d, 5, BETA) : openEq(9, 5 - d, BETA);
+    return { fiscal, d, beta, a, r0, aBefore, r0Tried, ...e, closedY: closed.Y };
+  };
+  const openPolicy = {
+    id: 'open-policy',
+    title: 'Policy under fixed and floating exchange rates',
+    summary: 'How well fiscal and monetary policy work in an open economy depends on the exchange rate regime and on how freely capital moves. With a fixed rate and perfect capital mobility, fiscal policy is very effective and monetary policy is powerless. With a floating rate it is the other way round.',
+    model: 'IS: r = a − 0.8Y, with potential output Y* = 5 and the world interest rate i* = 5. Under a peg with perfect capital mobility the MP schedule is flat at i*; otherwise r = r₀ + 0.8(Y − 5). Under a floating rate the exchange rate moves net exports by 60% of the policy shift. The closed-economy comparison uses the same shock with no exchange-rate effect and an MP slope of 0.8.',
+    graph: {
+      x: { range: [0, 10], label: 'Output (Y)' },
+      y: { range: [0, 10], label: 'Interest rate (r)' },
+      params: [
+        { id: 'reg', label: 'Exchange rate regime', options: [{ v: 0, label: 'Fixed, perfect capital mobility' }, { v: 1, label: 'Fixed, low capital mobility' }, { v: 2, label: 'Floating' }], value: 0 },
+        { id: 'pol', label: 'Policy', options: [{ v: 0, label: 'Fiscal expansion' }, { v: 1, label: 'Monetary expansion' }], value: 0 },
+        { id: 'size', label: 'Size of the policy change', min: 0, max: 3, step: 0.1, value: 2, hint: 'Fiscal: how far G shifts IS up. Monetary: the cut in the interest rate.' },
+      ],
+      draw(s) {
+        const z = openModel(s), moved = z.d > 1e-6;
+        const mpLabel = s.reg === 0 ? 'MP = i*' : 'MP';
+        return [
+          ghost(moved && (z.a !== 9 || z.aBefore !== null), (Y) => 9 - 0.8 * Y, 'IS₀'),
+          ghost(moved && z.aBefore !== null && z.aBefore !== 9, (Y) => z.aBefore - 0.8 * Y, z.fiscal ? 'IS before appreciation' : 'IS₀'),
+          ghost(moved && z.r0 !== 5, () => 5, 'MP₀'),
+          ghost(moved && z.r0Tried !== null, () => z.r0Tried, 'MP attempted'),
+          C((Y) => z.a - 0.8 * Y, 'd', moved && z.a !== 9 ? 'IS₁' : 'IS'),
+          C((Y) => z.r0 + z.beta * (Y - 5), 's', mpLabel),
+          moved && Math.abs(z.Y - 5) > 1e-6 ? P(5, 5, 'E₀') : null,
+          G(z.Y, z.r, 'Y', 'r'),
+          P(z.Y, z.r, moved && Math.abs(z.Y - 5) > 1e-6 ? 'E₁' : 'E'),
+        ];
+      },
+      readout(s) {
+        const z = openModel(s), dY = z.Y - 5, dC = z.closedY - 5;
+        const sign = (v) => (v >= 0 ? '+' : '−') + f(Math.abs(v));
+        const fx = [
+          ['The bank sells its own currency to stop an appreciation: reserves and the money supply rise.', 'Capital flows out. The bank buys its own currency with reserves to hold the peg, so the money supply shrinks back.'],
+          ['Capital controls let r rise above i*; the bank intervenes to hold the peg.', 'Capital controls let r fall below i* for a while; the bank uses reserves to hold the peg.'],
+          ['Appreciates: the higher interest rate attracts capital.', 'Depreciates: the lower interest rate drives capital out.'],
+        ][s.reg][s.pol];
+        const status = [
+          ['Fixed rate, perfect capital mobility: the interest rate is pinned at the world rate, so a fiscal expansion raises output by the full multiplier with no crowding out. Fiscal policy is very effective.', 'Fixed rate, perfect capital mobility: monetary policy is powerless. A lower rate would start a capital outflow; defending the peg, the central bank buys its own currency, the money supply falls back, and MP returns to i*.'],
+          ['Fixed rate, low capital mobility: capital controls let the domestic rate rise above i*, so MP slopes up and some spending is crowded out. Output rises by less than with perfect capital mobility.', 'Fixed rate, low capital mobility: capital controls give the central bank some room to set its own rate, so a cut raises output. The more mobile capital is, the less room it has.'],
+          ['Floating rate: the higher interest rate attracts capital and the currency appreciates. Net exports fall and IS shifts back part of the way, so fiscal policy is weaker than in a closed economy.', 'Floating rate: the lower interest rate drives capital out and the currency depreciates. Net exports rise and IS shifts right, reinforcing the cut: monetary policy is more powerful than in a closed economy.'],
+        ][s.reg][s.pol];
+        const strong = (s.reg === 0 && s.pol === 0) || (s.reg === 2 && s.pol === 1);
+        return {
+          rows: [['Output Y', f(z.Y)], ['Interest rate r', pct(z.r, 2)], ['Change in output', sign(dY)], ['Closed economy, same shock', sign(dC)], ['Exchange rate', fx]],
+          status: z.d < 1e-6 ? 'Choose a policy change to see how the regime alters its effect.' : status,
+          tone: z.d < 1e-6 ? undefined : strong ? 'good' : 'warn',
+        };
+      },
+    },
+    equations: [
+      { name: 'Open-economy IS', tex: R`(1 - c)Y + (a + b)r = A_0 + I_0 + G - cT + NX`, note: 'The guide’s IS curve with net exports added. A real appreciation lowers NX and shifts IS left; a depreciation shifts it right.' },
+      { name: 'Peg with perfect capital mobility', tex: R`r = i^*`, note: 'The guide (Block 20): the MP schedule is horizontal at the foreign interest rate.' },
+    ],
+    points: [
+      'Fixed rate, perfect capital mobility: fiscal policy is very effective (no crowding out); monetary policy is ineffective, because defending the peg reverses any change in the money supply (BVFD 28.2).',
+      'Floating rate: monetary policy is powerful, because the exchange rate moves net exports the same way; fiscal policy is weakened by the appreciation it causes (BVFD 28.5).',
+      'Fixing the exchange rate means giving up control of the interest rate, and fixing the interest rate means giving up control of the exchange rate.',
+      'The guide’s Block 20 text says a fiscal expansion under floating rates puts pressure on the currency to “depreciate”. It appreciates: the higher interest rate attracts capital, as BVFD 28.5 explains.',
+    ],
+    tip: 'Name the regime and the degree of capital mobility first. Then follow the chain: interest rate, capital flows, exchange rate (or intervention and the money supply), net exports, IS.',
+  };
+
   insertAfter('ad-as', inflationTypes, MACRO, blockOf('ad-as', 'Block 16'));
   insertAfter('inflation-types', lafferTopic, MACRO, blockOf('ad-as', 'Block 16'));
   insertAfter('money-ismp', investmentTrap, MACRO, blockOf('money-ismp', 'Block 15'));
   insertAfter('forex', interestParity, unitOf('forex', MACRO), blockOf('forex', 'Blocks 19–20'));
   insertAfter('interest-parity', jCurve, unitOf('forex', MACRO), blockOf('forex', 'Blocks 19–20'));
+  insertAfter('j-curve', openPolicy, unitOf('forex', MACRO), blockOf('forex', 'Blocks 19–20'));
 })();

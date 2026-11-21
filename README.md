@@ -4,7 +4,7 @@ An interactive study kit for the core graphs and equations of economics. Open `i
 
 ## What's inside
 
-77 topics. The first 72 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
+78 topics. The first 72 follow the EC1002 subject guide block by block, and each is tagged with its block. Every topic has a graph you can change with sliders, its key equations, points to remember and an exam tip.
 
 | Part | Topics |
 | --- | --- |
@@ -74,15 +74,15 @@ Topic pages link to the sheet that covers them. Progress, results and the exam d
 
 ## Reference and practice
 
-- **Glossary**: 364 key terms with plain-language definitions, checked against the textbook glossary and the guide (terms for content the guide excludes say so), an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
-- **Worked answers**: 81 exam-style run-throughs (76 calculations, 5 diagram answers), at least one for every topic, revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type. Every answer was checked against the guide and its assigned textbook reading; 15 that go beyond the guide, and 6 with one part that does, carry a note saying so.
-- **Quiz**: 202 question types built on the worked answers. 68 calculation types generate new numbers every time, so you practise the method rather than the example; 134 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type, and choose the scope: EC1002 guide only (the default, 165 question types) or including the 37 that go beyond the guide. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
+- **Glossary**: 367 key terms with plain-language definitions, checked against the textbook glossary and the guide (terms for content the guide excludes say so), an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
+- **Worked answers**: 82 exam-style run-throughs (76 calculations, 6 diagram answers), at least one for every topic, revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type. Every answer was checked against the guide and its assigned textbook reading; 15 that go beyond the guide, and 6 with one part that does, carry a note saying so.
+- **Quiz**: 206 question types built on the worked answers. 68 calculation types generate new numbers every time, so you practise the method rather than the example; 138 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type, and choose the scope: EC1002 guide only (the default, 169 question types) or including the 37 that go beyond the guide. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
 - **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck; in guide-only scope it leaves out the 15 terms for content the guide excludes.
 
 ## Modes
 
 - **Graphs**: move the sliders to shift curves. Equilibria, surplus areas, deadweight loss and other values update live.
-- **Formula sheet**: every equation on one filterable page. Each was checked against the guide and its assigned textbook reading: by default the sheet shows the 247 in the EC1002 syllabus; switch to “Include beyond the guide” to add the other 89, each marked with the reason.
+- **Formula sheet**: every equation on one filterable page. Each was checked against the guide and its assigned textbook reading: by default the sheet shows the 249 in the EC1002 syllabus; switch to “Include beyond the guide” to add the other 89, each marked with the reason.
 - **Flashcards**: name → formula or formula → name, by unit, with the same scope switch (EC1002 guide only by default). Keys: `Space` reveals, `1` again, `2` got it.
 
 Mark a topic as mastered to track progress. Progress is kept in your browser's local storage.
