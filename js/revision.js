@@ -72,6 +72,7 @@
         { name: 'Price elasticity of supply (PES)', tex: R`PES = \frac{\%\Delta Q_S}{\%\Delta P}` },
         { name: 'Revenue and elasticity', tex: R`\frac{\Delta TR}{\Delta P} = Q\,(1 + PED)`, note: 'From ΔTR ≈ QΔP + PΔQ. A price cut raises revenue when PED < −1.' },
         { name: 'Tax incidence (small taxes)', tex: R`\frac{\Delta P_D}{\Delta P_S} = \frac{PES}{PED}`, note: 'The less price-sensitive side bears more of the tax.' },
+        { name: 'Specific tax t on sellers (linear demand and supply)', tex: R`P_D^* = \frac{a - c}{b + d} + \frac{dt}{b + d}, \quad P_S^* = \frac{a - c}{b + d} - \frac{bt}{b + d}, \quad Q^* = \frac{ad + bc}{b + d} - \frac{bdt}{b + d}`, note: 'BVFD Maths 15.1. Buyers bear d/(b + d) of the tax and sellers b/(b + d).' },
         { name: 'Subsidy wedge', tex: R`P_p = P_c + s`, beyond: 'The guide discusses subsidies but gives no formula for the wedge.' },
       ],
       graphs: [
@@ -275,6 +276,8 @@
         { name: 'Efficiency in a competitive market', tex: R`MB_1 = MB_2 = \dots = MB_N = P = MC` },
         { name: 'Social efficiency', tex: R`MSC = MSB, \qquad MSC = MPC + MEC` },
         { name: 'Positive externality', tex: R`MSB = MPB + MEB = MC` },
+        { name: 'Efficient pollution (Coase)', tex: R`-\frac{\partial TC_A}{\partial P_A} = \frac{\partial TC_B}{\partial P_A}`, note: 'BVFD Maths A14.1: trading the right to pollute at price q brings the polluter’s saving from one more unit of pollution into line with the damage to the other firm.' },
+        { name: 'Pigouvian tax', tex: R`t = \frac{\partial TC_B}{\partial P_A} \;\text{(marginal external damage at the efficient level)}`, note: 'BVFD Maths 15.2.' },
         { name: 'Public good efficiency', tex: R`MB_1 + MB_2 + \dots + MB_N = MSB = MC` },
         { name: 'Common resource', tex: R`\text{open access: } AP = c;\quad \text{efficient: } MP = c`, beyond: 'The guide describes common property but gives no formula.' },
       ],
@@ -301,6 +304,7 @@
       equations: [
         { name: 'Expenditure identity', tex: R`GDP \equiv Y \equiv C + I + G + NX, \qquad NX = X - Z` },
         { name: 'Net taxes', tex: R`NT = T - B`, note: 'Taxes minus benefits (transfers).' },
+        { name: 'Disposable income', tex: R`Y + B - T_d \equiv C + S`, note: 'BVFD Maths 17.1: households spend or save what they have after benefits and direct taxes.' },
         { name: 'Leakages equal injections', tex: R`S + NT + Z \equiv I + G + X` },
         { name: 'Sector balances', tex: R`S - I = (G - NT) + NX` },
         { name: 'Value added', tex: R`\text{Value added} = \text{value of production} - \text{intermediate goods used}` },
