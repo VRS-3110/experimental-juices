@@ -16,13 +16,16 @@
         'Explain why the slope of the PPF equals minus the opportunity cost of C.',
         'Explain why a concave PPF shows increasing opportunity cost.',
         'Work out comparative advantage from a two-country table and show the gains from trade.',
+        'Calculate simple and weighted price indices, the inflation rate from a price index, and real income from nominal income and the CPI.',
       ],
       examFocus: ['Comparative advantage comes from the lower opportunity cost, not from producing more.', 'State terms of trade that lie between the two countries’ opportunity costs.'],
       equations: [
         { name: 'Linear PPF', tex: R`2C + T = 10 \;\Rightarrow\; T = 10 - 2C` },
         { name: 'Slope of the PPF', tex: R`\frac{\Delta T}{\Delta C} = -\,\text{opportunity cost of } C` },
+        { name: 'Weighted price index', tex: R`\text{Index} = \frac{\sum_i w_i \, I_i}{\sum_i w_i}, \qquad I_i = \frac{p_{i,t}}{p_{i,0}} \times 100`, note: 'The guide (Block 1): weight each item’s price index by its importance in spending. A fixed-basket CPI does the same with base-year quantities: CPI = Σp_t q_0 / Σp_0 q_0 × 100.' },
+        { name: 'Inflation and real income', tex: R`\pi = \frac{CPI_t - CPI_{t-1}}{CPI_{t-1}} \times 100, \qquad \text{real income} = \frac{\text{nominal income}}{CPI / 100}`, note: 'Inflation is the percentage change in the index, not its value or its rise in points.' },
       ],
-      graphs: [{ label: 'PPF: linear and concave, opportunity cost and trade gains', topic: 'ppf' }],
+      graphs: [{ label: 'PPF: linear and concave, opportunity cost and trade gains', topic: 'ppf' }, { label: 'Price indices and real values', topic: 'growth-measure' }],
       topics: ['ppf'],
     },
     {
@@ -293,8 +296,9 @@
         'Explain why leakages S + NT + Z equal injections I + G + X.',
         'Draw the circular flow with households, firms, government, the financial sector and the rest of the world.',
         'Distinguish nominal from real GDP and final from intermediate goods.',
+        'Calculate real GDP at base-year prices and the GDP deflator, and compare growth in real GDP per person across countries.',
       ],
-      examFocus: ['Subtract imports; exclude transfers from G.'],
+      examFocus: ['Subtract imports; exclude transfers from G.', 'Real GDP values this year’s quantities at base-year prices. Real growth ≈ nominal growth − inflation; divide by the deflator for the exact figure, and by population for living standards.'],
       equations: [
         { name: 'Expenditure identity', tex: R`GDP \equiv Y \equiv C + I + G + NX, \qquad NX = X - Z` },
         { name: 'Net taxes', tex: R`NT = T - B`, note: 'Taxes minus benefits (transfers).' },
@@ -302,6 +306,8 @@
         { name: 'Leakages equal injections', tex: R`S + NT + Z \equiv I + G + X` },
         { name: 'Sector balances', tex: R`S - I = (G - NT) + NX` },
         { name: 'Value added', tex: R`\text{Value added} = \text{value of production} - \text{intermediate goods used}` },
+        { name: 'Real GDP and the GDP deflator', tex: R`Y^{real}_t = \sum p_0 \, q_t, \qquad \text{deflator} = \frac{Y^{nom}_t}{Y^{real}_t} \times 100`, note: 'As in the guide (Block 11, Activity SG11.5): base-year prices times this year’s quantities.' },
+        { name: 'Real growth', tex: R`g = \frac{Y^{real}_t}{Y^{real}_{t-1}} - 1 \;\approx\; g^{nom} - \pi` },
       ],
       graphs: [{ label: 'Circular flow and GDP three ways', topic: 'national-income' }, { label: 'Real growth and price indices', topic: 'growth-measure' }],
       topics: ['national-income', 'growth-measure'],
@@ -487,11 +493,9 @@
     },
     {
       id: 'b-further', block: 'Further topics', part: 'Further topics', title: 'Beyond the guide',
-      note: 'These topics are outside the EC1002 subject guide. Price indices, loanable funds and the Lorenz curve support Blocks 11–15. The guide leaves the others out on purpose: its Block 8 reading excludes the kinked demand curve and contestable markets (BVFD 10.6), its Block 9 reading excludes wage discrimination (BVFD 11.8), it says interest parity is covered in EC2065 rather than EC1002 (it was last examined in October 2022, under the previous guide), and it does not cover trade policy. Intertemporal choice, price leadership, bilateral monopoly, the liquidity trap and the WS–PS model are in neither the guide nor its assigned reading, and none appeared in the 2022–2025 papers checked.',
-      summary: 'Price indices turn nominal values into real ones, and growth compounds. In the loanable funds market, government borrowing raises the interest rate and crowds out some private investment. The Lorenz curve and Gini coefficient measure how unequally income is shared.',
+      note: 'These topics are outside the EC1002 subject guide. The rule of 70, loanable funds and the Lorenz curve support Blocks 11–15. The guide leaves the others out on purpose: its Block 8 reading excludes the kinked demand curve and contestable markets (BVFD 10.6), its Block 9 reading excludes wage discrimination (BVFD 11.8), it says interest parity is covered in EC2065 rather than EC1002 (it was last examined in October 2022, under the previous guide), and it does not cover trade policy. Intertemporal choice, price leadership, bilateral monopoly, the liquidity trap and the WS–PS model are in neither the guide nor its assigned reading, and none appeared in the 2022–2025 papers checked.',
+      summary: 'Growth compounds: the rule of 70 gives the doubling time. In the loanable funds market, government borrowing raises the interest rate and crowds out some private investment. The Lorenz curve and Gini coefficient measure how unequally income is shared.',
       outcomes: [
-        'Calculate a CPI from a fixed basket and the inflation rate it implies.',
-        'Convert nominal GDP to real GDP with the deflator and find real growth.',
         'Estimate doubling times with the rule of 70.',
         'Find the equilibrium interest rate in the loanable funds market and show crowding out from a budget deficit.',
         'Explain why crowding out is partial when saving responds to the interest rate.',
@@ -507,10 +511,8 @@
         'Show how monetary policy works through investment, and why it fails in a liquidity trap.',
         'Derive the natural rate from the WS and PS curves and explain what raises or lowers it.',
       ],
-      examFocus: ['Real growth ≈ nominal growth − inflation; divide by the deflator for the exact figure.', 'Plot cumulative shares on the Lorenz curve, not each quintile’s own share.'],
+      examFocus: ['Plot cumulative shares on the Lorenz curve, not each quintile’s own share.'],
       equations: [
-        { name: 'Fixed-basket price index', tex: R`CPI_t = \frac{\sum p_t q_0}{\sum p_0 q_0}\times 100` },
-        { name: 'Real GDP and real growth', tex: R`Y^{real} = \frac{Y^{nom}}{\text{deflator}/100}, \qquad g \approx g^{nom} - \pi` },
         { name: 'Rule of 70', tex: R`t_{double} \approx \frac{70}{g\,(\%)}` },
         { name: 'Loanable funds (closed economy)', tex: R`S = I + (G - NT) \quad\Longleftrightarrow\quad S + (NT - G) = I` },
         { name: 'Gini coefficient', tex: R`G = \frac{A}{A + B} = 1 - 2B` },
@@ -536,7 +538,7 @@
         { label: 'Money market beside investment demand: the liquidity trap', topic: 'investment-trap' },
         { label: 'WS–PS: the natural rate of unemployment', topic: 'natural-rate' },
       ],
-      topics: ['growth-measure', 'loanable-funds', 'lorenz', 'kinked-demand', 'interest-parity', 'tariff', 'import-quota', 'contestable-markets', 'discrimination', 'intertemporal', 'price-leadership', 'bilateral-monopoly', 'investment-trap', 'natural-rate'],
+      topics: ['loanable-funds', 'lorenz', 'kinked-demand', 'interest-parity', 'tariff', 'import-quota', 'contestable-markets', 'discrimination', 'intertemporal', 'price-leadership', 'bilateral-monopoly', 'investment-trap', 'natural-rate'],
     },
   ];
 
@@ -576,6 +578,7 @@
       'commons': { 'Open access': 'The guide describes common property but gives no formulas.', 'Efficient use': 'The guide describes common property but gives no formulas.', 'Correcting tax per user': 'The guide describes common property but gives no formulas.' },
       'lemons': { 'Adverse selection': 'The guide mentions adverse selection but gives no model.', 'This model': 'The guide mentions adverse selection but gives no model.' },
       'solow': { 'Golden rule': 'The golden rule is not in the guide.' },
+      'growth-measure': { 'Rule of 70': 'The guide uses growth rates but not the rule of 70.', 'Present value': 'Present values are BVFD Chapter 12, which the guide does not assign.' },
       'is-mp': { 'MP schedule': 'The guide describes the MP curve in words; this equation is the app’s.' },
       'money-ismp': { 'MP rule': 'The guide describes the MP curve in words; this equation is the app’s.', 'LM curve (fixed money supply)': 'The guide says you are not required to know the IS–LM model.' },
       'investment-trap': { 'Liquidity trap': 'The guide and textbook note that interest rates cannot fall below zero, but do not use the liquidity trap model.' },
@@ -617,7 +620,7 @@
     'w-human-capital': { level: 'partial', note: 'The guide covers human capital in words; present-value calculations are BVFD Chapter 12, which it does not assign.' },
     'w-cartel': { level: 'partial', note: 'The tension between collusion and cheating is in the guide (Block 8); the repeated-game condition for stability goes further.' },
     'w-oligopoly-compare': { level: 'partial', note: 'Monopoly, Cournot and Bertrand are in the guide; the Stackelberg figures and the n-firm Cournot result go beyond it.' },
-    'w-growth-measure': { level: 'partial', note: 'Real GDP and the deflator are in the guide (Block 11); the rule of 70 is not.' },
+    'w-growth-measure': { level: 'partial', note: 'Price indices, real GDP and the deflator are in the guide (Blocks 1 and 11); the rule of 70 is not.' },
     'w-efficiency-wage': { level: 'partial', note: 'The guide covers efficiency wages in words (Block 9); minimising the wage per unit of effort goes further.' },
   };
 
@@ -645,6 +648,7 @@
     'oligopoly-compare': 'Partly beyond the guide: monopoly, Cournot and Bertrand are in the guide; the Stackelberg figures and n-firm Cournot go further.',
     'commons': 'Partly beyond the guide: the guide describes common property but gives no model.',
     'lemons': 'Partly beyond the guide: the guide mentions adverse selection but gives no model.',
+    'growth-measure': 'Partly beyond the guide: price indices, real and nominal GDP and the GDP deflator are in the guide (Blocks 1 and 11); the compound-growth graph, the rule of 70 and present value are not.',
     'tariff': 'Trade policy is not covered in the EC1002 subject guide.',
     'import-quota': 'Trade policy is not covered in the EC1002 subject guide.',
   };

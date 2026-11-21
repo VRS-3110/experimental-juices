@@ -227,6 +227,9 @@ window.GLOSSARY = [
   { term: 'Gross national product (GNP)', def: 'GDP plus net income received from abroad (income earned by residents abroad minus income earned by foreigners at home).', topics: ['national-income'] },
   { term: 'Nominal vs real GDP', def: 'Nominal GDP values output at current prices; real GDP values it at constant base-year prices, removing the effect of inflation.', topics: ['growth-measure'] },
   { term: 'GDP deflator', def: 'Nominal GDP divided by real GDP, times 100. A price index covering all domestically produced goods.', topics: ['growth-measure'] },
+  { term: 'Index number', def: 'A value expressed relative to a base period set to 100, so that changes read as percentages. A weighted index gives each item’s price change a weight equal to its share of spending.', topics: ['growth-measure'] },
+  { term: 'Base year', def: 'The year whose prices are used to value output in real terms, and in which a price index equals 100.', topics: ['growth-measure'] },
+  { term: 'Real income', def: 'Nominal income divided by the price level (CPI/100): what income can buy at base-year prices.', topics: ['growth-measure'] },
   { term: 'Consumer price index (CPI)', def: 'The cost of a fixed basket of consumer goods relative to a base year, used to measure consumer price inflation.', topics: ['growth-measure'] },
   { term: 'Inflation', def: 'A sustained rise in the general price level, measured as the percentage change in a price index.', topics: ['growth-measure', 'phillips'] },
   { term: 'Value added', def: 'The value of a firm’s output minus the value of intermediate inputs bought from other firms. Summing value added avoids double counting.', topics: ['national-income'] },
@@ -311,6 +314,7 @@ window.GLOSSARY = [
   { term: 'Rule of 70', def: 'A quantity growing at g% a year doubles in about 70/g years.', topics: ['growth-measure'] },
 
   /* ── Open economy ── */
+  { term: 'Managed float (dirty float)', def: 'A floating exchange rate in which the central bank intervenes in the foreign exchange market from time to time to smooth or steer the rate, without committing to a peg.', topics: ['forex'] },
   { term: 'Nominal exchange rate (e)', def: 'The price of one currency in terms of another. Here quoted as foreign currency per unit of domestic currency, so a rise is an appreciation.', topics: ['forex'] },
   { term: 'Real exchange rate (RER)', def: 'The relative price of domestic and foreign goods: RER = e·P/P*.', topics: ['forex'] },
   { term: 'Appreciation / depreciation', def: 'A rise / fall in the value of a currency under a floating exchange rate. Appreciation makes exports dearer abroad and imports cheaper at home.', topics: ['forex'] },

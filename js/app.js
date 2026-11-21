@@ -718,6 +718,18 @@
   }
   const dueItems = () => { const st = getStats(), now = Date.now(); return QUIZ_ITEMS.filter((it) => st[it.key] && st[it.key].due <= now); };
   const checks = () => store.get('mn-revise-checks', {});
+  (function migrateChecks() {
+    if (store.get('mn-revise-schema', 1) >= 2) return;
+    const all = checks(), f = all['b-further'];
+    if (Array.isArray(f) && f.length) {
+      const add = (id, i) => { all[id] = [...new Set([...(all[id] || []), i])]; };
+      if (f.includes(0)) add('b-1', 4);
+      if (f.includes(1)) add('b-11', 4);
+      all['b-further'] = f.filter((i) => i >= 2).map((i) => i - 2);
+      store.set('mn-revise-checks', all);
+    }
+    store.set('mn-revise-schema', 2);
+  })();
   const ticked = (sheet) => (checks()[sheet.id] || []).length;
   const sheetsFor = (topicId) => SHEETS.filter((sh) => sh.topics.includes(topicId));
 

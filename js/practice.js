@@ -200,6 +200,21 @@
       mistakes: ['Treating the short-run trade-off as permanent.', 'Getting the sign wrong: unemployment below u* raises inflation.', 'Moving along the SRPC for a supply shock instead of shifting it.'],
     },
 
+    {
+      id: 'w-real-gdp', topic: 'growth-measure', kind: 'calc',
+      title: 'Real GDP, the deflator and growth per person from a price–quantity table',
+      question: 'An island produces only coconuts and pineapples. In 2010 it sold 240 coconuts at $4 and 100 pineapples at $6. In 2020 it sold 300 coconuts at $5 and 120 pineapples at $9. Use 2010 as the base year. (a) Find nominal GDP in both years and real GDP in 2020. (b) Find real GDP growth and the GDP deflator for 2020. (c) The population grew from 10 to 12 (thousand). What happened to real GDP per person?',
+      steps: [
+        { t: '(a) Nominal GDP values each year’s output at that year’s prices:', m: R`2010: 240(4) + 100(6) = 1{,}560, \qquad 2020: 300(5) + 120(9) = 2{,}580` },
+        { t: 'Real GDP in 2020 values 2020 quantities at 2010 prices (in the base year, real = nominal):', m: R`300(4) + 120(6) = 1{,}920` },
+        { t: '(b)', m: R`g = \frac{1{,}920}{1{,}560} - 1 = 23.1\%, \qquad \text{deflator} = \frac{2{,}580}{1{,}920} \times 100 = 134.4` },
+        { t: 'Prices rose 34.4% over the decade. Nominal GDP grew 65.4%, but only 23.1% of that is more output.' },
+        { t: '(c)', m: R`\frac{1{,}560}{10} = 156, \qquad \frac{1{,}920}{12} = 160, \qquad \frac{160}{156} - 1 = 2.6\%` },
+        { t: 'Most of the real growth went to a larger population: output per person rose only 2.6%.' },
+      ],
+      answer: 'Nominal GDP: $1,560 (2010) and $2,580 (2020). Real GDP in 2020 at 2010 prices: $1,920, so real growth is 23.1% and the 2020 deflator is 134.4. Real GDP per person rose from 156 to 160, only 2.6%.',
+      mistakes: ['Valuing base-year quantities at current prices (that is a price index, not real GDP).', 'Reporting nominal GDP growth as growth in output.', 'Writing growth as 1 − new/old instead of new/old − 1.', 'Comparing living standards without dividing by population.'],
+    },
     /* ───────────── Further topics ───────────── */
     {
       id: 'w-growth-measure', topic: 'growth-measure', kind: 'calc',
@@ -500,6 +515,27 @@
       },
     },
     {
+      worked: 'w-real-gdp', topic: 'growth-measure',
+      gen() {
+        const q1 = 10 * int(15, 30), p1 = int(2, 6), q2 = 10 * int(8, 20), p2 = int(2, 6);
+        const Q1 = q1 + 10 * int(1, 8), P1 = p1 + int(1, 4), Q2 = q2 + 10 * int(1, 6), P2 = p2 + int(1, 4);
+        const N0 = q1 * p1 + q2 * p2, R1 = Q1 * p1 + Q2 * p2, N1 = Q1 * P1 + Q2 * P2;
+        return {
+          q: `An economy produces only apples and bread. In the base year it sold ${q1} apples at $${p1} and ${q2} loaves at $${p2}. Five years later it sold ${Q1} apples at $${P1} and ${Q2} loaves at $${P2}.`,
+          parts: [
+            { label: 'Real GDP in the later year at base-year prices ($)', answer: R1 },
+            { label: 'Real GDP growth (%)', answer: 100 * (R1 / N0 - 1) },
+            { label: 'GDP deflator in the later year', answer: (100 * N1) / R1 },
+          ],
+          solution: [
+            `Base year: real = nominal = ${q1}(${p1}) + ${q2}(${p2}) = ${N0}.`,
+            `Later year at base-year prices: ${Q1}(${p1}) + ${Q2}(${p2}) = ${R1}, so growth = ${R1}/${N0} − 1 = ${n(100 * (R1 / N0 - 1))}%.`,
+            `Nominal GDP = ${Q1}(${P1}) + ${Q2}(${P2}) = ${N1}; deflator = ${N1}/${R1} × 100 = ${n((100 * N1) / R1)}.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-growth-measure', topic: 'growth-measure',
       gen() {
         const Y0 = pick([400, 500, 800]), ng = pick([5, 6, 8, 10]), inf = pick([1, 2, 3, 4]);
@@ -589,6 +625,8 @@
     { worked: 'w-phillips', topic: 'phillips', q: 'With adaptive expectations, holding unemployment below the natural rate causes…', choices: ['A permanent fall in inflation', 'Steadily rising inflation', 'Stable inflation at a higher level', 'Ever-falling unemployment'], correct: 1, why: 'Each year expectations catch up with last year’s inflation, the SRPC shifts up, and inflation rises again.' },
     { worked: 'w-phillips', topic: 'phillips', q: 'The long-run Phillips curve is…', choices: ['Downward-sloping', 'Vertical at the natural rate', 'Horizontal at expected inflation', 'Upward-sloping'], correct: 1, why: 'In the long run π = πᵉ, which happens only at u = u*, whatever the inflation rate.' },
     { worked: 'w-phillips', topic: 'phillips', q: 'An adverse supply shock shifts the short-run Phillips curve…', choices: ['Down', 'Up', 'Along itself', 'Not at all'], correct: 1, why: 'v > 0 raises inflation at every unemployment rate.' },
+    { worked: 'w-real-gdp', topic: 'growth-measure', q: 'With 2010 as the base year, real GDP in 2015 values…', choices: ['2015 quantities at 2015 prices', '2015 quantities at 2010 prices', '2010 quantities at 2015 prices', '2010 quantities at 2010 prices'], correct: 1, why: 'Holding prices at their base-year level leaves only changes in quantities. 2015 quantities at 2015 prices is nominal GDP.' },
+    { worked: 'w-real-gdp', topic: 'growth-measure', q: 'The rate of inflation is…', choices: ['The value of the consumer price index', 'The rise in the consumer price index, in points', 'The percentage change in the consumer price index', 'The consumer price index minus 100'], correct: 2, why: 'Inflation is the percentage change in the price level. A CPI rising from 120 to 126 is a 6-point rise but 5% inflation.' },
     { worked: 'w-growth-measure', topic: 'growth-measure', q: 'Nominal GDP grew 6% and the GDP deflator rose 4%. Real GDP grew by about…', choices: ['10%', '2%', '6%', '1.5%'], correct: 1, why: 'Real growth ≈ nominal growth − inflation = 6 − 4 = 2% (exactly 1.06/1.04 − 1 = 1.9%).' },
     { worked: 'w-growth-measure', topic: 'growth-measure', q: 'By the rule of 70, an economy growing at 2% a year doubles in about…', choices: ['14 years', '35 years', '70 years', '140 years'], correct: 1, why: '70/2 = 35 years.' },
     { worked: 'w-growth-measure', topic: 'growth-measure', q: 'Why can the CPI overstate the rise in the cost of living?', choices: ['It includes imports', 'Its fixed basket ignores consumers switching to goods that have become relatively cheaper', 'It leaves out services', 'It counts exports'], correct: 1, why: 'This is substitution bias. New goods and quality improvements bias it upward too.' },
