@@ -74,7 +74,7 @@ Topic pages link to the sheet that covers them. Progress, results and the exam d
 
 ## Reference and practice
 
-- **Glossary**: 324 key terms with plain-language definitions, an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
+- **Glossary**: 353 key terms with plain-language definitions, checked against the textbook glossary and the guide (terms for content the guide excludes say so), an A–Z bar and a filter. Each term links to the topics that use it, and each topic page lists its key terms. Link to a term with `#g-<term>`, for example `#g-opportunity-cost`.
 - **Worked answers**: 79 exam-style run-throughs (74 calculations, 5 diagram answers), at least one for every topic, revealed one step at a time and ending with the final answer and common mistakes. Each also appears on its topic page. Filter by unit or question type.
 - **Quiz**: 194 question types built on the worked answers. 66 calculation types generate new numbers every time, so you practise the method rather than the example; 128 concept questions are multiple choice. Choose 5, 10 or 15 questions by area and type. Numeric answers are accepted within 1%. Each answer shows the solution and links to the full run-through; the results screen lets you retry missed questions with fresh numbers. Every worked answer has a "Practise with new numbers" button that starts a three-question drill.
 - **Definition flashcards**: the Flashcards page has a Definitions deck (term → definition or definition → term) alongside the formula deck.
