@@ -891,7 +891,7 @@
         { name: 'Aggregate demand', tex: R`r = g\pi,\quad r = h - kY \;\Rightarrow\; \pi = \frac{h - kY}{g}`, note: 'The policy rule and the IS schedule together. AD slopes down in π–Y space. (The guide prints (h − Y)/g, dropping the k.)' },
         { name: 'Long-run aggregate supply', tex: R`Y = Y^*`, note: 'Potential output, independent of inflation.' },
         { name: 'Short-run aggregate supply', tex: R`Y = Y^* + \alpha(\pi - \pi^e) \;\Leftrightarrow\; \pi = \pi^e + \gamma(Y - Y^*),\ \gamma = \tfrac{1}{\alpha}`, note: 'Output exceeds potential only when inflation exceeds expectations.' },
-        { name: 'Taylor rule', tex: R`r = r^* + \alpha_\pi(\pi - \pi^*) + \beta(Y - Y^*)`, note: 'The central bank raises r when inflation or output is above target.' },
+        { name: 'Taylor rule', tex: R`r - r^* = a(\pi - \pi^*) + b(Y - Y^*)`, note: 'BVFD Maths 24.1. The central bank raises r when inflation or output is above target.' },
         { name: 'Output gap', tex: R`\frac{Y - Y^*}{Y^*}\times 100`, note: 'Negative is recessionary, positive is inflationary.' },
       ],
       points: [

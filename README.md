@@ -59,7 +59,7 @@ Some topics draw two diagrams driven by the same sliders, side by side on a shar
 The **Revision** tab has one sheet per block of the EC1002 subject guide (Blocks 6–8, 17–18 and 19–20 share a sheet). A **Beyond the guide** sheet collects the topics outside the guide: price indices and growth rates, loanable funds and the Lorenz curve, which it does not cover, and the kinked demand curve, contestable markets, wage discrimination, interest parity and trade policy, which it excludes. Each sheet has:
 
 - a "you should be able to" checklist to tick off (119 statements in all)
-- the key equations for that block, checked against the guide and the textbook maths boxes it assigns (94 from the guide or those boxes, plus 21 that the app uses but the guide does not give or marks as not examinable, listed separately under "Beyond the guide"; the Beyond the guide sheet has 6 more)
+- the key equations for that block, checked against the guide and the textbook sections and maths boxes it assigns (95 from the guide or those boxes, plus 20 that the app uses but the guide does not give or marks as not examinable, listed separately under "Beyond the guide"; the Beyond the guide sheet has 6 more)
 - the graphs to practise, each linked to its interactive topic
 - exam focus points, the block's worked answers and key terms
 - a **Test this block** button that starts a 6-question quiz on the block's topics
