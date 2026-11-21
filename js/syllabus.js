@@ -259,7 +259,7 @@
         y: { range: [0, 12], label: 'Capital (K)' },
         params: [
           { id: 'tech', label: 'Technology', options: [{ v: 0, label: 'Q = √(LK)' }, { v: 1, label: 'Substitutes: Q = L + 2K' }, { v: 2, label: 'Fixed proportions: Q = min(L, K)' }], value: 0 },
-          { id: 'q', label: 'Target output (Q)', min: 0.2, max: 30, step: 0.1, value: 5 },
+          { id: 'q', label: 'Target output (Q)', min: 0.2, max: 12, step: 0.1, value: 5 },
           { id: 'w', label: 'Wage (w)', min: 0.2, max: 35, step: 0.1, value: 4 },
           { id: 'r', label: 'Rental rate of capital (r)', min: 0.2, max: 35, step: 0.1, value: 4 },
         ],
