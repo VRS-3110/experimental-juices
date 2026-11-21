@@ -629,6 +629,7 @@
     'w-human-capital': { level: 'partial', note: 'The guide covers human capital in words; present-value calculations are BVFD Chapter 12, which it does not assign.' },
     'w-cartel': { level: 'partial', note: 'The tension between collusion and cheating is in the guide (Block 8); the repeated-game condition for stability goes further.' },
     'w-oligopoly-compare': { level: 'partial', note: 'Monopoly, Cournot and Bertrand are in the guide; the Stackelberg figures and the n-firm Cournot result go beyond it.' },
+    'w-pp-cournot-2017': { level: 'partial', note: 'Part (b), the Stackelberg calculation, goes beyond the current guide, which says the Stackelberg mathematics (BVFD A10.2) is not examinable.' },
     'w-growth-measure': { level: 'partial', note: 'Price indices, real GDP and the deflator are in the guide (Blocks 1 and 11); the rule of 70 is not.' },
     'w-efficiency-wage': { level: 'partial', note: 'The guide covers efficiency wages in words (Block 9); minimising the wage per unit of effort goes further.' },
   };
