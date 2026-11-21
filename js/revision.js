@@ -100,6 +100,7 @@
         'Build market demand by horizontal summation.',
         'Find optimal bundles for perfect substitutes (corner) and perfect complements (kink).',
         'Describe diminishing marginal utility and diminishing MRS, and calculate the MRS from marginal utilities.',
+        'Match the assumptions on preferences (completeness, transitivity, non-satiation, diminishing MRS) to the shape of indifference curves.',
       ],
       examFocus: ['Draw the compensated budget line parallel to the new budget line.', 'Add quantities, not prices, when summing demand curves.'],
       equations: [
@@ -127,6 +128,7 @@
         'Read MC and ATC off a total cost curve: MC is the slope of TC, ATC is the slope of a ray from the origin.',
         'Draw LAC as the envelope of SAC curves and identify economies, constant returns and diseconomies of scale.',
         'Explain the difference between diminishing returns (short run) and returns to scale (long run).',
+        'Find the cheapest inputs when they are perfect substitutes (straight-line isoquants) or must be used in fixed proportions (L-shaped isoquants).',
       ],
       examFocus: ['MC cuts the average curves at their minimum points: examiners check this.', 'A SAC touches LAC at the SAC minimum only where LAC is flat.'],
       equations: [
@@ -319,17 +321,19 @@
         'Find the steady state from sAf(k) = (δ + n + t)k.',
         'Show the effect of a higher saving rate, faster population growth or faster technical progress.',
         'Explain the golden rule and why more saving is not always better.',
+        'Explain the Romer (AK) model of endogenous growth, find its growth rate, and contrast it with the Solow model.',
       ],
-      examFocus: ['Separate level effects (new steady state) from growth effects.'],
+      examFocus: ['Separate level effects (new steady state) from growth effects.', 'In the AK model saving changes the growth rate; in the Solow model only the level.'],
       equations: [
         { name: 'Production function per worker', tex: R`Y = Af(K, L) \;\Rightarrow\; y = Af(k)` },
         { name: 'Investment per worker', tex: R`i = sy = sAf(k)` },
         { name: 'Change in capital per worker', tex: R`\Delta k = sAf(k) - (\delta + n)k` },
         { name: 'Steady state', tex: R`sAf(k) = (\delta + n)k`, note: 'BVFD Maths A18.1 writes it without depreciation: k̇ = sf(k) − nk, so nk* = sf(k*).' },
         { name: 'With technical progress at rate t', tex: R`sAf(k) = (\delta + n + t)k \quad (k \text{ per unit of effective labour})`, note: 'Output per worker then grows at t, and total output at t + n.' },
+        { name: 'Romer (AK) model', tex: R`y = Ak \;\Rightarrow\; g = sA - (\delta + n)`, note: 'The guide gives y = Ak (Block 12); the growth rate follows from Δk = sAk − (δ + n)k.' },
       ],
-      graphs: [{ label: 'Solow diagram: sAf(k) against (δ + n + t)k', topic: 'solow' }],
-      topics: ['solow'],
+      graphs: [{ label: 'Solow diagram: sAf(k) against (δ + n + t)k', topic: 'solow' }, { label: 'Romer (AK) model: growth without diminishing returns', topic: 'romer-ak' }],
+      topics: ['solow', 'romer-ak'],
     },
     {
       id: 'b-13', block: 'Block 13', part: 'Macroeconomics', title: 'Keynesian aggregate demand and multipliers',
@@ -339,6 +343,7 @@
         'Find equilibrium income on the 45° diagram and from leakages = injections.',
         'Calculate the simple, open-economy and balanced-budget multipliers.',
         'Measure the deflationary or inflationary gap at full-employment output.',
+        'Derive the multiplier when investment, taxes, imports or government spending depend on income.',
       ],
       examFocus: ['The deflationary gap is the AD shortfall at Y_f, not the output gap.', 'Show both multiplier forms are the same: 1 − c(1 − t) + z = t + s(1 − t) + z.'],
       equations: [
@@ -350,6 +355,7 @@
         { name: 'Simple multiplier', tex: R`\frac{1}{1 - c} = \frac{1}{s}` },
         { name: 'Open-economy multiplier', tex: R`\frac{1}{1 - c(1 - t) + z} = \frac{1}{t + s(1 - t) + z}` },
         { name: 'Equilibrium output (open economy)', tex: R`Y = \frac{A + I + G + X}{s(1 - t) + t + z}`, note: 'BVFD Maths A20.1.' },
+        { name: 'Multiplier with other induced spending', tex: R`I = I_0 + jY \Rightarrow \frac{1}{1 - c - j}, \qquad G = G_0 - gY \Rightarrow \frac{1}{1 - c + g}`, note: 'Set output equal to planned spending and collect the Y terms. Examined in May 2024.' },
         { name: 'Balanced-budget multiplier', tex: R`G = T \;\Rightarrow\; Y = \frac{A + I}{1 - c} + G`, note: 'A rise in G matched by taxes raises Y by the same amount: the balanced-budget multiplier is 1.' },
       ],
       graphs: [
@@ -449,6 +455,7 @@
         'Link the Phillips curve to AD–AS through Okun’s law.',
         'Calculate the unemployment, employment, participation and inactivity rates (including from labour demand and supply with a minimum wage), classify unemployment by type, and find steady-state unemployment from job flows.',
         'Distinguish voluntary from involuntary unemployment, explain how supply-side policies reduce equilibrium unemployment, and explain hysteresis.',
+        'Evaluate the costs of inflation: shoe-leather and menu costs, fiscal drag, and the redistribution caused by unexpected inflation.',
       ],
       examFocus: ['Moves along SRPC come from demand; shifts of SRPC come from expectations or supply shocks.', 'With labour demand and supply and a working-age population: employment is labour demand at the going wage, the labour force is labour supply, and the rest are inactive. A minimum wage above equilibrium creates classical unemployment and lowers inactivity.', 'Unemployment is never zero in long-run equilibrium or at full employment: there is always frictional and structural unemployment.'],
       equations: [
@@ -483,6 +490,7 @@
         { name: 'Real exchange rate', tex: R`RER = e \times \frac{P}{P^*}`, note: 'Nominal rate × domestic price level ÷ foreign price level.' },
         { name: 'Purchasing power parity', tex: R`\text{PPP path: constant real exchange rate}` },
         { name: 'Uncovered interest parity', tex: R`i = i^* + \frac{E^e - E}{E}`, beyond: 'Not on the EC1002 syllabus: the guide says interest parity is covered in EC2065 Macroeconomics.' },
+        { name: 'Balance of payments', tex: R`CA + KA + FA = 0 \quad (\text{plus any change in official reserves})`, note: 'Current account (goods, services, income, transfers), capital account (capital transfers) and financial account (assets). Under a free float there is no official intervention.' },
         { name: 'Marshall–Lerner condition', tex: R`|\varepsilon_X| + |\varepsilon_M| > 1`, note: 'BVFD 28.3 (assigned reading): a devaluation improves the trade balance only if the export and import price elasticities sum to more than 1 in size. In the short run they are small, hence the J-curve.' },
       ],
       graphs: [

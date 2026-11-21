@@ -603,6 +603,65 @@
       },
     },
     {
+      worked: 'w-iso-corner', topic: 'isoquant',
+      gen() {
+        const b = pick([2, 3, 4]), w = int(5, 30), r = int(10, 90), Q = 10 * int(2, 12);
+        if (Math.abs(w - r / b) < 1e-9) return this.gen();
+        const unitB = Math.min(w, r / b), Lb = w < r / b ? Q : 0;
+        return {
+          q: `Firm A has Q = min{L, K}; firm B has Q = L + ${b}K (one machine does the work of ${b} workers). Both pay w = ${w} per worker and r = ${r} per machine, and each must produce Q = ${Q}.`,
+          parts: [
+            { label: 'Firm A minimum cost', answer: Q * (w + r) },
+            { label: 'Firm B minimum cost', answer: Q * unitB },
+            { label: 'Workers hired by firm B', answer: Lb },
+          ],
+          solution: [
+            `A: fixed proportions, so L = K = ${Q}; cost = (${w} + ${r}) × ${Q} = ${Q * (w + r)}.`,
+            `B: cost per unit of output is ${w} with labour and ${r}/${b} = ${n(r / b)} with capital, so use only ${w < r / b ? 'labour' : 'capital'}.`,
+            `Cost = ${Q} × ${n(unitB)} = ${n(Q * unitB)}; workers hired = ${Lb}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-multiplier-induced', topic: 'keynesian-cross',
+      gen() {
+        const c = pick([0.5, 0.6, 0.7, 0.75]), a = 10 * int(5, 15), I0 = 10 * int(3, 10), G0 = 10 * int(5, 20);
+        const induced = Math.random() < 0.5, k = induced ? pick([0.05, 0.1, 0.15]) : pick([0.05, 0.1, 0.2]);
+        const mult = induced ? 1 / (1 - c - k) : 1 / (1 - c + k), Y = (a + I0 + G0) * mult;
+        return {
+          q: induced
+            ? `C = ${a} + ${c}Y, I = ${I0} + ${k}Y and G = ${G0} in a closed economy.`
+            : `C = ${a} + ${c}Y, I = ${I0} and counter-cyclical government spending G = ${G0} − ${k}Y in a closed economy.`,
+          parts: [
+            { label: 'Multiplier', answer: mult },
+            { label: 'Equilibrium output Y', answer: Y },
+          ],
+          solution: [
+            induced ? `Y = ${a} + ${c}Y + ${I0} + ${k}Y + ${G0} → (1 − ${c} − ${k})Y = ${a + I0 + G0}.` : `Y = ${a} + ${c}Y + ${I0} + ${G0} − ${k}Y → (1 − ${c} + ${k})Y = ${a + I0 + G0}.`,
+            `Multiplier = 1/${n(induced ? 1 - c - k : 1 - c + k, 3)} = ${n(mult)}; Y = ${a + I0 + G0} × ${n(mult)} = ${n(Y)}.`,
+          ],
+        };
+      },
+    },
+    {
+      worked: 'w-romer-ak', topic: 'romer-ak',
+      gen() {
+        const A = pick([0.25, 0.4, 0.5, 0.6, 0.8, 1]), s = pick([0.15, 0.2, 0.25, 0.3, 0.4]), d = pick([0.02, 0.03, 0.05]), nn = pick([0, 0.01, 0.02]), s2 = s + 0.1;
+        return {
+          q: `In the Romer model y = ${A}k. The saving rate is ${Math.round(s * 100)}%, depreciation ${Math.round(d * 100)}% and population growth ${Math.round(nn * 100)}% a year.`,
+          parts: [
+            { label: 'Growth rate of output per worker (%)', answer: 100 * (s * A - d - nn) },
+            { label: `Growth rate if saving rises to ${Math.round(s2 * 100)}% (%)`, answer: 100 * (s2 * A - d - nn) },
+          ],
+          solution: [
+            `g = sA − (δ + n) = ${s}(${A}) − (${d} + ${nn}) = ${n(100 * (s * A - d - nn))}%.`,
+            `With s = ${n(s2)}: g = ${n(100 * (s2 * A - d - nn))}%. Saving raises the growth rate permanently.`,
+          ],
+        };
+      },
+    },
+    {
       worked: 'w-natural-rate', topic: 'natural-rate',
       gen() {
         const A = pick([8, 10, 12]), mu = pick([0.2, 0.25, 0.5]), c = pick([0.5, 1]), ps = A / (1 + mu);
@@ -1081,6 +1140,22 @@
     { worked: 'w-oil-shock', topic: 'ad-as', q: 'Why does an adverse supply shock pose a dilemma for the central bank?', choices: ['It cannot change interest rates after a supply shock', 'Stimulating output adds to inflation, while fighting inflation deepens the recession', 'Supply shocks only affect the long run', 'Fiscal policy automatically offsets it'], correct: 1, why: 'One instrument cannot move output up and inflation down at the same time when SRAS has shifted.' },
     { worked: 'w-unemployment-flows', topic: 'unemployment', q: 'A steelworker loses their job when the industry closes and their skills are not wanted elsewhere. This is…', choices: ['Frictional unemployment', 'Structural unemployment', 'Cyclical unemployment', 'Seasonal unemployment'], correct: 1, why: 'A lasting mismatch between workers’ skills or location and the jobs available is structural.' },
     { worked: 'w-unemployment-flows', topic: 'unemployment', q: 'If discouraged workers stop looking for work, the measured unemployment rate…', choices: ['Rises, because they are still without jobs', 'Falls, because they leave the labour force', 'Is unchanged', 'Rises, because participation falls'], correct: 1, why: 'They move from unemployed to inactive, so both U and the labour force fall and u drops.' },
+    { worked: 'w-romer-ak', topic: 'romer-ak', q: 'In the Romer (AK) model, a permanent rise in the saving rate…', choices: ['Raises the level of output per worker but not its long-run growth rate', 'Raises the long-run growth rate of output per worker', 'Has no effect, as in the Solow model', 'Lowers growth because consumption falls'], correct: 1, why: 'With y = Ak, g = sA − (δ + n), so a higher s raises growth for ever. In the Solow model it would raise only the level.' },
+    { worked: 'w-romer-ak', topic: 'romer-ak', q: 'Why might capital not run into diminishing returns, as the Romer model assumes?', choices: ['Machines never wear out', 'Capital includes ideas and knowledge, which are non-rival: one firm using an idea does not use it up', 'Population growth is zero', 'Firms are monopolies'], correct: 1, why: 'The guide (Block 12): if K includes ideas and human capital as well as machines, its marginal product need not fall.' },
+    { worked: 'w-iso-corner', topic: 'isoquant', q: 'Isoquants are straight lines when…', choices: ['Inputs must be used in fixed proportions', 'Inputs are perfect substitutes in production', 'There are decreasing returns to scale', 'Never: isoquants are always convex'], correct: 1, why: 'With Q = aL + bK one input can replace the other at a constant rate, so the MRTS is constant. Fixed proportions give L-shaped isoquants.' },
+    { worked: 'w-iso-corner', topic: 'isoquant', q: 'A firm produces with Q = min{L, K}. The wage rises. The cost-minimising firm…', choices: ['Substitutes capital for labour', 'Keeps L = K = Q: its costs rise but its input mix does not change', 'Uses only capital', 'Cuts its costs'], correct: 1, why: 'With fixed proportions an input on its own adds nothing, so the firm stays at the corner of the L-shaped isoquant.' },
+    { worked: 'w-multiplier-induced', topic: 'keynesian-cross', q: 'C = a + cY, and government spending falls as income rises: G = G₀ − gY. The multiplier is…', choices: ['1/(1 − c)', '1/(1 − c − g), larger than 1/(1 − c)', '1/(1 − c + g), smaller than 1/(1 − c)', 'Zero'], correct: 2, why: 'Spending that falls with income offsets part of each round, so g enters the denominator with a plus.' },
+    { worked: 'w-multiplier-induced', topic: 'keynesian-cross', q: 'Automatic stabilisers work by…', choices: ['Requiring the government to change tax rates in a recession', 'Making net tax revenue rise with income (and benefits fall), so the multiplier is smaller', 'Raising government spending when income rises', 'Fixing the interest rate'], correct: 1, why: 'With a given tax rate, revenue rises and benefits fall in a boom without any policy decision, damping the multiplier.' },
+    { worked: 'w-inflation-costs', topic: 'phillips', q: 'Inflation illusion is…', choices: ['Believing the Phillips curve trade-off lasts for ever', 'Confusing nominal and real changes, for example treating a pay rise matched by inflation as a gain', 'Overestimating measured inflation', 'The cost of changing price lists'], correct: 1, why: 'Welfare depends on real values. A 5% pay rise with 5% inflation leaves the real wage unchanged.' },
+    { worked: 'w-inflation-costs', topic: 'phillips', q: 'If inflation were fully anticipated and wages, tax allowances and interest rates were all indexed, which costs of inflation would remain?', choices: ['None', 'Shoe-leather and menu costs', 'Redistribution from lenders to borrowers', 'Fiscal drag'], correct: 1, why: 'The guide (Block 17): with full anticipation and indexation only shoe-leather and menu costs remain.' },
+    { worked: 'w-inflation-costs', topic: 'phillips', q: 'Inflation turns out higher than expected when the nominal interest rate on loans was fixed. This…', choices: ['Benefits lenders', 'Benefits borrowers at the expense of lenders', 'Has no real effects', 'Raises the real interest rate'], correct: 1, why: 'The real rate actually paid, i − π, is lower than expected, so borrowers gain.' },
+    { worked: 'w-consumer-optimum', topic: 'consumer-choice', q: 'Which assumption on preferences makes indifference curves slope downwards?', choices: ['Completeness', 'Transitivity', 'Non-satiation (more is preferred to less)', 'Diminishing MRS'], correct: 2, why: 'Guide Activity SG4.1: non-satiation gives the downward slope, transitivity stops curves crossing, completeness puts every bundle on some curve, and diminishing MRS makes them convex.' },
+    { worked: 'w-consumer-optimum', topic: 'consumer-choice', q: 'A consumer’s indifference curves slope upwards and cross. Their preferences show…', choices: ['Completeness and diminishing MRS', 'Satiation in at least one good, and a failure of transitivity', 'Perfect substitutes', 'Perfect complements'], correct: 1, why: 'Upward-sloping curves mean more of one good is unwanted (satiation); crossing curves break transitivity.' },
+    { worked: 'w-bop', topic: 'forex', q: 'A country with a floating exchange rate runs a current account surplus. Its…', choices: ['Financial account (with the capital account) is in deficit: it is a net lender abroad', 'Imports exceed its exports', 'Financial account is also in surplus', 'Exchange rate must be fixed'], correct: 0, why: 'With no official intervention the accounts sum to zero, so a current account surplus is matched by a net capital outflow.' },
+    { worked: 'w-bop', topic: 'forex', q: 'A foreign investor buys shares in a domestic company. This is recorded in the…', choices: ['Current account', 'Capital account', 'Financial account', 'It is not recorded'], correct: 2, why: 'Purchases and sales of financial assets go in the financial account; the capital account records capital transfers.' },
+    { worked: 'w-unemployment-flows', topic: 'unemployment', q: 'In a slump the average spell of unemployment gets longer mainly because…', choices: ['More people lose their jobs', 'The outflow from unemployment falls: the hiring rate drops', 'Participation rises', 'The natural rate falls'], correct: 1, why: 'Average duration is about 1/h. Inflows rise in a slump too, but longer spells come from lower outflows.' },
+    { worked: 'w-exchange-rate', topic: 'forex', q: 'Why is the price of a cinema ticket a poor test of purchasing power parity?', choices: ['Cinema tickets are a luxury', 'A cinema ticket is a non-traded service, so arbitrage cannot equalise its price across countries', 'PPP holds only for financial assets', 'Ticket prices are set by governments'], correct: 1, why: 'PPP rests on arbitrage in traded goods.' },
+    { worked: 'w-injections-leakages', topic: 'injections-leakages', q: 'With tax rates and the budget unchanged, inflation tends to…', choices: ['Raise the ratio of government debt to national income', 'Lower the ratio of government debt to national income', 'Leave the debt ratio unchanged', 'Turn the deficit into a surplus by definition'], correct: 1, why: 'Nominal income rises with prices while the stock of debt is fixed in nominal terms.' },
     { worked: 'w-open-policy', topic: 'open-policy', q: 'With a fixed exchange rate and perfect capital mobility, a monetary expansion…', choices: ['Raises output by more than in a closed economy', 'Has no lasting effect: capital flows out and defending the peg shrinks the money supply again', 'Causes a depreciation that raises net exports', 'Lowers the interest rate permanently below the world rate'], correct: 1, why: 'The domestic rate is tied to the world rate. To stop the currency falling the central bank buys it back with reserves, which reverses the monetary expansion.' },
     { worked: 'w-open-policy', topic: 'open-policy', q: 'With a fixed exchange rate and perfect capital mobility, a fiscal expansion…', choices: ['Is fully crowded out by higher interest rates', 'Raises output by the full multiplier, because the interest rate stays at the world rate', 'Has no effect on output', 'Causes the currency to depreciate'], correct: 1, why: 'MP is flat at i*: the central bank expands the money supply to hold the peg, so nothing is crowded out.' },
     { worked: 'w-open-policy', topic: 'open-policy', q: 'Under a floating exchange rate, a fiscal expansion raises output by less than in a closed economy because…', choices: ['The currency depreciates and imports fall', 'The higher interest rate attracts capital, the currency appreciates and net exports fall', 'The central bank must sell reserves', 'Floating rates fix the interest rate at the world level'], correct: 1, why: 'Exchange-rate crowding out: the appreciation shifts IS back to the left.' },

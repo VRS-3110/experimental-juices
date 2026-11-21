@@ -4,6 +4,16 @@
 (function () {
   const { R, f, money, pct, C, V, Hl, P, G, A, S, T, ghost, changed, range, XQ, YP } = window.TOPIC_KIT;
 
+  // Least-cost inputs for the isoquant topic. tech 0: Q = √(LK); 1: Q = L + 2K (perfect substitutes); 2: Q = min(L, K).
+  const isoOpt = (s) => {
+    let L, K;
+    if (s.tech === 1) {
+      const lab = s.w, cap = s.r / 2;
+      if (Math.abs(lab - cap) < 1e-9) { L = s.q / 2; K = s.q / 4; } else if (lab < cap) { L = s.q; K = 0; } else { L = 0; K = s.q / 2; }
+    } else if (s.tech === 2) { L = s.q; K = s.q; } else { L = s.q * Math.sqrt(s.r / s.w); K = s.q * Math.sqrt(s.w / s.r); }
+    return { L, K, cost: s.w * L + s.r * K };
+  };
+
   const added = [
     /* ───────────── Block 1 ───────────── */
     {
@@ -243,30 +253,43 @@
       id: 'isoquant',
       title: 'Isoquants and isocosts',
       summary: 'An isoquant shows input combinations that produce the same output. The firm minimises cost where the lowest isocost line just touches the isoquant.',
-      model: 'Q = √(LK); isocost C = wL + rK.',
+      model: 'Choose the technology: Q = √(LK) (smooth, convex isoquants), Q = L + 2K (perfect substitutes: one machine does the work of two workers, so isoquants are straight lines) or Q = min(L, K) (fixed proportions: one worker per machine, so isoquants are L-shaped). Isocost C = wL + rK.',
       graph: {
         x: { range: [0, 12], label: 'Labour (L)' },
         y: { range: [0, 12], label: 'Capital (K)' },
         params: [
+          { id: 'tech', label: 'Technology', options: [{ v: 0, label: 'Q = √(LK)' }, { v: 1, label: 'Substitutes: Q = L + 2K' }, { v: 2, label: 'Fixed proportions: Q = min(L, K)' }], value: 0 },
           { id: 'q', label: 'Target output (Q)', min: 0.2, max: 30, step: 0.1, value: 5 },
           { id: 'w', label: 'Wage (w)', min: 0.2, max: 35, step: 0.1, value: 4 },
           { id: 'r', label: 'Rental rate of capital (r)', min: 0.2, max: 35, step: 0.1, value: 4 },
         ],
         draw(s) {
-          const L = s.q * Math.sqrt(s.r / s.w), K = s.q * Math.sqrt(s.w / s.r), c = s.w * L + s.r * K;
+          const { L, K, cost: c } = isoOpt(s), lab = `Q = ${s.q.toFixed(1)}`;
           const iso = (cc) => (x) => cc / s.r - (s.w / s.r) * x;
+          const quant = s.tech === 1 ? [S(0, s.q / 2, s.q, 0, 's', lab)]
+            : s.tech === 2 ? [S(s.q, s.q, s.q, 13, 's', lab), S(s.q, s.q, 13, s.q, 's', null)]
+            : [C((x) => (s.q * s.q) / x, 's', lab, { from: 0.3 })];
           return [
             C(iso(c * 0.7), 'ghost', '', { to: (c * 0.7) / s.w }),
             C(iso(c * 1.35), 'ghost', '', { to: (c * 1.35) / s.w }),
             C(iso(c), 'd', 'Isocost', { to: c / s.w, labelAt: Math.min(11, c / s.w) * 0.15 }),
-            C((x) => (s.q * s.q) / x, 's', `Q = ${s.q.toFixed(1)}`, { from: 0.3 }),
+            ...quant,
             G(L, K, 'L*', 'K*'),
             P(L, K, 'E'),
           ];
         },
         readout(s) {
-          const L = s.q * Math.sqrt(s.r / s.w), K = s.q * Math.sqrt(s.w / s.r);
-          return { rows: [['Labour L*', f(L)], ['Capital K*', f(K)], ['Minimum cost', money(s.w * L + s.r * K)], ['MRTS at E', f(-s.w / s.r)]], status: 'A higher wage rotates the isocost steeper, and the firm substitutes capital for labour.' };
+          const { L, K, cost } = isoOpt(s);
+          const rows = [['Labour L*', f(L)], ['Capital K*', f(K)], ['Minimum cost', money(cost)]];
+          if (s.tech === 0) return { rows: [...rows, ['MRTS at E', f(-s.w / s.r)]], status: 'A higher wage rotates the isocost steeper, and the firm substitutes capital for labour.' };
+          if (s.tech === 1) {
+            const lab = s.w, cap = s.r / 2;
+            return {
+              rows: [...rows, ['Cost per unit of output: labour (w)', money(lab)], ['Cost per unit of output: capital (r/2)', money(cap)]],
+              status: Math.abs(lab - cap) < 1e-9 ? 'Labour and capital cost the same per unit of output, so every point on the isoquant costs the same.' : `Perfect substitutes: the isoquant is a straight line with a constant MRTS of −1/2, so there is no tangency. The firm uses only the input that is cheaper per unit of output, here ${lab < cap ? 'labour' : 'capital'}: a corner solution.`,
+            };
+          }
+          return { rows, status: 'Fixed proportions: the isoquant is L-shaped, and more of one input on its own adds nothing. The firm hires L = K = Q whatever the input prices; a higher wage raises cost but does not change the input mix.' };
         },
       },
       equations: [
@@ -274,9 +297,10 @@
         { name: 'Marginal rate of technical substitution', tex: R`MRTS = -\frac{MP_L}{MP_K}`, note: 'Slope of the isoquant with labour on the horizontal axis, as drawn here. The guide and BVFD put capital on the horizontal axis and write MRTS = MP_K/MP_L = r/w: the same least-cost condition.' },
         { name: 'Least-cost tangency', tex: R`MRTS = -\frac{w}{r} \;\Rightarrow\; \frac{MP_L}{w} = \frac{MP_K}{r}`, note: 'The last pound spent on each input adds the same output.' },
         { name: 'Returns to scale', tex: R`F(\lambda L, \lambda K) \gtreqless \lambda F(L, K)`, note: 'Increasing, constant or decreasing returns to scale.' },
+        { name: 'Perfect substitutes and fixed proportions', tex: R`Q = aL + bK \;\text{(straight-line isoquants)}, \qquad Q = \min\{aL, bK\} \;\text{(L-shaped)}`, note: 'No tangency: with substitutes use only the input that is cheaper per unit of output (w/a against r/b); with fixed proportions hire aL = bK = Q. Examined in May 2022, May 2023 and May 2024.' },
       ],
       points: [
-        'Isoquants slope down, do not cross, and are convex (diminishing MRTS).',
+        'Isoquants slope down, do not cross, and are usually convex (diminishing MRTS). They are straight lines when inputs are perfect substitutes, and L-shaped when inputs must be used in fixed proportions.',
         'Joining cost-minimising points as output rises gives the expansion path, and from it the long-run cost curve.',
         'Diminishing marginal product is a short-run idea; returns to scale is a long-run idea.',
       ],

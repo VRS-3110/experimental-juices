@@ -414,10 +414,59 @@
     tip: 'Name the regime and the degree of capital mobility first. Then follow the chain: interest rate, capital flows, exchange rate (or intervention and the money supply), net exports, IS.',
   };
 
+
+  /* ── Romer (AK) model of endogenous growth (guide Block 12, BVFD 18.8) ── */
+  const romerAK = {
+    id: 'romer-ak',
+    title: 'Endogenous growth: the Romer (AK) model',
+    summary: 'If capital, broadly defined to include ideas and knowledge, does not run into diminishing returns, output per worker is proportional to capital per worker: y = Ak. Saving then never stops adding to growth, so the saving rate changes the long-run growth rate, not just the level of income.',
+    model: 'y = Ak. Saving per worker is sAk; the investment needed to keep k constant is (δ + n)k. Both are straight lines from the origin, so the gap between them grows with k, and k and y grow at the constant rate g = sA − (δ + n).',
+    graph: {
+      x: { range: [0, 10], label: 'Capital per worker (k)' },
+      y: { range: [0, 10], label: 'Output and investment per worker' },
+      params: [
+        { id: 'A', label: 'Productivity of capital (A)', min: 0.1, max: 1, step: 0.01, value: 0.5 },
+        { id: 's', label: 'Saving rate (s)', min: 0, max: 0.8, step: 0.01, value: 0.3 },
+        { id: 'dn', label: 'Depreciation plus population growth (δ + n)', min: 0, max: 0.3, step: 0.005, value: 0.07 },
+      ],
+      draw(s) {
+        const k1 = 8;
+        return [
+          C((k) => s.A * k, 'g', 'y = Ak'),
+          C((k) => s.s * s.A * k, 'd', 'sAk'),
+          C((k) => s.dn * k, 's', '(δ + n)k'),
+          S(k1, s.dn * k1, k1, s.s * s.A * k1, 'o', 'Δk', { dash: true }),
+        ];
+      },
+      readout(s) {
+        const g = s.s * s.A - s.dn;
+        return {
+          rows: [['Saving per unit of capital (sA)', pct(100 * s.s * s.A, 1)], ['Break-even investment rate (δ + n)', pct(100 * s.dn, 1)], ['Growth of k and y: sA − (δ + n)', pct(100 * g, 1)]],
+          status: g > 5e-4 ? `sAk is steeper than (δ + n)k, so the gap between them widens as k grows: capital and output per worker grow at ${pct(100 * g, 1)} a year for ever. A higher saving rate raises this growth rate permanently, unlike in the Solow model.`
+            : g < -5e-4 ? 'Saving does not cover the investment needed to equip new workers and replace worn-out capital, so capital and output per worker shrink.'
+            : 'Saving just covers break-even investment, so capital and output per worker stay constant.',
+          tone: g > 5e-4 ? 'good' : 'warn',
+        };
+      },
+    },
+    equations: [
+      { name: 'Romer (AK) production function', tex: R`Y = AK \;\Rightarrow\; y = Ak`, note: 'As in the guide (Block 12): constant returns to capital, so the marginal product of capital (A) does not fall.' },
+      { name: 'Growth rate of output per worker', tex: R`\Delta k = sAk - (\delta + n)k \;\Rightarrow\; g = \frac{\Delta k}{k} = sA - (\delta + n)`, note: 'The guide’s capital accumulation equation with f(k) = k. With no depreciation or population growth, g = sA.' },
+    ],
+    points: [
+      'In the Solow model diminishing returns make growth per worker die out unless technology improves; with y = Ak they never set in.',
+      'Why no diminishing returns? If K includes ideas and knowledge, which are non-rival, one firm using an idea does not use it up, and human capital grows alongside physical capital.',
+      'Policy matters for long-run growth: more saving, education or research raises the growth rate, not just the level of income.',
+      'The guide asks for the model’s key assumptions and insights; it does not require formal equations beyond y = Ak.',
+    ],
+    tip: 'Draw sAk and (δ + n)k as straight lines from the origin. If sAk is steeper, the gap between them, and so growth, never closes. Contrast this with the Solow steady state.',
+  };
+
   insertAfter('ad-as', inflationTypes, MACRO, blockOf('ad-as', 'Block 16'));
   insertAfter('inflation-types', lafferTopic, MACRO, blockOf('ad-as', 'Block 16'));
   insertAfter('money-ismp', investmentTrap, MACRO, blockOf('money-ismp', 'Block 15'));
   insertAfter('forex', interestParity, unitOf('forex', MACRO), blockOf('forex', 'Blocks 19–20'));
   insertAfter('interest-parity', jCurve, unitOf('forex', MACRO), blockOf('forex', 'Blocks 19–20'));
+  insertAfter('solow', romerAK, MACRO, blockOf('solow', 'Block 12'));
   insertAfter('j-curve', openPolicy, unitOf('forex', MACRO), blockOf('forex', 'Blocks 19–20'));
 })();
