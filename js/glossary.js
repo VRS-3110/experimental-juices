@@ -271,7 +271,7 @@ window.GLOSSARY = [
   { term: 'Nominal vs real interest rate', def: 'The nominal rate is the quoted rate; the real rate removes expected inflation: r ≈ i − πᵉ (the Fisher equation).', topics: ['is-mp', 'money-market'] },
   { term: 'Zero lower bound', def: 'Nominal interest rates cannot be cut much below zero, which limits conventional monetary policy in deep recessions.', topics: ['investment-trap', 'money-ismp'] },
   { term: 'Functions of money', def: 'Medium of exchange (accepted in payment), unit of account (prices are quoted in it) and store of value (it holds purchasing power over time).', topics: ['money-market'] },
-  { term: 'Monetary base (MB)', def: 'Currency in circulation plus banks’ reserves held at the central bank. The central bank controls it directly; it is sometimes called high-powered money.', topics: ['money-market'] },
+  { term: 'Monetary base (H)', def: 'Currency in circulation plus banks’ reserves: H = C + R. The central bank controls it directly; it is also called narrow money or high-powered money.', topics: ['money-market'] },
   { term: 'Fractional-reserve banking', def: 'Banks keep only a fraction of deposits as reserves and lend out the rest. Each loan is redeposited, creating new deposits, so the money supply is a multiple of the monetary base.', topics: ['money-market'] },
   { term: 'Reserve ratio (rr)', def: 'The fraction of deposits banks hold as reserves. A higher reserve ratio lowers the money multiplier.', topics: ['money-market'] },
   { term: 'Currency-deposit ratio (cr)', def: 'The cash the public holds relative to its bank deposits. Cash held outside banks cannot be re-lent, so a higher ratio lowers the money multiplier.', topics: ['money-market'] },
@@ -280,8 +280,8 @@ window.GLOSSARY = [
   { term: 'Liquidity', def: 'How quickly and cheaply an asset can be turned into money without losing value. Cash is the most liquid asset.', topics: ['money-market'] },
   { term: 'Lender of last resort', def: 'The central bank’s role of lending to solvent banks that face a sudden shortage of liquidity, to stop bank runs spreading.', topics: ['money-market'] },
   { term: 'Bank run', def: 'Many depositors withdraw at once because they fear the bank will fail. Because banks hold only fractional reserves, a run can bring down even a sound bank.', topics: ['money-market'] },
-  { term: 'Quantity theory of money', def: 'MV = PY. If velocity and real output are stable, faster money growth leads to higher inflation.', topics: ['money-market'] },
-  { term: 'Money multiplier', def: 'The ratio of the broad money supply to the monetary base. In the simple model it is 1/reserve ratio.', topics: ['money-market'] },
+  { term: 'Quantity theory of money', def: 'MV = PY. If velocity and real output are stable, faster money growth leads to higher inflation. Not part of EC1002: the guide (Block 17) leaves it out.', topics: ['money-market'] },
+  { term: 'Money multiplier', def: 'The ratio of broad money to the monetary base: M/H = (c_p + 1)/(c_p + c_b), where c_b is the banks’ reserve ratio and c_p the public’s cash-to-deposit ratio. With no cash outside banks it is 1/c_b.', topics: ['money-market'] },
 
   /* ── Macro: supply side, inflation, growth ── */
   { term: 'Potential output (Y*)', def: 'The output the economy produces when resources are fully employed at normal rates, with unemployment at its natural rate.', topics: ['ad-as'] },

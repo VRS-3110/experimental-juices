@@ -325,7 +325,7 @@
         { name: 'Production function per worker', tex: R`Y = Af(K, L) \;\Rightarrow\; y = Af(k)` },
         { name: 'Investment per worker', tex: R`i = sy = sAf(k)` },
         { name: 'Change in capital per worker', tex: R`\Delta k = sAf(k) - (\delta + n)k` },
-        { name: 'Steady state', tex: R`sAf(k) = (\delta + n)k` },
+        { name: 'Steady state', tex: R`sAf(k) = (\delta + n)k`, note: 'BVFD Maths A18.1 writes it without depreciation: k̇ = sf(k) − nk, so nk* = sf(k*).' },
         { name: 'With technical progress at rate t', tex: R`sAf(k) = (\delta + n + t)k \quad (k \text{ per unit of effective labour})`, note: 'Output per worker then grows at t, and total output at t + n.' },
       ],
       graphs: [{ label: 'Solow diagram: sAf(k) against (δ + n + t)k', topic: 'solow' }],
@@ -346,8 +346,10 @@
         { name: 'Disposable income', tex: R`Y_d = Y - T \quad\text{or}\quad Y_d = (1 - t)Y` },
         { name: 'Propensities', tex: R`MPC + MPS \equiv 1` },
         { name: 'Equilibrium output with a lump-sum tax', tex: R`Y = \frac{A + I + G - cT}{1 - c}` },
+        { name: 'Equilibrium output (no government)', tex: R`Y^* = \frac{A + I}{1 - c} = \frac{A + I}{s}`, note: 'BVFD Maths 19.1. In equilibrium planned saving equals planned investment.' },
         { name: 'Simple multiplier', tex: R`\frac{1}{1 - c} = \frac{1}{s}` },
         { name: 'Open-economy multiplier', tex: R`\frac{1}{1 - c(1 - t) + z} = \frac{1}{t + s(1 - t) + z}` },
+        { name: 'Equilibrium output (open economy)', tex: R`Y = \frac{A + I + G + X}{s(1 - t) + t + z}`, note: 'BVFD Maths A20.1.' },
         { name: 'Balanced-budget multiplier', tex: R`G = T \;\Rightarrow\; Y = \frac{A + I}{1 - c} + G`, note: 'A rise in G matched by taxes raises Y by the same amount: the balanced-budget multiplier is 1.' },
       ],
       graphs: [
@@ -358,7 +360,7 @@
     },
     {
       id: 'b-14', block: 'Block 14', part: 'Macroeconomics', title: 'Money and banking',
-      note: 'The guide’s Block 14 (money and banking; interest rates and monetary transmission) states no formulas: it describes the money multiplier in words and sends you to BVFD chapters 21 and 22. The equations here are BVFD’s.',
+      note: 'The guide’s Block 14 (money and banking; interest rates and monetary transmission) states no formulas: it describes the money multiplier in words and sends you to BVFD chapters 21 and 22. The equations here are from those chapters (Maths 21.1), in the textbook’s letters.',
       summary: 'Money is whatever is generally accepted in payment. The central bank creates the monetary base; commercial banks multiply it through fractional-reserve lending. Money supply and money demand set the short-run interest rate, through which monetary policy reaches spending.',
       outcomes: [
         'Explain the four functions of money (medium of exchange, store of value, unit of account, standard of deferred payment) and the difference between narrow and broad money.',
@@ -374,8 +376,8 @@
         'Say whether the central bank is fixing the money supply or the interest rate; the diagrams differ.',
       ],
       equations: [
-        { name: 'Money multiplier', tex: R`m = \frac{\text{broad money}}{\text{narrow money}}, \qquad M = m \times MB` },
-        { name: 'Multiplier with reserve and cash ratios', tex: R`m = \frac{1 + cr}{cr + rr}`, note: 'The guide says the multiplier depends on banks’ reserve ratio and the public’s cash-to-deposit ratio; this is BVFD’s formula.' },
+        { name: 'Monetary base and money supply', tex: R`H = C + R = (c_p + c_b)D, \qquad M = C + D = (c_p + 1)D`, note: 'The guide: narrow money (the base) is cash in circulation plus banks’ reserves; broad money adds deposits.' },
+        { name: 'Money multiplier', tex: R`\frac{M}{H} = \frac{c_p + 1}{c_p + c_b}`, note: 'BVFD Maths 21.1: c_b is the banks’ reserve ratio, c_p the public’s cash-to-deposit ratio. With c_p = c_b = 0.02 it is 25.5; if banks raise c_b to 0.1 it falls to 8.5.' },
         { name: 'Money demand', tex: R`\frac{M^d}{P} = L(i, Y)`, note: 'Real money demand falls as the interest rate rises and rises with real income.' },
         { name: 'Quantity equation', tex: R`MV = PY`, beyond: 'Not part of this course: the guide (Block 17) says the quantity theory of money is not on the EC1002 syllabus.' },
       ],

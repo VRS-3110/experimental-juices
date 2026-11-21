@@ -953,21 +953,19 @@
       worked: 'w-money-creation', topic: 'money-market',
       gen() {
         const rr = pick([0.05, 0.1, 0.2, 0.25]), cr = pick([0, 0.1, 0.2, 0.25]), MB = pick([50, 100, 200, 400]);
-        const gM = int(3, 10), gY = int(1, 4), gV = pick([0, 0, 1, -1]), r = int(1, 3);
-        const m = (1 + cr) / (cr + rr), pi = gM + gV - gY;
+        const i = int(3, 10), pi = int(1, 4);
+        const m = (1 + cr) / (cr + rr);
         return {
-          q: `The monetary base is ${MB}. Banks hold reserves of ${n(rr * 100)}% of deposits and the public holds cash equal to ${n(cr * 100)}% of deposits. Money grows ${gM}% a year, real output ${gY}% and velocity ${gV > 0 ? 'rises ' + gV + '%' : gV < 0 ? 'falls ' + -gV + '%' : 'is constant'}. The real interest rate is ${r}%.`,
+          q: `The monetary base is ${MB}. Banks hold reserves of ${n(rr * 100)}% of deposits and the public holds cash equal to ${n(cr * 100)}% of deposits. The nominal interest rate is ${i}% and inflation is ${pi}%.`,
           parts: [
             { label: 'Money multiplier', answer: m },
             { label: 'Money supply', answer: m * MB },
-            { label: 'Inflation (%)', answer: pi },
-            { label: 'Nominal interest rate (%), with expected inflation equal to that inflation', answer: r + pi },
+            { label: 'Real interest rate (%), using r ≈ i − π', answer: i - pi },
           ],
           solution: [
-            `m = (1 + cr)/(cr + rr) = ${n(1 + cr)}/${n(cr + rr)} = ${n(m)}${cr === 0 ? ' (with no cash this is just 1/rr)' : ''}.`,
+            `M/H = (c_p + 1)/(c_p + c_b) = ${n(1 + cr)}/${n(cr + rr)} = ${n(m)}${cr === 0 ? ' (with no cash this is just 1/c_b)' : ''}.`,
             `M = ${n(m)} × ${MB} = ${n(m * MB)}.`,
-            `%ΔM + %ΔV = %ΔP + %ΔY → π = ${gM} + (${gV}) − ${gY} = ${pi}%.`,
-            `Fisher: i = r + πᵉ = ${r} + ${pi} = ${r + pi}%.`,
+            `Fisher: r ≈ i − π = ${i} − ${pi} = ${i - pi}%.`,
           ],
         };
       },
@@ -1124,7 +1122,7 @@
     { worked: 'w-slutsky', topic: 'income-substitution', q: 'The price of an inferior good that is not a Giffen good rises. What happens to the quantity demanded?', choices: ['It rises, because the income effect dominates', 'It falls: the income effect raises it, but by less than the substitution effect lowers it', 'It falls, because both effects reduce it', 'It is unchanged'], correct: 1, why: 'For an inferior good the income effect works against the substitution effect, but here it is smaller, so demand still slopes down.' },
     { worked: 'w-slutsky', topic: 'income-substitution', q: 'Which statement about Giffen goods is correct?', choices: ['Every inferior good is a Giffen good', 'A Giffen good is a normal good with a large substitution effect', 'A Giffen good is an inferior good whose income effect outweighs its substitution effect, so demand slopes up', 'For a Giffen good the substitution effect raises demand when its price rises'], correct: 2, why: 'The substitution effect always moves against the price change; Giffen behaviour needs an inferior good with a large enough income effect to outweigh it.' },
     { worked: 'w-money-creation', topic: 'money-market', q: 'The central bank buys government bonds from commercial banks (an open market purchase). What happens?', choices: ['The monetary base and money supply fall, and interest rates rise', 'The monetary base and money supply rise, and interest rates fall', 'Only the price of bonds changes', 'The reserve ratio rises'], correct: 1, why: 'Paying for the bonds adds reserves to banks, raising the monetary base; banks lend more, the money supply rises, and higher bond prices mean lower interest rates.' },
-    { worked: 'w-money-creation', topic: 'money-market', q: 'Banks raise their reserve ratio, and households start holding more cash. The money multiplier…', choices: ['Rises', 'Falls', 'Is unchanged', 'Becomes 1/cr'], correct: 1, why: 'm = (1 + cr)/(cr + rr): a higher rr or a higher cr (when rr < 1) lowers it, because less base money is re-lent.' },
+    { worked: 'w-money-creation', topic: 'money-market', q: 'Banks raise their reserve ratio, and households start holding more cash. The money multiplier…', choices: ['Rises', 'Falls', 'Is unchanged', 'Becomes 1/c_p'], correct: 1, why: 'M/H = (c_p + 1)/(c_p + c_b): a higher c_b or a higher c_p (when c_b < 1) lowers it, because less base money is re-lent.' },
     { worked: 'w-cournot', topic: 'cournot', q: 'Compared with monopoly and perfect competition, Cournot duopoly output is…', choices: ['Below monopoly output', 'Between monopoly and competitive output', 'Equal to competitive output', 'Above competitive output'], correct: 1, why: 'With linear demand and equal costs, Cournot total output is 2/3 of competitive output, monopoly is 1/2.' },
   ];
 
